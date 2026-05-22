@@ -1,0 +1,257 @@
+import React, { useState, useEffect } from 'react'
+import { useParams, useNavigate } from 'react-router-dom'
+import { getJobById, applyToJob, getMatchScore, toggleSavedJob, getSavedJobs } from '../services/api'
+import { useAuth } from '../context/AuthContext'
+import CompanyLogo from '../components/CompanyLogo'
+
+export default function JobDetail() {
+  const { id } = useParams()
+  const { user } = useAuth()
+  const navigate = useNavigate()
+  const [job, setJob] = useState(null)
+  const [loading, setLoading] = useState(true)
+  const [matchScore, setMatchScore] = useState(null)
+  const [coverLetter, setCoverLetter] = useState('')
+  const [applying, setApplying] = useState(false)
+  const [applied, setApplied] = useState(false)
+  const [applyError, setApplyError] = useState('')
+  const [isSaved, setIsSaved] = useState(false)
+  const [saving, setSaving] = useState(false)
+
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const { data } = await getJobById(id)
+        setJob(data)
+        if (user?.role === 'SEEKER') {
+          try {
+            const { data: score } = await getMatchScore(id)
+            setMatchScore(score.score)
+          } catch { setMatchScore(0) }
+          try {
+            const { data: saved } = await getSavedJobs()
+            setIsSaved(saved.some(j => j.id === id))
+          } catch {}
+        }
+      } catch (e) {
+        console.error('Job not found', e)
+      } finally {
+        setLoading(false)
+      }
+    }
+    load()
+  }, [id, user])
+
+  const handleApply = async () => {
+    if (!user) { navigate('/login'); return }
+    setApplying(true); setApplyError('')
+    try {
+      await applyToJob(id, { coverLetter })
+      setApplied(true)
+    } catch (e) {
+      setApplyError(e.response?.data || 'Failed to apply. You may have already applied to this job.')
+    } finally { setApplying(false) }
+  }
+
+  const scoreColor = s => s>=70?'#057642':s>=40?'#d97706':'#dc3545'
+  const scoreMsg = s => s>=70?'🎯 Great fit! Apply now.':s>=40?'⚡ Decent match. Worth trying!':'📚 Low match. Add more skills first.'
+
+  if (loading) return (
+    <div className="d-flex justify-content-center align-items-center" style={{minHeight:'60vh'}}>
+      <div className="spinner-border" style={{color:'#0A66C2'}}></div>
+    </div>
+  )
+  if (!job) return (
+    <div className="text-center py-5">
+      <i className="bi bi-briefcase-x fs-1 text-muted mb-3 d-block"></i>
+      <h5 className="text-muted">Job not found</h5>
+    </div>
+  )
+
+  const skills = job.requiredSkillsList || []
+
+  return (
+    <div className="container py-4">
+      <div className="row g-4">
+        {/* Left: Job Info */}
+        <div className="col-lg-8">
+          <div className="card border-0 shadow-sm rounded-4 mb-4">
+            <div className="card-body p-4">
+              {/* Company Header */}
+              <div className="d-flex gap-3 mb-4">
+                <CompanyLogo companyName={job.companyName} size={56} />
+                <div className="flex-fill">
+                  <h2 className="fw-bold mb-1" style={{fontSize:'1.4rem'}}>{job.title}</h2>
+                  <div className="text-muted">{job.companyName}</div>
+                  <div className="d-flex flex-wrap gap-2 mt-2">
+                    {job.remote && (
+                      <span className="badge rounded-pill" style={{background:'#D1FAE5',color:'#065f46',fontSize:'0.8rem'}}>
+                        🌐 Remote
+                      </span>
+                    )}
+                    <span className="badge rounded-pill bg-light text-dark" style={{fontSize:'0.8rem'}}>
+                      {job.experienceLevel}
+                    </span>
+                    <span className="badge rounded-pill bg-light text-dark" style={{fontSize:'0.8rem'}}>
+                      {job.jobType?.replace('_',' ')}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Meta Info */}
+              <div className="row g-3 mb-4">
+                <div className="col-6 col-md-3">
+                  <div className="text-center p-2 rounded-3" style={{background:'#EEF3F8'}}>
+                    <i className="bi bi-currency-rupee d-block mb-1" style={{color:'#0A66C2',fontSize:'1.2rem'}}></i>
+                    <div className="small fw-semibold">
+                      ₹{job.minSalary?(job.minSalary/100000).toFixed(0)+'L':'?'}–{job.maxSalary?(job.maxSalary/100000).toFixed(0)+'L':'?'}
+                    </div>
+                    <div style={{fontSize:'0.7rem',color:'#666'}}>Per Year</div>
+                  </div>
+                </div>
+                <div className="col-6 col-md-3">
+                  <div className="text-center p-2 rounded-3" style={{background:'#EEF3F8'}}>
+                    <i className="bi bi-bar-chart d-block mb-1" style={{color:'#0A66C2',fontSize:'1.2rem'}}></i>
+                    <div className="small fw-semibold">{job.experienceLevel}</div>
+                    <div style={{fontSize:'0.7rem',color:'#666'}}>Level</div>
+                  </div>
+                </div>
+                <div className="col-6 col-md-3">
+                  <div className="text-center p-2 rounded-3" style={{background:'#EEF3F8'}}>
+                    <i className="bi bi-clock d-block mb-1" style={{color:'#0A66C2',fontSize:'1.2rem'}}></i>
+                    <div className="small fw-semibold">{job.jobType?.replace('_',' ')}</div>
+                    <div style={{fontSize:'0.7rem',color:'#666'}}>Type</div>
+                  </div>
+                </div>
+                <div className="col-6 col-md-3">
+                  <div className="text-center p-2 rounded-3" style={{background:'#EEF3F8'}}>
+                    <i className="bi bi-people d-block mb-1" style={{color:'#0A66C2',fontSize:'1.2rem'}}></i>
+                    <div className="small fw-semibold">{job.applicationCount||0}</div>
+                    <div style={{fontSize:'0.7rem',color:'#666'}}>Applicants</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Required Skills */}
+              <div className="mb-4">
+                <h6 className="fw-bold mb-2">Required Skills</h6>
+                {skills.length===0 ? (
+                  <span className="text-muted small">No specific skills listed</span>
+                ) : (
+                  <div className="d-flex flex-wrap gap-2">
+                    {skills.map((s,i)=>(
+                      <span key={i} className="skill-badge unverified">{s}</span>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Description */}
+              <div>
+                <h6 className="fw-bold mb-2">Job Description</h6>
+                <p className="text-muted" style={{whiteSpace:'pre-line',lineHeight:1.7}}>{job.description}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Right: Match Score + Apply */}
+        <div className="col-lg-4">
+          {/* Match Score — SEEKER only */}
+          {user?.role==='SEEKER' && matchScore!==null && (
+            <div className="card border-0 shadow-sm rounded-4 mb-4">
+              <div className="card-body p-4 text-center">
+                <h6 className="fw-bold text-muted mb-3">Your Skill Match</h6>
+                <div className="rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center text-white fw-bold"
+                  style={{width:90,height:90,fontSize:'1.5rem',background:scoreColor(matchScore)}}>
+                  {matchScore}%
+                </div>
+                <p className="text-muted small mb-0">{scoreMsg(matchScore)}</p>
+                {/* Skill match breakdown */}
+                <div className="mt-3 pt-3 border-top">
+                  <div className="d-flex justify-content-between small text-muted mb-1">
+                    <span>Match strength</span>
+                    <span className="fw-bold" style={{color:scoreColor(matchScore)}}>{matchScore}%</span>
+                  </div>
+                  <div className="progress rounded-pill" style={{height:8}}>
+                    <div className="progress-bar rounded-pill" role="progressbar"
+                      style={{width:`${matchScore}%`,background:scoreColor(matchScore)}}></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Apply Card */}
+          <div className="card border-0 shadow-sm rounded-4">
+            <div className="card-body p-4">
+              <h6 className="fw-bold mb-3">Apply for this Job</h6>
+
+              {applied ? (
+                <div>
+                  <div className="alert alert-success rounded-3 mb-3">
+                    <i className="bi bi-check-circle-fill me-2"></i>
+                    <strong>Application submitted!</strong><br/>
+                    <small>A confirmation email has been sent to you. Track your application in My Applications.</small>
+                  </div>
+                  <a href="/seeker/applications" className="btn w-100 text-white rounded-pill fw-semibold"
+                    style={{background:'#0A66C2'}}>
+                    <i className="bi bi-file-text me-2"></i>View My Applications
+                  </a>
+                </div>
+              ) : (
+                <>
+                  {applyError && (
+                    <div className="alert alert-danger rounded-3 py-2 small mb-3">
+                      <i className="bi bi-exclamation-triangle me-2"></i>{applyError}
+                    </div>
+                  )}
+
+                  {!user ? (
+                    <div>
+                      <p className="text-muted small mb-3">Login to apply for this job</p>
+                      <button className="btn w-100 text-white fw-semibold rounded-pill"
+                        style={{background:'#0A66C2'}} onClick={()=>navigate('/login')}>
+                        <i className="bi bi-person me-2"></i>Login to Apply
+                      </button>
+                    </div>
+                  ) : user.role==='EMPLOYER' ? (
+                    <div className="alert alert-info rounded-3 py-2 small mb-0">
+                      <i className="bi bi-info-circle me-2"></i>Employers cannot apply to jobs.
+                    </div>
+                  ) : user.role==='ADMIN' ? (
+                    <div className="alert alert-info rounded-3 py-2 small mb-0">
+                      <i className="bi bi-info-circle me-2"></i>Admins cannot apply to jobs.
+                    </div>
+                  ) : (
+                    <>
+                      <div className="mb-3">
+                        <label className="form-label fw-semibold small">Cover Letter <span className="text-muted">(optional)</span></label>
+                        <textarea className="form-control rounded-3" rows={4}
+                          placeholder="Tell the employer why you're a great fit for this role..."
+                          value={coverLetter}
+                          onChange={e=>setCoverLetter(e.target.value)} />
+                      </div>
+                      <button className="btn w-100 text-white fw-semibold rounded-pill py-2"
+                        style={{background:'#0A66C2',fontSize:'1rem'}}
+                        onClick={handleApply} disabled={applying}>
+                        {applying
+                          ? <><span className="spinner-border spinner-border-sm me-2"></span>Submitting...</>
+                          : <><i className="bi bi-send me-2"></i>Submit Application</>}
+                      </button>
+                      <small className="text-muted d-block text-center mt-2">
+                        <i className="bi bi-envelope me-1"></i>
+                        You'll receive a confirmation email after applying
+                      </small>
+                    </>
+                  )}
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}

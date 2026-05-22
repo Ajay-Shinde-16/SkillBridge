@@ -1,0 +1,116 @@
+import React from 'react'
+import { Link } from 'react-router-dom'
+
+export default function Home() {
+  return (
+    <div>
+      {/* Hero */}
+      <div style={{
+        background:'linear-gradient(135deg, #0A66C2 0%, #004182 100%)',
+        position:'relative', overflow:'hidden'
+      }}>
+        {/* Background pattern */}
+        <div style={{
+          position:'absolute', top:0, left:0, right:0, bottom:0,
+          backgroundImage:`url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.06'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+        }}></div>
+        <div className="container py-5 text-center text-white" style={{position:'relative'}}>
+          <div className="d-flex align-items-center justify-content-center gap-3 mb-3">
+            <img src="/logo.svg" alt="SkillBridge" width={52} height={52} style={{borderRadius:12}} onError={e=>e.target.style.display='none'}/>
+            <h1 className="fw-bold mb-0" style={{fontSize:'2.2rem'}}>SkillBridge</h1>
+          </div>
+          <p className="mb-2 fs-5 opacity-90">Remote Job Portal with Verified Skill Tagging</p>
+          <p className="mb-4 opacity-75 small">Find jobs that match your skills. Employers find real talent.</p>
+          <div className="d-flex justify-content-center gap-3 flex-wrap">
+            <Link to="/jobs" className="btn btn-light fw-bold px-4 rounded-pill" style={{color:'#0A66C2'}}>
+              <i className="bi bi-search me-2"></i>Browse Jobs
+            </Link>
+            <Link to="/register" className="btn btn-outline-light fw-bold px-4 rounded-pill">
+              <i className="bi bi-person-plus me-2"></i>Get Started Free
+            </Link>
+          </div>
+          {/* Trust badges */}
+          <div className="d-flex justify-content-center gap-4 mt-4 flex-wrap">
+            {['500+ Remote Jobs','2000+ Seekers','150+ Employers','80+ Verified Skills'].map((t,i)=>(
+              <div key={i} className="text-white-50 small">
+                <span className="fw-bold text-white">{t.split(' ')[0]} </span>
+                {t.split(' ').slice(1).join(' ')}
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <div className="container py-5">
+        {/* Features */}
+        <h4 className="fw-bold text-center mb-2">Why SkillBridge?</h4>
+        <p className="text-muted text-center mb-4 small">Everything you need to land your remote job</p>
+        <div className="row g-3 mb-5">
+          {[
+            {icon:'bi-patch-check-fill', color:'#057642', title:'Verified Skill Tagging', desc:'Admin-verified skill badges. Not just self-declared. Employers see real talent.'},
+            {icon:'bi-bar-chart-fill', color:'#0A66C2', title:'Skill Match Score', desc:'Auto-calculates your % match with every job. Know before you apply.'},
+            {icon:'bi-kanban-fill', color:'#d97706', title:'Application Pipeline', desc:'Applied → Shortlisted → Interview → Offer. Track every stage.'},
+            {icon:'bi-calendar-check-fill', color:'#0ea5e9', title:'Interview Scheduler', desc:'Employers schedule Video/Phone/In-Person. You get notified instantly.'},
+            {icon:'bi-envelope-fill', color:'#7C3AED', title:'Auto Email Notifications', desc:'Get emails for shortlist, interview, offer. No manual messages needed.'},
+            {icon:'bi-currency-rupee', color:'#dc3545', title:'Salary Range Filter', desc:'Filter by exact salary. No wasted time on wrong budgets.'},
+          ].map((f,i)=>(
+            <div key={i} className="col-12 col-sm-6 col-md-4">
+              <div className="card h-100 border-0 shadow-sm rounded-4 p-2">
+                <div className="card-body">
+                  <div className="d-flex align-items-center gap-3 mb-2">
+                    <div className="rounded-3 d-flex align-items-center justify-content-center"
+                      style={{width:44,height:44,background:f.color+'18',flexShrink:0}}>
+                      <i className={`bi ${f.icon}`} style={{color:f.color,fontSize:'1.3rem'}}></i>
+                    </div>
+                    <h6 className="fw-bold mb-0">{f.title}</h6>
+                  </div>
+                  <p className="text-muted small mb-0">{f.desc}</p>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* How it works */}
+        <div className="text-center mb-4">
+          <h4 className="fw-bold mb-2">How It Works</h4>
+          <p className="text-muted small">Simple 4-step process to get hired</p>
+        </div>
+        <div className="row g-3 mb-5">
+          {[
+            {step:'01', icon:'bi-person-plus', color:'#0A66C2', title:'Create Account', desc:'Register as Job Seeker or Employer. Free forever.'},
+            {step:'02', icon:'bi-tools', color:'#057642', title:'Add Your Skills', desc:'Add skills to your profile. Admin verifies them for credibility.'},
+            {step:'03', icon:'bi-search', color:'#d97706', title:'Browse & Apply', desc:'Find jobs matched to your skills. See % match before applying.'},
+            {step:'04', icon:'bi-trophy', color:'#7C3AED', title:'Get Hired', desc:'Track applications. Get interview. Accept offer. Done!'},
+          ].map((s,i)=>(
+            <div key={i} className="col-6 col-md-3">
+              <div className="text-center p-3">
+                <div className="rounded-circle d-inline-flex align-items-center justify-content-center mb-3"
+                  style={{width:56,height:56,background:s.color+'18'}}>
+                  <i className={`bi ${s.icon}`} style={{color:s.color,fontSize:'1.5rem'}}></i>
+                </div>
+                <div className="fw-bold mb-1" style={{fontSize:'0.85rem',color:s.color}}>STEP {s.step}</div>
+                <div className="fw-bold mb-1">{s.title}</div>
+                <div className="text-muted" style={{fontSize:'0.8rem'}}>{s.desc}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* CTA */}
+        <div className="text-center p-5 rounded-4" style={{background:'linear-gradient(135deg,#0A66C2,#004182)'}}>
+          <h4 className="fw-bold text-white mb-2">Ready to find your remote job?</h4>
+          <p className="text-white opacity-75 mb-4 small">Join thousands of professionals on SkillBridge</p>
+          <div className="d-flex justify-content-center gap-3 flex-wrap">
+            <Link to="/register" className="btn btn-light fw-bold px-4 rounded-pill" style={{color:'#0A66C2'}}>
+              <i className="bi bi-person-plus me-2"></i>Join as Job Seeker
+            </Link>
+            <Link to="/register" className="btn btn-outline-light fw-bold px-4 rounded-pill">
+              <i className="bi bi-building me-2"></i>Hire Talent
+            </Link>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}

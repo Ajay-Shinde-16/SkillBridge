@@ -1,0 +1,262 @@
+import React, { useState, useEffect } from 'react'
+import { Link } from 'react-router-dom'
+import { searchJobs, toggleSavedJob, getSavedJobs, getProfile } from '../services/api'
+import { useAuth } from '../context/AuthContext'
+import CompanyLogo from '../components/CompanyLogo'
+
+const scoreColor = s => s>=70?'#057642':s>=40?'#d97706':'#dc3545'
+
+export default function JobList() {
+  const { user } = useAuth()
+  const [jobs, setJobs] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [savedIds, setSavedIds] = useState([])
+  const [savingId, setSavingId] = useState(null)
+  const [showFilters, setShowFilters] = useState(false)
+  const [sortBy, setSortBy] = useState('newest') // newest, salary-high, salary-low, applicants
+  const [filters, setFilters] = useState({
+    keyword:'', minSalary:'', maxSalary:'',
+    remote:'', experienceLevel:'', jobType:'', location:''
+  })
+
+  const fetchJobs = async (f = filters) => {
+    setLoading(true)
+    try {
+      const params = {}
+      if (f.keyword)         params.keyword         = f.keyword
+      if (f.minSalary)       params.minSalary       = f.minSalary
+      if (f.maxSalary)       params.maxSalary       = f.maxSalary
+      if (f.remote !== '')   params.remote          = f.remote
+      if (f.experienceLevel) params.experienceLevel = f.experienceLevel
+      if (f.jobType)         params.jobType         = f.jobType
+      if (f.location)        params.location        = f.location
+      const { data } = await searchJobs(params)
+      setJobs(data)
+    } catch (e) { console.error(e) } finally { setLoading(false) }
+  }
+
+  useEffect(() => {
+    fetchJobs()
+    if (user?.role === 'SEEKER') {
+      getSavedJobs().then(({ data }) => setSavedIds(data.map(j => j.id))).catch(()=>{})
+    }
+  }, [user])
+
+  const handleToggleSave = async (e, jobId) => {
+    e.preventDefault(); e.stopPropagation()
+    if (!user || user.role !== 'SEEKER') return
+    setSavingId(jobId)
+    try {
+      await toggleSavedJob(jobId)
+      setSavedIds(prev => prev.includes(jobId) ? prev.filter(id=>id!==jobId) : [...prev, jobId])
+    } catch { console.error('Save failed') } finally { setSavingId(null) }
+  }
+
+  const clearFilters = () => {
+    const empty = { keyword:'', minSalary:'', maxSalary:'', remote:'', experienceLevel:'', jobType:'', location:'' }
+    setFilters(empty); fetchJobs(empty)
+  }
+
+  // Sort jobs
+  const sortedJobs = [...jobs].sort((a,b) => {
+    if (sortBy === 'salary-high') return (b.maxSalary||0) - (a.maxSalary||0)
+    if (sortBy === 'salary-low')  return (a.minSalary||0) - (b.minSalary||0)
+    if (sortBy === 'applicants')  return (b.applicationCount||0) - (a.applicationCount||0)
+    return 0 // newest — keep API order
+  })
+
+  const activeCount = Object.values(filters).filter(Boolean).length
+
+  return (
+    <div className="container py-4">
+      <div className="page-header">
+        <div className="d-flex justify-content-between align-items-start flex-wrap gap-2">
+          <div>
+            <h2 className="fw-bold mb-1"><i className="bi bi-briefcase me-2"></i>Browse Remote Jobs</h2>
+            <p className="mb-0 opacity-75">{sortedJobs.length} positions available</p>
+          </div>
+          {user?.role === 'SEEKER' && (
+            <Link to="/seeker/saved-jobs" className="btn btn-sm rounded-pill fw-semibold"
+              style={{background:'rgba(255,255,255,0.2)',color:'#fff',border:'1px solid rgba(255,255,255,0.4)'}}>
+              <i className="bi bi-bookmark-fill me-1"></i>Saved Jobs ({savedIds.length})
+            </Link>
+          )}
+        </div>
+      </div>
+
+      {/* Search + Filters */}
+      <div className="card border-0 shadow-sm rounded-4 mb-4">
+        <div className="card-body p-3">
+          <div className="d-flex gap-2 flex-wrap mb-2">
+            <div className="input-group flex-fill" style={{minWidth:200}}>
+              <span className="input-group-text bg-white border-end-0"><i className="bi bi-search text-muted"></i></span>
+              <input className="form-control border-start-0 rounded-end-3"
+                placeholder="Job title, skill, keyword..."
+                value={filters.keyword}
+                onChange={e => setFilters({...filters, keyword:e.target.value})}
+                onKeyDown={e => e.key==='Enter' && fetchJobs()} />
+            </div>
+            <button className="btn text-white fw-semibold rounded-pill px-4" style={{background:'#0A66C2'}} onClick={() => fetchJobs()}>
+              <i className="bi bi-search me-1"></i>Search
+            </button>
+            {/* Sort */}
+            <select className="form-select rounded-pill" style={{maxWidth:160,fontSize:'0.85rem'}}
+              value={sortBy} onChange={e => setSortBy(e.target.value)}>
+              <option value="newest">Newest First</option>
+              <option value="salary-high">Salary: High→Low</option>
+              <option value="salary-low">Salary: Low→High</option>
+              <option value="applicants">Most Applied</option>
+            </select>
+            <button className="btn rounded-pill px-3 fw-semibold position-relative"
+              style={{background:showFilters?'#0A66C2':'#EEF3F8',color:showFilters?'#fff':'#0A66C2',border:'none'}}
+              onClick={() => setShowFilters(!showFilters)}>
+              <i className="bi bi-sliders me-1"></i>Filters
+              {activeCount>0 && <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style={{fontSize:'0.6rem'}}>{activeCount}</span>}
+            </button>
+            {activeCount>0 && <button className="btn btn-outline-secondary rounded-pill px-3" onClick={clearFilters}><i className="bi bi-x me-1"></i>Clear</button>}
+          </div>
+
+          {showFilters && (
+            <div className="border-top pt-3 mt-1">
+              <div className="row g-2">
+                <div className="col-md-2 col-6">
+                  <label className="form-label small fw-semibold mb-1 text-muted">Job Type</label>
+                  <select className="form-select form-select-sm rounded-3" value={filters.jobType}
+                    onChange={e => setFilters({...filters, jobType:e.target.value})}>
+                    <option value="">All Types</option>
+                    <option value="FULL_TIME">Full Time</option>
+                    <option value="PART_TIME">Part Time</option>
+                    <option value="CONTRACT">Contract</option>
+                    <option value="FREELANCE">Freelance</option>
+                  </select>
+                </div>
+                <div className="col-md-2 col-6">
+                  <label className="form-label small fw-semibold mb-1 text-muted">Experience</label>
+                  <select className="form-select form-select-sm rounded-3" value={filters.experienceLevel}
+                    onChange={e => setFilters({...filters, experienceLevel:e.target.value})}>
+                    <option value="">All Levels</option>
+                    <option value="ENTRY">Entry (0-2 yrs)</option>
+                    <option value="MID">Mid (2-5 yrs)</option>
+                    <option value="SENIOR">Senior (5+ yrs)</option>
+                  </select>
+                </div>
+                <div className="col-md-2 col-6">
+                  <label className="form-label small fw-semibold mb-1 text-muted">Remote</label>
+                  <select className="form-select form-select-sm rounded-3" value={filters.remote}
+                    onChange={e => setFilters({...filters, remote:e.target.value})}>
+                    <option value="">All</option>
+                    <option value="true">Remote Only</option>
+                    <option value="false">On-site</option>
+                  </select>
+                </div>
+                <div className="col-md-2 col-6">
+                  <label className="form-label small fw-semibold mb-1 text-muted">Location</label>
+                  <input className="form-control form-control-sm rounded-3" placeholder="e.g. Bangalore"
+                    value={filters.location}
+                    onChange={e => setFilters({...filters, location:e.target.value})} />
+                </div>
+                <div className="col-md-2 col-6">
+                  <label className="form-label small fw-semibold mb-1 text-muted">Min Salary (₹)</label>
+                  <input type="number" className="form-control form-control-sm rounded-3" placeholder="500000"
+                    value={filters.minSalary}
+                    onChange={e => setFilters({...filters, minSalary:e.target.value})} />
+                </div>
+                <div className="col-md-2 col-6">
+                  <label className="form-label small fw-semibold mb-1 text-muted">Max Salary (₹)</label>
+                  <input type="number" className="form-control form-control-sm rounded-3" placeholder="2000000"
+                    value={filters.maxSalary}
+                    onChange={e => setFilters({...filters, maxSalary:e.target.value})} />
+                </div>
+              </div>
+              <button className="btn btn-sm text-white rounded-pill px-4 mt-2 fw-semibold" style={{background:'#0A66C2'}} onClick={() => fetchJobs()}>
+                Apply Filters
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {loading ? (
+        <div className="text-center py-5">
+          <div className="spinner-border" style={{color:'#0A66C2'}}></div>
+          <p className="text-muted mt-2 small">Finding jobs...</p>
+        </div>
+      ) : sortedJobs.length===0 ? (
+        <div className="text-center py-5">
+          <i className="bi bi-search fs-1 text-muted mb-3 d-block"></i>
+          <h5 className="text-muted">No jobs found</h5>
+          <button className="btn text-white rounded-pill px-4 mt-2" style={{background:'#0A66C2'}} onClick={clearFilters}>Clear Filters</button>
+        </div>
+      ) : (
+        <div className="row g-3">
+          {sortedJobs.map(job => {
+            const isSaved = savedIds.includes(job.id)
+            return (
+              <div key={job.id} className="col-12 col-md-6 col-lg-4">
+                <div className="job-card p-4 h-100 d-flex flex-column">
+                  {/* Header */}
+                  <div className="d-flex align-items-center gap-3 mb-3">
+                    <CompanyLogo companyName={job.companyName} size={44} />
+                    <div className="flex-fill">
+                      <div className="fw-bold" style={{fontSize:'0.95rem',lineHeight:1.3}}>{job.title}</div>
+                      <div className="text-muted small">{job.companyName}</div>
+                    </div>
+                    {/* Bookmark Button */}
+                    {user?.role === 'SEEKER' && (
+                      <button
+                        onClick={(e) => handleToggleSave(e, job.id)}
+                        disabled={savingId === job.id}
+                        title={isSaved ? 'Remove from saved' : 'Save this job'}
+                        className="btn btn-sm rounded-circle flex-shrink-0"
+                        style={{
+                          width:34, height:34, border:'none',
+                          background: isSaved ? '#FEF3C7' : '#EEF3F8',
+                          color: isSaved ? '#d97706' : '#adb5bd',
+                          transition:'all 0.2s'
+                        }}>
+                        {savingId===job.id
+                          ? <span className="spinner-border spinner-border-sm" style={{width:12,height:12}}></span>
+                          : <i className={`bi ${isSaved?'bi-bookmark-fill':'bi-bookmark'}`} style={{fontSize:'0.85rem'}}></i>}
+                      </button>
+                    )}
+                    {job.remote && (
+                      <span className="badge rounded-pill flex-shrink-0" style={{background:'#D1FAE5',color:'#065f46',fontSize:'0.7rem'}}>🌐 Remote</span>
+                    )}
+                  </div>
+
+                  {/* Badges */}
+                  <div className="d-flex flex-wrap gap-1 mb-2" style={{fontSize:'0.75rem'}}>
+                    <span className="badge bg-light text-dark rounded-pill">
+                      ₹{job.minSalary?(job.minSalary/100000).toFixed(0)+'L':'?'}–{job.maxSalary?(job.maxSalary/100000).toFixed(0)+'L':'?'}/yr
+                    </span>
+                    <span className="badge bg-light text-dark rounded-pill">{job.experienceLevel}</span>
+                    <span className="badge bg-light text-dark rounded-pill">{job.jobType?.replace('_',' ')}</span>
+                  </div>
+
+                  {/* Skills */}
+                  <div className="d-flex flex-wrap gap-1 mb-3 flex-fill">
+                    {(job.requiredSkillsList||[]).slice(0,4).map((s,i)=>(
+                      <span key={i} className="skill-badge unverified">{s}</span>
+                    ))}
+                    {(job.requiredSkillsList||[]).length>4 && (
+                      <span className="skill-badge unverified">+{(job.requiredSkillsList||[]).length-4}</span>
+                    )}
+                  </div>
+
+                  {/* Footer */}
+                  <div className="d-flex justify-content-between align-items-center mt-auto">
+                    <small className="text-muted"><i className="bi bi-people me-1"></i>{job.applicationCount||0} applied</small>
+                    <Link to={`/jobs/${job.id}`} className="btn btn-sm text-white rounded-pill fw-semibold"
+                      style={{background:'#0A66C2',fontSize:'0.8rem'}}>
+                      View Job <i className="bi bi-arrow-right ms-1"></i>
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            )
+          })}
+        </div>
+      )}
+    </div>
+  )
+}

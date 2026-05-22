@@ -1,0 +1,192 @@
+import React, { useState } from 'react'
+import { Link } from 'react-router-dom'
+import { changePassword } from '../services/api'
+
+export default function ChangePassword() {
+  const [form, setForm] = useState({ currentPassword:'', newPassword:'', confirmPassword:'' })
+  const [loading, setLoading] = useState(false)
+  const [success, setSuccess] = useState(false)
+  const [error, setError] = useState('')
+  const [show, setShow] = useState({ current:false, new:false, confirm:false })
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    setError('')
+    if (form.newPassword !== form.confirmPassword) {
+      setError('New passwords do not match'); return
+    }
+    if (form.newPassword.length < 6) {
+      setError('New password must be at least 6 characters'); return
+    }
+    if (form.currentPassword === form.newPassword) {
+      setError('New password must be different from current password'); return
+    }
+    setLoading(true)
+    try {
+      await changePassword({ currentPassword: form.currentPassword, newPassword: form.newPassword })
+      setSuccess(true)
+      setForm({ currentPassword:'', newPassword:'', confirmPassword:'' })
+    } catch (e) {
+      setError(e.response?.data || 'Failed to change password. Check your current password.')
+    } finally { setLoading(false) }
+  }
+
+  const strength = (pwd) => {
+    if (!pwd) return { width:'0%', color:'#e2e8f0', label:'' }
+    let score = 0
+    if (pwd.length >= 6) score++
+    if (pwd.length >= 10) score++
+    if (/[A-Z]/.test(pwd)) score++
+    if (/[0-9]/.test(pwd)) score++
+    if (/[^A-Za-z0-9]/.test(pwd)) score++
+    const levels = [
+      { width:'20%', color:'#dc3545', label:'Very Weak' },
+      { width:'40%', color:'#d97706', label:'Weak' },
+      { width:'60%', color:'#f59e0b', label:'Fair' },
+      { width:'80%', color:'#0ea5e9', label:'Strong' },
+      { width:'100%', color:'#057642', label:'Very Strong' },
+    ]
+    return levels[score - 1] || levels[0]
+  }
+
+  const pwdStrength = strength(form.newPassword)
+
+  if (success) return (
+    <div className="container py-5">
+      <div className="row justify-content-center">
+        <div className="col-md-5">
+          <div className="card border-0 shadow-sm rounded-4 text-center p-5">
+            <div className="rounded-circle d-inline-flex align-items-center justify-content-center mx-auto mb-3"
+              style={{ width:68, height:68, background:'#D1FAE5' }}>
+              <i className="bi bi-check-circle-fill" style={{ fontSize:32, color:'#057642' }}></i>
+            </div>
+            <h4 className="fw-bold mb-2">Password Changed!</h4>
+            <p className="text-muted mb-4">Your password has been updated successfully.</p>
+            <Link to="/profile" className="btn text-white fw-bold rounded-pill px-4"
+              style={{ background:'#0A66C2' }}>
+              Back to Profile
+            </Link>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+
+  return (
+    <div className="container py-4">
+      <div className="row justify-content-center">
+        <div className="col-md-5">
+          <div className="d-flex align-items-center gap-3 mb-4">
+            <Link to="/profile" className="btn btn-sm btn-outline-secondary rounded-pill">
+              <i className="bi bi-arrow-left me-1"></i>Back
+            </Link>
+            <h4 className="fw-bold mb-0">Change Password</h4>
+          </div>
+
+          <div className="card border-0 shadow-sm rounded-4">
+            <div className="card-body p-4">
+              <div className="text-center mb-4">
+                <div className="rounded-circle d-inline-flex align-items-center justify-content-center mb-3"
+                  style={{ width:56, height:56, background:'#EEF3F8' }}>
+                  <i className="bi bi-shield-lock-fill fs-3" style={{ color:'#0A66C2' }}></i>
+                </div>
+                <p className="text-muted small mb-0">Enter your current password and choose a new one</p>
+              </div>
+
+              {error && <div className="alert alert-danger rounded-3 py-2 mb-3 small">
+                <i className="bi bi-exclamation-triangle-fill me-2"></i>{error}
+              </div>}
+
+              <form onSubmit={handleSubmit}>
+                {/* Current Password */}
+                <div className="mb-3">
+                  <label className="form-label fw-semibold small">Current Password</label>
+                  <div className="input-group">
+                    <input type={show.current ? 'text' : 'password'}
+                      className="form-control rounded-start-3" required
+                      value={form.currentPassword}
+                      onChange={e => setForm({ ...form, currentPassword: e.target.value })}
+                      placeholder="Your current password" />
+                    <button type="button" className="btn btn-outline-secondary rounded-end-3"
+                      onClick={() => setShow({ ...show, current: !show.current })}>
+                      <i className={`bi ${show.current ? 'bi-eye-slash' : 'bi-eye'}`}></i>
+                    </button>
+                  </div>
+                </div>
+
+                {/* New Password */}
+                <div className="mb-2">
+                  <label className="form-label fw-semibold small">New Password</label>
+                  <div className="input-group">
+                    <input type={show.new ? 'text' : 'password'}
+                      className="form-control rounded-start-3" required
+                      value={form.newPassword}
+                      onChange={e => setForm({ ...form, newPassword: e.target.value })}
+                      placeholder="Min 6 characters" />
+                    <button type="button" className="btn btn-outline-secondary rounded-end-3"
+                      onClick={() => setShow({ ...show, new: !show.new })}>
+                      <i className={`bi ${show.new ? 'bi-eye-slash' : 'bi-eye'}`}></i>
+                    </button>
+                  </div>
+                </div>
+
+                {/* Password Strength Bar */}
+                {form.newPassword && (
+                  <div className="mb-3">
+                    <div className="rounded-pill overflow-hidden mb-1" style={{ height:6, background:'#e2e8f0' }}>
+                      <div className="rounded-pill h-100" style={{ width:pwdStrength.width, background:pwdStrength.color, transition:'all 0.3s' }}></div>
+                    </div>
+                    <small style={{ color:pwdStrength.color }}>{pwdStrength.label}</small>
+                  </div>
+                )}
+
+                {/* Confirm Password */}
+                <div className="mb-4">
+                  <label className="form-label fw-semibold small">Confirm New Password</label>
+                  <div className="input-group">
+                    <input type={show.confirm ? 'text' : 'password'}
+                      className={`form-control rounded-start-3 ${form.confirmPassword && (form.newPassword !== form.confirmPassword ? 'is-invalid' : 'is-valid')}`}
+                      required
+                      value={form.confirmPassword}
+                      onChange={e => setForm({ ...form, confirmPassword: e.target.value })}
+                      placeholder="Repeat new password" />
+                    <button type="button" className="btn btn-outline-secondary rounded-end-3"
+                      onClick={() => setShow({ ...show, confirm: !show.confirm })}>
+                      <i className={`bi ${show.confirm ? 'bi-eye-slash' : 'bi-eye'}`}></i>
+                    </button>
+                    {form.confirmPassword && form.newPassword === form.confirmPassword && (
+                      <div className="valid-feedback">Passwords match!</div>
+                    )}
+                    {form.confirmPassword && form.newPassword !== form.confirmPassword && (
+                      <div className="invalid-feedback">Passwords do not match</div>
+                    )}
+                  </div>
+                </div>
+
+                <button type="submit" className="btn w-100 text-white fw-bold rounded-pill py-2"
+                  style={{ background:'#0A66C2' }} disabled={loading}>
+                  {loading ? <span className="spinner-border spinner-border-sm me-2"></span>
+                           : <i className="bi bi-shield-check me-2"></i>}
+                  Update Password
+                </button>
+              </form>
+
+              <div className="mt-4 p-3 rounded-3" style={{ background:'#EEF3F8' }}>
+                <div className="text-muted small fw-semibold mb-2">
+                  <i className="bi bi-info-circle me-1" style={{ color:'#0A66C2' }}></i>
+                  Password Tips:
+                </div>
+                <ul className="mb-0 text-muted small" style={{ paddingLeft:16 }}>
+                  <li>At least 6 characters long</li>
+                  <li>Use uppercase + lowercase letters</li>
+                  <li>Include numbers and symbols (@, #, !)</li>
+                  <li>Don't use your name or email</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
