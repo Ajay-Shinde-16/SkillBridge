@@ -44,7 +44,6 @@ export default function ManageApplications() {
     setUpdating(id)
     try {
       await updateApplicationStatus(id, { status, employerNote: notes[id] || '' })
-      // update local state immediately so counts refresh right away
       setApplications(prev => prev.map(a =>
         a.id === id ? { ...a, status, employerNote: notes[id] || a.employerNote } : a
       ))
@@ -57,6 +56,8 @@ export default function ManageApplications() {
   const getActionBtns = (app) => {
     const id = app.id
     const busy = updating === id
+    const spinner = <span className="spinner-border spinner-border-sm me-1" style={{width:10,height:10}}></span>
+
     switch (app.status) {
       case 'APPLIED':
         return (
@@ -64,8 +65,7 @@ export default function ManageApplications() {
             <button className="btn btn-sm rounded-pill fw-semibold"
               style={{ background:'#DBEAFE',color:'#1e40af',border:'1px solid #93C5FD',fontSize:'0.8rem' }}
               disabled={busy} onClick={() => handleStatus(id,'SHORTLISTED')}>
-              {busy?<span className="spinner-border spinner-border-sm me-1" style={{width:10,height:10}}></span>:<i className="bi bi-star me-1"></i>}
-              Shortlist
+              {busy ? spinner : <i className="bi bi-star me-1"></i>}Shortlist
             </button>
             <button className="btn btn-sm rounded-pill fw-semibold"
               style={{ background:'#FEE2E2',color:'#991b1b',border:'1px solid #fca5a5',fontSize:'0.8rem' }}
@@ -82,6 +82,11 @@ export default function ManageApplications() {
               <i className="bi bi-calendar-plus me-1"></i>Schedule Interview
             </Link>
             <button className="btn btn-sm rounded-pill fw-semibold"
+              style={{ background:'#057642',color:'#fff',border:'none',fontSize:'0.8rem',padding:'6px 14px' }}
+              disabled={busy} onClick={() => handleStatus(id,'OFFERED')}>
+              {busy ? spinner : <i className="bi bi-trophy me-1"></i>}Send Offer Letter
+            </button>
+            <button className="btn btn-sm rounded-pill fw-semibold"
               style={{ background:'#FEE2E2',color:'#991b1b',border:'1px solid #fca5a5',fontSize:'0.8rem' }}
               disabled={busy} onClick={() => handleStatus(id,'REJECTED')}>
               <i className="bi bi-x me-1"></i>Reject
@@ -92,9 +97,9 @@ export default function ManageApplications() {
         return (
           <div className="d-flex gap-2 flex-wrap mt-2">
             <button className="btn btn-sm rounded-pill fw-semibold"
-              style={{ background:'#057642',color:'#fff',border:'none',fontSize:'0.8rem',padding:'6px 16px' }}
+              style={{ background:'#057642',color:'#fff',border:'none',fontSize:'0.85rem',padding:'6px 18px' }}
               disabled={busy} onClick={() => handleStatus(id,'OFFERED')}>
-              {busy?<span className="spinner-border spinner-border-sm me-1" style={{width:10,height:10}}></span>:<i className="bi bi-trophy me-1"></i>}
+              {busy ? spinner : <i className="bi bi-trophy me-1"></i>}
               Send Offer Letter
             </button>
             <button className="btn btn-sm rounded-pill fw-semibold"
@@ -118,7 +123,7 @@ export default function ManageApplications() {
           <div className="mt-2">
             <span className="badge rounded-pill px-3 py-2"
               style={{ background:'#DBEAFE',color:'#1e40af',fontSize:'0.8rem' }}>
-              <i className="bi bi-check-circle-fill me-1"></i>Offer Accepted!
+              <i className="bi bi-check-circle-fill me-1"></i>Offer Accepted! 🎉
             </span>
           </div>
         )
@@ -182,9 +187,12 @@ export default function ManageApplications() {
                 {applications.length} total — sorted by skill match score
               </p>
             </div>
+            <button className="btn btn-sm btn-outline-secondary rounded-pill ms-auto" onClick={fetchApplications}>
+              <i className="bi bi-arrow-clockwise me-1"></i>Refresh
+            </button>
           </div>
 
-          {/* LIVE Status Counts — updates instantly */}
+          {/* Status Counts */}
           <div className="row g-2 mb-4">
             {Object.entries(STATUS_STYLE).map(([status,style])=>{
               const count = applications.filter(a=>a.status===status).length
@@ -209,10 +217,14 @@ export default function ManageApplications() {
                 How to give Offer Letter
               </div>
               <div className="small" style={{color:'#065f46'}}>
-                1. Shortlist the candidate &nbsp;→&nbsp;
+                1. Shortlist &nbsp;→&nbsp;
                 2. Schedule Interview &nbsp;→&nbsp;
-                3. After interview, click <strong>"Send Offer Letter"</strong> green button &nbsp;→&nbsp;
-                4. Seeker accepts/declines from their My Offers page
+                3. Click green <strong>"Send Offer Letter"</strong> button &nbsp;→&nbsp;
+                4. Seeker accepts from My Offers page
+              </div>
+              <div className="small mt-1" style={{color:'#065f46'}}>
+                <i className="bi bi-info-circle me-1"></i>
+                You can also send offer directly after shortlisting (skip interview step)
               </div>
             </div>
           </div>
@@ -256,7 +268,6 @@ export default function ManageApplications() {
                     }}>
                     <div className="card-body p-4">
 
-                      {/* Row 1: Avatar + Info + Score + Status */}
                       <div className="d-flex align-items-start gap-3 flex-wrap">
                         <div className="rounded-circle text-white d-flex align-items-center justify-content-center fw-bold flex-shrink-0"
                           style={{width:46,height:46,background:'#0A66C2',fontSize:17}}>
@@ -276,8 +287,6 @@ export default function ManageApplications() {
                             )}
                           </div>
                           <div className="text-muted small">{app.seekerEmail}</div>
-
-                          {/* Current Status Badge */}
                           <div className="mt-2">
                             <span className="badge rounded-pill px-3 py-1"
                               style={{background:style.bg,color:style.color,fontSize:'0.75rem'}}>
@@ -286,7 +295,6 @@ export default function ManageApplications() {
                           </div>
                         </div>
 
-                        {/* Match Score */}
                         <div className="text-center flex-shrink-0">
                           <div className="rounded-circle d-flex align-items-center justify-content-center text-white fw-bold"
                             style={{width:52,height:52,background:scoreColor(app.skillMatchScore),fontSize:'0.88rem'}}>
@@ -296,15 +304,13 @@ export default function ManageApplications() {
                         </div>
                       </div>
 
-                      {/* Action Buttons — visible and clear */}
+                      {/* Action Buttons */}
                       {getActionBtns(app)}
 
-                      {/* Note input + Resume */}
+                      {/* Note + Resume */}
                       <div className="d-flex gap-2 mt-3 flex-wrap align-items-center">
                         <div className="input-group input-group-sm flex-fill" style={{maxWidth:380}}>
-                          <span className="input-group-text bg-light" style={{fontSize:'0.78rem'}}>
-                            Note
-                          </span>
+                          <span className="input-group-text bg-light" style={{fontSize:'0.78rem'}}>Note</span>
                           <input className="form-control" style={{fontSize:'0.78rem'}}
                             placeholder="Add a message to the candidate..."
                             value={notes[app.id]||''}
@@ -317,7 +323,6 @@ export default function ManageApplications() {
                           </button>
                         </div>
 
-                        {/* Resume buttons */}
                         {app.resumeUrl && (
                           <div className="d-flex gap-1">
                             <a href={`${import.meta.env.VITE_API_URL || ''}${app.resumeUrl}`}
@@ -336,7 +341,6 @@ export default function ManageApplications() {
                         )}
                       </div>
 
-                      {/* Cover Letter */}
                       {app.coverLetter && (
                         <div className="mt-3 p-3 rounded-3" style={{background:'#EEF3F8',fontSize:'0.82rem'}}>
                           <span className="fw-semibold" style={{color:'#0A66C2'}}>
@@ -346,7 +350,6 @@ export default function ManageApplications() {
                         </div>
                       )}
 
-                      {/* Employer Note */}
                       {app.employerNote && (
                         <div className="mt-2 p-2 rounded-3"
                           style={{background:'#FEF3C7',fontSize:'0.8rem',border:'1px solid #FCD34D'}}>
