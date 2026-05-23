@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "notifications")
 public class Notification {
+
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
@@ -20,8 +21,11 @@ public class Notification {
     @Column(columnDefinition = "TEXT")
     private String message;
 
-    private String type; // APPLICATION, SHORTLIST, INTERVIEW, OFFER, SYSTEM
-    private String link; // frontend route to navigate to
+    private String type;
+    private String link;
+
+    @Column(name = "is_read")
     private boolean read = false;
+
     private LocalDateTime createdAt;
 }
