@@ -9,6 +9,7 @@ import com.skillbridge.repository.JobRepository;
 import com.skillbridge.repository.UserRepository;
 import com.skillbridge.service.EmailService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -19,6 +20,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/users")
 @RequiredArgsConstructor
@@ -70,31 +72,28 @@ public class UserController {
     }
 
     // ─── Forgot Password: Step 1 - Send OTP ───
-   @PostMapping("/forgot-password")
-public ResponseEntity<?> forgotPassword(@RequestBody Map<String, String> body) {
-    String email = body.get("email");
-    Optional<User> optUser = userRepository.findByEmail(email);
-    if (optUser.isEmpty())
-        return ResponseEntity.badRequest().body("No account found with this email address");
-    User user = optUser.get();
-    String otp = String.format("%06d", new Random().nextInt(999999));
-    user.setOtpCode(passwordEncoder.encode(otp));
-    user.setOtpExpiry(LocalDateTime.now().plusMinutes(10));
-    userRepository.save(user);
-
-    // Try to send email - if fails, show OTP on screen
-    try {
-        emailService.sendOtpEmail(email, user.getName(), otp);
-    } catch (Exception e) {
-        log.error("Email failed: {}", e.getMessage());
+    @PostMapping("/forgot-password")
+    public ResponseEntity<?> forgotPassword(@RequestBody Map<String, String> body) {
+        String email = body.get("email");
+        Optional<User> optUser = userRepository.findByEmail(email);
+        if (optUser.isEmpty())
+            return ResponseEntity.badRequest().body("No account found with this email address");
+        User user = optUser.get();
+        String otp = String.format("%06d", new Random().nextInt(999999));
+        user.setOtpCode(passwordEncoder.encode(otp));
+        user.setOtpExpiry(LocalDateTime.now().plusMinutes(10));
+        userRepository.save(user);
+        try {
+            emailService.sendOtpEmail(email, user.getName(), otp);
+        } catch (Exception e) {
+            log.error("Email failed: {}", e.getMessage());
+        }
+        // Always return OTP on screen as backup
+        return ResponseEntity.ok(Map.of(
+            "message", "OTP generated successfully. Valid for 10 minutes.",
+            "debug_otp", otp
+        ));
     }
-
-    // Always return OTP on screen as backup
-    return ResponseEntity.ok(Map.of(
-        "message", "OTP generated successfully. Valid for 10 minutes.",
-        "debug_otp", otp
-    ));
-}
 
     // ─── Forgot Password: Step 2 - Verify OTP & Reset ───
     @PostMapping("/reset-password")
@@ -130,7 +129,8 @@ public ResponseEntity<?> forgotPassword(@RequestBody Map<String, String> body) {
         if (wasSaved) saved.remove(jobId); else saved.add(jobId);
         user.setSavedJobIdsList(saved);
         userRepository.save(user);
-        return ResponseEntity.ok(Map.of("saved", !wasSaved, "message", wasSaved ? "Job removed from saved" : "Job saved!"));
+        return ResponseEntity.ok(Map.of("saved", !wasSaved,
+            "message", wasSaved ? "Job removed from saved" : "Job saved!"));
     }
 
     // ─── Get Saved Jobs ───
