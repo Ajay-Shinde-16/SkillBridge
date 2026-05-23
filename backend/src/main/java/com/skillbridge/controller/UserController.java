@@ -70,20 +70,31 @@ public class UserController {
     }
 
     // ─── Forgot Password: Step 1 - Send OTP ───
-    @PostMapping("/forgot-password")
-    public ResponseEntity<?> forgotPassword(@RequestBody Map<String, String> body) {
-        String email = body.get("email");
-        Optional<User> optUser = userRepository.findByEmail(email);
-        if (optUser.isEmpty())
-            return ResponseEntity.badRequest().body("No account found with this email address");
-        User user = optUser.get();
-        String otp = String.format("%06d", new Random().nextInt(999999));
-        user.setOtpCode(passwordEncoder.encode(otp));
-        user.setOtpExpiry(LocalDateTime.now().plusMinutes(10));
-        userRepository.save(user);
+   @PostMapping("/forgot-password")
+public ResponseEntity<?> forgotPassword(@RequestBody Map<String, String> body) {
+    String email = body.get("email");
+    Optional<User> optUser = userRepository.findByEmail(email);
+    if (optUser.isEmpty())
+        return ResponseEntity.badRequest().body("No account found with this email address");
+    User user = optUser.get();
+    String otp = String.format("%06d", new Random().nextInt(999999));
+    user.setOtpCode(passwordEncoder.encode(otp));
+    user.setOtpExpiry(LocalDateTime.now().plusMinutes(10));
+    userRepository.save(user);
+
+    // Try to send email - if fails, show OTP on screen
+    try {
         emailService.sendOtpEmail(email, user.getName(), otp);
-        return ResponseEntity.ok(Map.of("message", "OTP sent to your email. Valid for 10 minutes."));
+    } catch (Exception e) {
+        log.error("Email failed: {}", e.getMessage());
     }
+
+    // Always return OTP on screen as backup
+    return ResponseEntity.ok(Map.of(
+        "message", "OTP generated successfully. Valid for 10 minutes.",
+        "debug_otp", otp
+    ));
+}
 
     // ─── Forgot Password: Step 2 - Verify OTP & Reset ───
     @PostMapping("/reset-password")
