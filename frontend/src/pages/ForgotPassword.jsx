@@ -1,11 +1,17 @@
 import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { forgotPassword, resetPassword } from '../services/api'
+import axios from 'axios'
+import { resetPassword } from '../services/api'
+
+const BASE_URL = import.meta.env.VITE_API_URL
+  ? `${import.meta.env.VITE_API_URL}/api`
+  : '/api'
 
 export default function ForgotPassword() {
-  const [step, setStep] = useState(1) // 1=email, 2=otp+new password
+  const [step, setStep] = useState(1)
   const [email, setEmail] = useState('')
   const [otp, setOtp] = useState('')
+  const [screenOtp, setScreenOtp] = useState('')
   const [newPassword, setNewPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [loading, setLoading] = useState(false)
@@ -17,28 +23,54 @@ export default function ForgotPassword() {
   const handleSendOtp = async (e) => {
     e.preventDefault()
     if (!email.trim()) { setError('Please enter your email'); return }
-    setLoading(true); setError('')
+    setLoading(true)
+    setError('')
+    setScreenOtp('')
+    setOtp('')
     try {
-      await forgotPassword({ email })
+      const res = await axios.post(
+        `${BASE_URL}/users/forgot-password`,
+        { email }
+      )
+      const otpVal = String(res.data?.debug_otp || '').trim()
+      setScreenOtp(otpVal)
+      setOtp(otpVal)
       setStep(2)
     } catch (err) {
-      setError(err.response?.data || 'No account found with this email')
-    } finally { setLoading(false) }
+      setError(
+        err.response?.data ||
+        'No account found with this email'
+      )
+    } finally {
+      setLoading(false)
+    }
   }
 
   const handleReset = async (e) => {
     e.preventDefault()
-    if (otp.length !== 6) { setError('Please enter the 6-digit OTP'); return }
-    if (newPassword.length < 6) { setError('Password must be at least 6 characters'); return }
-    if (newPassword !== confirmPassword) { setError('Passwords do not match'); return }
-    setLoading(true); setError('')
+    if (otp.length !== 6) {
+      setError('Please enter the 6-digit OTP')
+      return
+    }
+    if (newPassword.length < 6) {
+      setError('Password must be at least 6 characters')
+      return
+    }
+    if (newPassword !== confirmPassword) {
+      setError('Passwords do not match')
+      return
+    }
+    setLoading(true)
+    setError('')
     try {
       await resetPassword({ email, otp, newPassword })
       setSuccess(true)
       setTimeout(() => navigate('/login'), 3000)
     } catch (err) {
-      setError(err.response?.data || 'Invalid or expired OTP. Please try again.')
-    } finally { setLoading(false) }
+      setError(err.response?.data || 'Invalid OTP. Please try again.')
+    } finally {
+      setLoading(false)
+    }
   }
 
   if (success) return (
@@ -47,12 +79,12 @@ export default function ForgotPassword() {
         <div className="col-md-5 text-center">
           <div className="card border-0 shadow-sm rounded-4 p-5">
             <div className="rounded-circle d-inline-flex align-items-center justify-content-center mx-auto mb-3"
-              style={{width:72,height:72,background:'#D1FAE5'}}>
-              <i className="bi bi-check-circle-fill" style={{fontSize:36,color:'#057642'}}></i>
+              style={{ width: 72, height: 72, background: '#D1FAE5' }}>
+              <i className="bi bi-check-circle-fill"
+                style={{ fontSize: 36, color: '#057642' }}></i>
             </div>
-            <h4 className="fw-bold mb-2">Password Reset!</h4>
-            <p className="text-muted mb-0">Your password has been reset successfully. Redirecting to login...</p>
-            <div className="mt-3 spinner-border spinner-border-sm" style={{color:'#0A66C2'}}></div>
+            <h4 className="fw-bold mb-2">Password Reset Successfully!</h4>
+            <p className="text-muted mb-0">Redirecting to login...</p>
           </div>
         </div>
       </div>
@@ -65,102 +97,204 @@ export default function ForgotPassword() {
         <div className="col-md-5">
           <div className="card border-0 shadow-sm rounded-4">
             <div className="card-body p-5">
+
+              {/* Header */}
               <div className="text-center mb-4">
                 <div className="rounded-circle d-inline-flex align-items-center justify-content-center mb-3"
-                  style={{width:60,height:60,background:'#EEF3F8'}}>
-                  <i className="bi bi-shield-lock-fill fs-3" style={{color:'#0A66C2'}}></i>
+                  style={{ width: 60, height: 60, background: '#EEF3F8' }}>
+                  <i className="bi bi-shield-lock-fill fs-3"
+                    style={{ color: '#0A66C2' }}></i>
                 </div>
-                <h4 className="fw-bold mb-1">{step===1?'Forgot Password':'Reset Password'}</h4>
-                <p className="text-muted small mb-0">
-                  {step===1
-                    ? 'Enter your email to receive a 6-digit OTP'
-                    : `OTP sent to ${email}. Check your inbox.`}
-                </p>
+                <h4 className="fw-bold mb-1">
+                  {step === 1 ? 'Forgot Password' : 'Reset Password'}
+                </h4>
               </div>
 
-              {/* Step indicator */}
+              {/* Step Indicator */}
               <div className="d-flex align-items-center gap-2 mb-4">
                 <div className="rounded-circle d-flex align-items-center justify-content-center fw-bold"
-                  style={{width:28,height:28,background:'#0A66C2',color:'#fff',fontSize:13,flexShrink:0}}>1</div>
-                <div className="flex-fill" style={{height:2,background:step>=2?'#0A66C2':'#e2e8f0'}}></div>
+                  style={{ width: 28, height: 28, background: '#0A66C2', color: '#fff', fontSize: 13 }}>
+                  1
+                </div>
+                <div className="flex-fill"
+                  style={{ height: 2, background: step >= 2 ? '#0A66C2' : '#e2e8f0' }}>
+                </div>
                 <div className="rounded-circle d-flex align-items-center justify-content-center fw-bold"
-                  style={{width:28,height:28,background:step>=2?'#0A66C2':'#e2e8f0',color:step>=2?'#fff':'#aaa',fontSize:13,flexShrink:0}}>2</div>
-              </div>
-              <div className="d-flex justify-content-between mb-4" style={{fontSize:'0.72rem',color:'#666'}}>
-                <span>Enter Email</span>
-                <span>OTP + New Password</span>
+                  style={{ width: 28, height: 28, background: step >= 2 ? '#0A66C2' : '#e2e8f0', color: step >= 2 ? '#fff' : '#aaa', fontSize: 13 }}>
+                  2
+                </div>
               </div>
 
+              {/* Error */}
               {error && (
                 <div className="alert alert-danger rounded-3 py-2 small mb-3">
-                  <i className="bi bi-exclamation-triangle-fill me-2"></i>{error}
+                  <i className="bi bi-exclamation-triangle-fill me-2"></i>
+                  {error}
                 </div>
               )}
 
+              {/* Step 1 - Enter Email */}
               {step === 1 ? (
                 <form onSubmit={handleSendOtp}>
                   <div className="mb-4">
-                    <label className="form-label fw-semibold small">Email Address</label>
-                    <input type="email" className="form-control form-control-lg rounded-3" required
-                      value={email} onChange={e => setEmail(e.target.value)}
-                      placeholder="your@email.com" />
+                    <label className="form-label fw-semibold small">
+                      Email Address
+                    </label>
+                    <input
+                      type="email"
+                      className="form-control form-control-lg rounded-3"
+                      required
+                      value={email}
+                      onChange={e => setEmail(e.target.value)}
+                      placeholder="your@email.com"
+                    />
                   </div>
-                  <button type="submit" className="btn w-100 text-white fw-bold rounded-pill py-2"
-                    style={{background:'#0A66C2',fontSize:'1rem'}} disabled={loading}>
-                    {loading ? <span className="spinner-border spinner-border-sm me-2"></span> : <i className="bi bi-send me-2"></i>}
-                    Send OTP to Email
+                  <button
+                    type="submit"
+                    className="btn w-100 text-white fw-bold rounded-pill py-2"
+                    style={{ background: '#0A66C2' }}
+                    disabled={loading}>
+                    {loading
+                      ? <span className="spinner-border spinner-border-sm me-2"></span>
+                      : <i className="bi bi-send me-2"></i>}
+                    Generate OTP
                   </button>
                 </form>
+
               ) : (
+                /* Step 2 - Show OTP + Reset Password */
                 <form onSubmit={handleReset}>
-                  <div className="mb-3">
-                    <label className="form-label fw-semibold small">6-Digit OTP</label>
-                    <input className="form-control form-control-lg rounded-3 text-center fw-bold"
-                      style={{fontSize:'1.3rem',letterSpacing:'8px'}}
-                      maxLength={6} placeholder="000000" required
-                      value={otp} onChange={e => setOtp(e.target.value.replace(/\D/g, '').slice(0,6))} />
-                    <div className="d-flex justify-content-between mt-1">
-                      <small className="text-muted">Check your email for the OTP</small>
-                      <button type="button" className="btn btn-link btn-sm p-0"
-                        style={{fontSize:'0.78rem',color:'#0A66C2'}}
-                        onClick={() => { setStep(1); setError('') }}>
-                        Resend OTP
-                      </button>
+
+                  {/* BIG OTP DISPLAY */}
+                  <div style={{
+                    background: '#FEF3C7',
+                    border: '3px solid #F59E0B',
+                    borderRadius: 16,
+                    padding: 24,
+                    marginBottom: 20,
+                    textAlign: 'center'
+                  }}>
+                    <div style={{
+                      color: '#92400e',
+                      fontWeight: 700,
+                      fontSize: 14,
+                      marginBottom: 12
+                    }}>
+                      🔑 YOUR OTP CODE
+                    </div>
+                    <div style={{
+                      background: '#ffffff',
+                      border: '3px solid #0A66C2',
+                      borderRadius: 12,
+                      padding: '16px 20px',
+                      fontSize: 42,
+                      fontWeight: 900,
+                      letterSpacing: 16,
+                      color: '#0A66C2',
+                      fontFamily: 'monospace',
+                      marginBottom: 10
+                    }}>
+                      {screenOtp}
+                    </div>
+                    <div style={{
+                      color: '#065f46',
+                      fontWeight: 600,
+                      fontSize: 13
+                    }}>
+                      ✅ Valid for 10 minutes
                     </div>
                   </div>
+
+                  {/* OTP Input */}
                   <div className="mb-3">
-                    <label className="form-label fw-semibold small">New Password</label>
+                    <label className="form-label fw-semibold small">
+                      Enter OTP
+                    </label>
+                    <input
+                      className="form-control form-control-lg rounded-3 text-center fw-bold"
+                      style={{ fontSize: '1.5rem', letterSpacing: 10, fontFamily: 'monospace' }}
+                      maxLength={6}
+                      placeholder="000000"
+                      required
+                      value={otp}
+                      onChange={e => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                    />
+                  </div>
+
+                  {/* New Password */}
+                  <div className="mb-3">
+                    <label className="form-label fw-semibold small">
+                      New Password
+                    </label>
                     <div className="input-group">
-                      <input type={showPwd?'text':'password'} className="form-control rounded-start-3" required
-                        value={newPassword} onChange={e => setNewPassword(e.target.value)}
-                        placeholder="Min 6 characters" />
-                      <button type="button" className="btn btn-outline-secondary rounded-end-3"
+                      <input
+                        type={showPwd ? 'text' : 'password'}
+                        className="form-control rounded-start-3"
+                        required
+                        value={newPassword}
+                        onChange={e => setNewPassword(e.target.value)}
+                        placeholder="Min 6 characters"
+                      />
+                      <button
+                        type="button"
+                        className="btn btn-outline-secondary rounded-end-3"
                         onClick={() => setShowPwd(!showPwd)}>
-                        <i className={`bi ${showPwd?'bi-eye-slash':'bi-eye'}`}></i>
+                        <i className={`bi ${showPwd ? 'bi-eye-slash' : 'bi-eye'}`}></i>
                       </button>
                     </div>
                   </div>
+
+                  {/* Confirm Password */}
                   <div className="mb-4">
-                    <label className="form-label fw-semibold small">Confirm New Password</label>
-                    <input type="password" className={`form-control rounded-3 ${confirmPassword&&(newPassword!==confirmPassword?'is-invalid':'is-valid')}`}
-                      required value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)}
-                      placeholder="Repeat new password" />
-                    {confirmPassword && newPassword===confirmPassword && (
-                      <div className="valid-feedback">Passwords match!</div>
-                    )}
+                    <label className="form-label fw-semibold small">
+                      Confirm Password
+                    </label>
+                    <input
+                      type="password"
+                      className={`form-control rounded-3 ${confirmPassword && (newPassword !== confirmPassword ? 'is-invalid' : 'is-valid')}`}
+                      required
+                      value={confirmPassword}
+                      onChange={e => setConfirmPassword(e.target.value)}
+                      placeholder="Repeat new password"
+                    />
                   </div>
-                  <button type="submit" className="btn w-100 text-white fw-bold rounded-pill py-2"
-                    style={{background:'#057642',fontSize:'1rem'}} disabled={loading}>
-                    {loading ? <span className="spinner-border spinner-border-sm me-2"></span> : <i className="bi bi-shield-check me-2"></i>}
+
+                  {/* Reset Button */}
+                  <button
+                    type="submit"
+                    className="btn w-100 text-white fw-bold rounded-pill py-2 mb-2"
+                    style={{ background: '#057642' }}
+                    disabled={loading}>
+                    {loading
+                      ? <span className="spinner-border spinner-border-sm me-2"></span>
+                      : <i className="bi bi-shield-check me-2"></i>}
                     Reset Password
                   </button>
+
+                  {/* Back Button */}
+                  <button
+                    type="button"
+                    className="btn w-100 btn-outline-secondary rounded-pill py-2"
+                    onClick={() => {
+                      setStep(1)
+                      setError('')
+                      setScreenOtp('')
+                      setOtp('')
+                    }}>
+                    ← Generate New OTP
+                  </button>
+
                 </form>
               )}
 
               <p className="text-center mt-4 mb-0 small">
-                Remember your password?{' '}
-                <Link to="/login" className="fw-semibold" style={{color:'#0A66C2'}}>Sign In</Link>
+                Remember password?{' '}
+                <Link to="/login" className="fw-semibold"
+                  style={{ color: '#0A66C2' }}>
+                  Sign In
+                </Link>
               </p>
+
             </div>
           </div>
         </div>
