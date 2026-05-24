@@ -85,11 +85,7 @@ export default function NotificationBell() {
   const handleOpen = () => {
     const next = !open
     setOpen(next)
-    if (next) {
-      fetchAll()
-      // Play sound when opening bell if there are unread
-      if (unread > 0) playNotifSound()
-    }
+    if (next) fetchAll()
   }
 
   const handleMarkRead = async () => {
