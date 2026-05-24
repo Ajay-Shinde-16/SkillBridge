@@ -168,11 +168,17 @@ export default function NotificationBell() {
       {/* Dropdown */}
       {open && (
         <div style={{
-          position: 'absolute', right: 0, top: 'calc(100% + 8px)',
-          width: 360, maxHeight: 500,
+          position: 'fixed',
+          top: 60,
+          left: 8,
+          right: 8,
+          width: 'auto',
+          maxWidth: 400,
+          maxHeight: '75vh',
+          margin: '0 auto',
           background: 'var(--notif-bg, #fff)',
           borderRadius: 14,
-          boxShadow: '0 12px 40px rgba(0,0,0,0.18)',
+          boxShadow: '0 12px 40px rgba(0,0,0,0.25)',
           border: '1px solid var(--notif-border, #e2e8f0)',
           zIndex: 9999, overflow: 'hidden',
           display: 'flex', flexDirection: 'column'
