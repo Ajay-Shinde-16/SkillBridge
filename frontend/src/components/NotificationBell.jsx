@@ -2,51 +2,16 @@ import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { getNotifications, markAllRead, markNotifRead, clearNotifications, getUnreadCount } from '../services/api'
 
-// ── Shared AudioContext ──
-let audioCtx = null
+// ── Play notification sound using base64 audio ──
+const NOTIF_SOUND = 'data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbz6xwSkVil7PUzLCAWUZHZKO+3dS4jWhOS2iuwuDavJByUE5wts3m5+C9lHNWVXq/1+bm38KYeF1XgMTb6eTkyJ99Y1+JzN3r5+bPpIF2aZHV5u3p5tGrjX1wmNzp7urn1bSZhXujz+Pq6efYuKCSiKzT4evp6N/FqpOIr9Pi6unp4cmwmpCz1+Lq6ujk0LiinrTY4urq6OXSuaWhuNnk6Ojn5NK9p6W53OXo5+fl1cCsqLzd5efn5uXWwq6qv97m5+bm5NfEsKzB3+bn5ubk2MWxrsLf5+bl5uTYxrKww+Dn5uXm5NnHs7HD4Ofm5Obl2ceysMTg5+bl5uXa'
 
-const getAudioCtx = () => {
-  if (!audioCtx) {
-    audioCtx = new (window.AudioContext || window.webkitAudioContext)()
-  }
-  if (audioCtx.state === 'suspended') {
-    audioCtx.resume()
-  }
-  return audioCtx
-}
-
-// ── Play notification sound ──
 const playNotifSound = () => {
   try {
-    const ctx = getAudioCtx()
-    const times = [0, 0.18]
-    const freqs = [880, 660]
-    times.forEach((time, i) => {
-      const osc = ctx.createOscillator()
-      const gain = ctx.createGain()
-      osc.connect(gain)
-      gain.connect(ctx.destination)
-      osc.frequency.value = freqs[i]
-      osc.type = 'sine'
-      gain.gain.setValueAtTime(0, ctx.currentTime + time)
-      gain.gain.linearRampToValueAtTime(0.25, ctx.currentTime + time + 0.01)
-      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + time + 0.45)
-      osc.start(ctx.currentTime + time)
-      osc.stop(ctx.currentTime + time + 0.5)
-    })
-  } catch(e) {
-    console.log('Sound error:', e)
-  }
+    const audio = new Audio(NOTIF_SOUND)
+    audio.volume = 0.5
+    audio.play().catch(() => {})
+  } catch(e) {}
 }
-
-// ── Unlock audio on first user interaction ──
-const unlockAudio = () => {
-  try { getAudioCtx() } catch(e) {}
-  document.removeEventListener('click', unlockAudio)
-  document.removeEventListener('touchstart', unlockAudio)
-}
-document.addEventListener('click', unlockAudio)
-document.addEventListener('touchstart', unlockAudio)
 
 const typeIcon = {
   APPLICATION: 'bi-send-fill',
@@ -120,7 +85,11 @@ export default function NotificationBell() {
   const handleOpen = () => {
     const next = !open
     setOpen(next)
-    if (next) fetchAll()
+    if (next) {
+      fetchAll()
+      // Play sound when opening bell if there are unread
+      if (unread > 0) playNotifSound()
+    }
   }
 
   const handleMarkRead = async () => {
