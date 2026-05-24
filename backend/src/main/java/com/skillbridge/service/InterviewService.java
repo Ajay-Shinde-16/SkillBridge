@@ -76,6 +76,42 @@ public class InterviewService {
         return interviewRepository.findByEmployerId(employerId);
     }
 
+    // Seeker marks interview as completed (joined meeting)
+    public Interview markCompleted(String id, String seekerId) {
+        Interview interview = interviewRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Interview not found"));
+
+        // Verify this seeker owns the interview
+        if (!interview.getSeekerId().equals(seekerId))
+            throw new RuntimeException("Not authorized");
+
+        // Mark interview as completed
+        interview.setStatus("COMPLETED");
+        Interview saved = interviewRepository.save(interview);
+
+        // Update application status to INTERVIEW_COMPLETED
+        applicationService.updateStatus(interview.getApplicationId(), "INTERVIEW_COMPLETED", null);
+
+        // Notify employer that seeker attended
+        User seeker = userRepository.findById(seekerId).orElse(null);
+        if (seeker != null && interview.getEmployerId() != null) {
+            notificationService.create(interview.getEmployerId(),
+                "✅ " + seeker.getName() + " Attended the Interview!",
+                seeker.getName() + " has joined and completed the interview for " + interview.getJobTitle() + ". You can now send the offer letter!",
+                "INTERVIEW", "/employer/applications/" + interview.getJobId());
+        }
+
+        // Notify seeker confirmation
+        if (seeker != null) {
+            notificationService.create(seekerId,
+                "✅ Interview Completed!",
+                "Your interview for " + interview.getJobTitle() + " is marked as completed. Wait for employer's decision.",
+                "INTERVIEW", "/seeker/interviews");
+        }
+
+        return saved;
+    }
+
     public Interview updateInterview(String id, String status, String feedback, String result) {
         Interview interview = interviewRepository.findById(id)
             .orElseThrow(() -> new RuntimeException("Interview not found"));

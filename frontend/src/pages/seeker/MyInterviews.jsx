@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { getMyInterviews } from '../../services/api'
+import { getMyInterviews, joinInterview } from '../../services/api'
 
 const modeInfo = {
   VIDEO:     { icon:'bi-camera-video-fill', label:'Video Call',  color:'#0A66C2' },
@@ -22,6 +22,7 @@ export default function MyInterviews() {
   const [interviews, setInterviews] = useState([])
   const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState('ALL')
+  const [joining, setJoining] = useState(null)
 
   const fetchInterviews = () => {
     getMyInterviews()
@@ -151,6 +152,15 @@ export default function MyInterviews() {
                     {/* Join button for upcoming video interviews */}
                     {iv.meetingLink && iv.status==='SCHEDULED' && (
                       <a href={iv.meetingLink} target="_blank" rel="noreferrer"
+                        onClick={async () => {
+                          if (joining === iv.id) return
+                          setJoining(iv.id)
+                          try {
+                            await joinInterview(iv.id)
+                            fetchInterviews()
+                          } catch(e) { console.error(e) }
+                          finally { setJoining(null) }
+                        }}
                         className="btn w-100 text-white rounded-pill fw-semibold"
                         style={{background:'#0A66C2',fontSize:'0.85rem'}}>
                         <i className="bi bi-camera-video me-2"></i>

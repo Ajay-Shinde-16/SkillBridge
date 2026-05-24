@@ -39,6 +39,7 @@ export const scheduleInterview         = (data)     => API.post('/interviews/sch
 export const getMyInterviews           = ()         => API.get('/interviews/my-interviews')
 export const getEmployerInterviewsList = ()         => API.get('/interviews/employer-interviews')
 export const updateInterview           = (id, data) => API.put(`/interviews/${id}`, data)
+export const joinInterview             = (id)       => API.put(`/interviews/${id}/join`)
 export const getAllInterviews           = ()         => API.get('/interviews/all')
 
 // ─── Skills ───

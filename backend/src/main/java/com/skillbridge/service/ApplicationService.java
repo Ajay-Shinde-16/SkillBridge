@@ -145,6 +145,10 @@ public class ApplicationService {
                                 "INTERVIEW", "/employer/interviews");
                         }
                     }
+                    case "INTERVIEW_COMPLETED" -> {
+                        // Seeker attended interview - just log, notifications sent by InterviewService
+                        log.info("Interview completed for application: {}", appId);
+                    }
                     case "OFFERED" -> {
                         // Notify seeker about offer — NO email yet, email sent only when accepted
                         notificationService.create(seeker.getId(),

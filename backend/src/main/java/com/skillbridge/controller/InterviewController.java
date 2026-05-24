@@ -50,6 +50,19 @@ public class InterviewController {
         return ResponseEntity.ok(interviewService.getEmployerInterviews(user.getId()));
     }
 
+    // Seeker marks interview as attended (joins meeting)
+    @PutMapping("/{id}/join")
+    @PreAuthorize("hasRole('SEEKER')")
+    public ResponseEntity<?> joinInterview(@PathVariable String id, Authentication auth) {
+        try {
+            User user = userRepository.findByEmail(auth.getName())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+            return ResponseEntity.ok(interviewService.markCompleted(id, user.getId()));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('EMPLOYER') or hasRole('ADMIN')")
     public ResponseEntity<?> updateInterview(@PathVariable String id,

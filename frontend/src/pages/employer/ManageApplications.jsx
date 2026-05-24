@@ -1,16 +1,17 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef, useCallback } from 'react'
 import UserAvatar from '../../components/UserAvatar'
 import { useParams, Link } from 'react-router-dom'
 import { getJobApplications, updateApplicationStatus } from '../../services/api'
 
-const STATUS_OPTIONS = ['APPLIED','SHORTLISTED','INTERVIEW_SCHEDULED','OFFERED','REJECTED','ACCEPTED']
+const STATUS_OPTIONS = ['APPLIED','SHORTLISTED','INTERVIEW_SCHEDULED','INTERVIEW_COMPLETED','OFFERED','REJECTED','ACCEPTED']
 const STATUS_STYLE = {
-  APPLIED:             { bg:'#F1F5F9', color:'#475569', label:'Applied' },
-  SHORTLISTED:         { bg:'#DBEAFE', color:'#1e40af', label:'Shortlisted' },
-  INTERVIEW_SCHEDULED: { bg:'#FEF3C7', color:'#92400e', label:'Interviewed' },
-  OFFERED:             { bg:'#D1FAE5', color:'#065f46', label:'Offered' },
-  REJECTED:            { bg:'#FEE2E2', color:'#991b1b', label:'Rejected' },
-  ACCEPTED:            { bg:'#DBEAFE', color:'#1e40af', label:'Accepted' },
+  APPLIED:              { bg:'#F1F5F9', color:'#475569', label:'Applied' },
+  SHORTLISTED:          { bg:'#DBEAFE', color:'#1e40af', label:'Shortlisted' },
+  INTERVIEW_SCHEDULED:  { bg:'#FEF3C7', color:'#92400e', label:'Interviewed' },
+  INTERVIEW_COMPLETED:  { bg:'#EDE9FF', color:'#5B21B6', label:'Interview Done' },
+  OFFERED:              { bg:'#D1FAE5', color:'#065f46', label:'Offered' },
+  REJECTED:             { bg:'#FEE2E2', color:'#991b1b', label:'Rejected' },
+  ACCEPTED:             { bg:'#DBEAFE', color:'#1e40af', label:'Accepted' },
 }
 const scoreColor = s => s>=70?'#057642':s>=40?'#d97706':'#dc3545'
 
@@ -23,17 +24,28 @@ export default function ManageApplications() {
   const [search, setSearch] = useState('')
   const [toast, setToast] = useState({ msg:'', type:'success' })
 
-  const fetchApplications = () => {
-    setLoading(true)
-    getJobApplications(jobId)
-      .then(({ data }) => {
-        setApplications([...data].sort((a,b) => b.skillMatchScore - a.skillMatchScore))
-        setLoading(false)
-      })
-      .catch(() => setLoading(false))
-  }
+  const prevDataRef = useRef('')
 
-  useEffect(() => { fetchApplications() }, [jobId])
+  const fetchApplications = useCallback(async (showLoader = false) => {
+    if (showLoader) setLoading(true)
+    try {
+      const { data } = await getJobApplications(jobId)
+      const sorted = [...data].sort((a,b) => b.skillMatchScore - a.skillMatchScore)
+      const newData = JSON.stringify(sorted.map(a => ({id:a.id,status:a.status})))
+      if (newData !== prevDataRef.current) {
+        prevDataRef.current = newData
+        setApplications(sorted)
+      }
+    } catch(e) { console.error(e) }
+    finally { setLoading(false) }
+  }, [jobId])
+
+  useEffect(() => {
+    fetchApplications(true)
+    // Poll every 10 seconds — only updates UI if data changed
+    const t = setInterval(() => fetchApplications(false), 10000)
+    return () => clearInterval(t)
+  }, [fetchApplications])
 
   const showToast = (msg, type='success') => {
     setToast({ msg, type })
@@ -82,11 +94,6 @@ export default function ManageApplications() {
               <i className="bi bi-calendar-plus me-1"></i>Schedule Interview
             </Link>
             <button className="btn btn-sm rounded-pill fw-semibold"
-              style={{ background:'#057642',color:'#fff',border:'none',fontSize:'0.8rem',padding:'6px 14px' }}
-              disabled={busy} onClick={() => handleStatus(id,'OFFERED')}>
-              {busy ? spinner : <i className="bi bi-trophy me-1"></i>}Send Offer Letter
-            </button>
-            <button className="btn btn-sm rounded-pill fw-semibold"
               style={{ background:'#FEE2E2',color:'#991b1b',border:'1px solid #fca5a5',fontSize:'0.8rem' }}
               disabled={busy} onClick={() => handleStatus(id,'REJECTED')}>
               <i className="bi bi-x me-1"></i>Reject
@@ -95,18 +102,46 @@ export default function ManageApplications() {
         )
       case 'INTERVIEW_SCHEDULED':
         return (
-          <div className="d-flex gap-2 flex-wrap mt-2">
-            <button className="btn btn-sm rounded-pill fw-semibold"
-              style={{ background:'#057642',color:'#fff',border:'none',fontSize:'0.85rem',padding:'6px 18px' }}
-              disabled={busy} onClick={() => handleStatus(id,'OFFERED')}>
-              {busy ? spinner : <i className="bi bi-trophy me-1"></i>}
-              Send Offer Letter
-            </button>
-            <button className="btn btn-sm rounded-pill fw-semibold"
-              style={{ background:'#FEE2E2',color:'#991b1b',border:'1px solid #fca5a5',fontSize:'0.8rem' }}
-              disabled={busy} onClick={() => handleStatus(id,'REJECTED')}>
-              <i className="bi bi-x me-1"></i>Reject
-            </button>
+          <div className="d-flex flex-column gap-2 mt-2">
+            <div className="rounded-3 p-2 d-flex align-items-center gap-2"
+              style={{background:'#FEF3C7',border:'1px solid #FCD34D'}}>
+              <i className="bi bi-hourglass-split" style={{color:'#92400e'}}></i>
+              <span className="small fw-semibold" style={{color:'#92400e'}}>
+                Waiting for seeker to join interview... Offer letter will be available after interview is completed.
+              </span>
+            </div>
+            <div className="d-flex gap-2">
+              <button className="btn btn-sm rounded-pill fw-semibold"
+                style={{ background:'#FEE2E2',color:'#991b1b',border:'1px solid #fca5a5',fontSize:'0.8rem' }}
+                disabled={busy} onClick={() => handleStatus(id,'REJECTED')}>
+                <i className="bi bi-x me-1"></i>Reject
+              </button>
+            </div>
+          </div>
+        )
+      case 'INTERVIEW_COMPLETED':
+        return (
+          <div className="d-flex flex-column gap-2 mt-2">
+            <div className="rounded-3 p-2 d-flex align-items-center gap-2"
+              style={{background:'#EDE9FF',border:'1px solid #C4B5FD'}}>
+              <i className="bi bi-check-circle-fill" style={{color:'#5B21B6'}}></i>
+              <span className="small fw-semibold" style={{color:'#5B21B6'}}>
+                Interview completed! You can now send the offer letter.
+              </span>
+            </div>
+            <div className="d-flex gap-2 flex-wrap">
+              <button className="btn btn-sm rounded-pill fw-semibold"
+                style={{ background:'#057642',color:'#fff',border:'none',fontSize:'0.85rem',padding:'6px 18px' }}
+                disabled={busy} onClick={() => handleStatus(id,'OFFERED')}>
+                {busy ? spinner : <i className="bi bi-trophy me-1"></i>}
+                Send Offer Letter
+              </button>
+              <button className="btn btn-sm rounded-pill fw-semibold"
+                style={{ background:'#FEE2E2',color:'#991b1b',border:'1px solid #fca5a5',fontSize:'0.8rem' }}
+                disabled={busy} onClick={() => handleStatus(id,'REJECTED')}>
+                <i className="bi bi-x me-1"></i>Reject
+              </button>
+            </div>
           </div>
         )
       case 'OFFERED':
