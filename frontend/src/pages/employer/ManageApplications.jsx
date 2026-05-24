@@ -126,7 +126,7 @@ export default function ManageApplications() {
               style={{background:'#EDE9FF',border:'1px solid #C4B5FD'}}>
               <i className="bi bi-check-circle-fill" style={{color:'#5B21B6'}}></i>
               <span className="small fw-semibold" style={{color:'#5B21B6'}}>
-                Interview completed! You can now send the offer letter.
+                Interview completed! Send offer or reject based on performance.
               </span>
             </div>
             <div className="d-flex gap-2 flex-wrap">
@@ -137,9 +137,14 @@ export default function ManageApplications() {
                 Send Offer Letter
               </button>
               <button className="btn btn-sm rounded-pill fw-semibold"
-                style={{ background:'#FEE2E2',color:'#991b1b',border:'1px solid #fca5a5',fontSize:'0.8rem' }}
-                disabled={busy} onClick={() => handleStatus(id,'REJECTED')}>
-                <i className="bi bi-x me-1"></i>Reject
+                style={{ background:'#FEE2E2',color:'#991b1b',border:'1px solid #fca5a5',fontSize:'0.8rem', padding:'6px 16px' }}
+                disabled={busy} onClick={() => {
+                  if (window.confirm('Are you sure you want to reject this candidate after interview?')) {
+                    handleStatus(id,'REJECTED')
+                  }
+                }}>
+                {busy ? spinner : <i className="bi bi-x-circle me-1"></i>}
+                Reject After Interview
               </button>
             </div>
           </div>
