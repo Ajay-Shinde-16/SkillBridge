@@ -51,19 +51,25 @@ public class ApplicationService {
         jobService.incrementApplicationCount(jobId);
         Application saved = applicationRepository.save(app);
 
-        // Notify seeker
+        // Notify seeker: application confirmation
         notificationService.create(seeker.getId(),
             "📨 Application Submitted!",
             "Your application for " + job.getTitle() + " at " + job.getCompanyName() + " has been submitted successfully!",
             "APPLICATION", "/seeker/applications");
 
-        // Notify employer — new application received
-        notificationService.create(job.getEmployerId(),
-            "👤 New Application from " + seeker.getName(),
-            seeker.getName() + " has applied for " + job.getTitle() + ". Skill match: " + saved.getSkillMatchScore() + "%. Review now!",
-            "APPLICATION", "/employer/applications/" + jobId);
+        // Notify employer: new application received
+        if (job.getEmployerId() != null && !job.getEmployerId().isEmpty()) {
+            notificationService.create(job.getEmployerId(),
+                "👤 New Application from " + seeker.getName(),
+                seeker.getName() + " has applied for " + job.getTitle() +
+                ". Skill match: " + saved.getSkillMatchScore() + "%. Review their profile now!",
+                "APPLICATION", "/employer/applications/" + jobId);
+            log.info("✅ Employer notification sent to employerId: {}", job.getEmployerId());
+        } else {
+            log.warn("⚠️ Cannot notify employer — job {} has no employerId!", jobId);
+        }
 
-        // Email seeker confirmation
+        // Auto email: Application confirmation to seeker
         emailService.sendApplicationConfirmationEmail(
             seeker.getEmail(), seeker.getName(),
             job.getTitle(), job.getCompanyName(),
@@ -100,6 +106,7 @@ public class ApplicationService {
         app.setUpdatedAt(LocalDateTime.now());
         Application saved = applicationRepository.save(app);
 
+        // Send emails only when status actually changes
         if (!status.equals(previousStatus)) {
             User seeker = userRepository.findById(app.getSeekerId()).orElse(null);
             if (seeker != null) {
@@ -114,22 +121,22 @@ public class ApplicationService {
                             "⭐ You've been Shortlisted!",
                             "Congratulations! You've been shortlisted for " + app.getJobTitle() + " at " + app.getCompanyName() + ". Interview may be scheduled soon.",
                             "SHORTLIST", "/seeker/applications");
-                        // Notify employer
+                        // Notify employer confirmation
                         Job job = jobRepository.findById(app.getJobId()).orElse(null);
                         if (job != null) {
                             notificationService.create(job.getEmployerId(),
                                 "✅ " + seeker.getName() + " Shortlisted",
-                                "You shortlisted " + seeker.getName() + " for " + app.getJobTitle() + ". Schedule interview next.",
+                                "You have shortlisted " + seeker.getName() + " for " + app.getJobTitle() + ". Schedule interview next.",
                                 "SHORTLIST", "/employer/applications/" + app.getJobId());
                         }
                     }
                     case "INTERVIEW_SCHEDULED" -> {
-                        // Notify seeker
+                        // Notify seeker about interview
                         notificationService.create(seeker.getId(),
                             "📅 Interview Scheduled!",
                             "Your interview for " + app.getJobTitle() + " at " + app.getCompanyName() + " has been scheduled. Check My Interviews for details.",
                             "INTERVIEW", "/seeker/interviews");
-                        // Notify employer
+                        // Notify employer confirmation
                         Job jobI = jobRepository.findById(app.getJobId()).orElse(null);
                         if (jobI != null) {
                             notificationService.create(jobI.getEmployerId(),
@@ -139,12 +146,13 @@ public class ApplicationService {
                         }
                     }
                     case "OFFERED" -> {
-                        // Notify seeker — NO email yet, sent only when accepted
+                        // Notify seeker about offer — NO email yet, email sent only when accepted
                         notificationService.create(seeker.getId(),
                             "🎉 Job Offer Received!",
                             "You have received an offer for " + app.getJobTitle() + " at " + app.getCompanyName() + ". Please accept or decline.",
                             "OFFER", "/seeker/offers");
-                        // Notify employer
+
+                        // Notify employer that offer was sent
                         Job job = jobRepository.findById(app.getJobId()).orElse(null);
                         if (job != null) {
                             notificationService.create(job.getEmployerId(),
@@ -154,13 +162,18 @@ public class ApplicationService {
                         }
                     }
                     case "ACCEPTED" -> {
+                        // Seeker accepted — NOW send offer letter email
                         Job job = jobRepository.findById(app.getJobId()).orElse(null);
                         User employer = job != null
-                            ? userRepository.findById(job.getEmployerId()).orElse(null) : null;
-                        // Send offer letter email NOW
+                            ? userRepository.findById(job.getEmployerId()).orElse(null)
+                            : null;
+
+                        // Send offer letter email to seeker
                         emailService.sendOfferLetterEmail(
-                            seeker.getEmail(), seeker.getName(),
-                            app.getJobTitle(), app.getCompanyName(),
+                            seeker.getEmail(),
+                            seeker.getName(),
+                            app.getJobTitle(),
+                            app.getCompanyName(),
                             employer != null ? employer.getCompanyWebsite() : "",
                             employer != null ? employer.getName() : app.getCompanyName(),
                             job != null ? job.getMinSalary() : 0,
@@ -169,16 +182,18 @@ public class ApplicationService {
                             job != null && job.isRemote(),
                             employerNote
                         );
+
                         // Notify seeker
                         notificationService.create(seeker.getId(),
                             "✅ Offer Accepted!",
-                            "You accepted the offer for " + app.getJobTitle() + " at " + app.getCompanyName() + ". Congratulations!",
+                            "You have accepted the offer for " + app.getJobTitle() + " at " + app.getCompanyName() + ". Congratulations!",
                             "OFFER", "/seeker/offers");
-                        // Notify employer
+
+                        // Notify employer that seeker ACCEPTED
                         if (job != null) {
                             notificationService.create(job.getEmployerId(),
                                 "🎉 " + seeker.getName() + " Accepted the Offer!",
-                                seeker.getName() + " accepted your offer for " + app.getJobTitle() + ". Congratulations on your new hire!",
+                                seeker.getName() + " has accepted your offer for " + app.getJobTitle() + ". Congratulations on your new hire!",
                                 "OFFER", "/employer/applications/" + app.getJobId());
                         }
                     }
@@ -188,16 +203,11 @@ public class ApplicationService {
                         if (job != null) {
                             notificationService.create(job.getEmployerId(),
                                 "❌ " + seeker.getName() + " Declined the Offer",
-                                seeker.getName() + " declined your offer for " + app.getJobTitle() + ".",
+                                seeker.getName() + " has declined your offer for " + app.getJobTitle() + ".",
                                 "OFFER", "/employer/applications/" + app.getJobId());
                         }
-                        // Notify seeker their rejection was recorded
-                        notificationService.create(seeker.getId(),
-                            "❌ Offer Declined",
-                            "You have declined the offer for " + app.getJobTitle() + " at " + app.getCompanyName() + ".",
-                            "OFFER", "/seeker/offers");
                     }
-                    default -> log.info("Status: {} — no trigger", status);
+                    default -> log.info("Status: {} — no email trigger", status);
                 }
             }
         }
