@@ -103,7 +103,7 @@ export default function AdminDashboard() {
                         onMouseOver={e=>e.currentTarget.style.transform='translateY(-3px)'}
                         onMouseOut={e=>e.currentTarget.style.transform='translateY(0)'}>
                         <i className={`bi ${card.icon} fs-2 mb-3 d-block`} style={{color:card.color}}></i>
-                        <h6 className="fw-bold" style={{color:'#191919'}}>{card.title}</h6>
+                        <h6 className="fw-bold">{card.title}</h6>
                         <p className="text-muted small mb-0">{card.desc}</p>
                       </div>
                     </Link>
