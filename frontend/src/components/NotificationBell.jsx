@@ -2,6 +2,29 @@ import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { getNotifications, markAllRead, markNotifRead, clearNotifications, getUnreadCount } from '../services/api'
 
+// ── Play notification sound ──
+const playNotifSound = () => {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)()
+    // Create a pleasant 2-tone chime
+    const times = [0, 0.15]
+    const freqs = [880, 660]
+    times.forEach((time, i) => {
+      const osc = ctx.createOscillator()
+      const gain = ctx.createGain()
+      osc.connect(gain)
+      gain.connect(ctx.destination)
+      osc.frequency.value = freqs[i]
+      osc.type = 'sine'
+      gain.gain.setValueAtTime(0, ctx.currentTime + time)
+      gain.gain.linearRampToValueAtTime(0.3, ctx.currentTime + time + 0.01)
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + time + 0.4)
+      osc.start(ctx.currentTime + time)
+      osc.stop(ctx.currentTime + time + 0.4)
+    })
+  } catch(e) {}
+}
+
 const typeIcon = {
   APPLICATION: 'bi-send-fill',
   SHORTLIST:   'bi-star-fill',
@@ -31,9 +54,10 @@ export default function NotificationBell() {
     try {
       const { data } = await getUnreadCount()
       const newCount = data.count || 0
-      // If count increased — auto-open or flash bell
+      // If count increased — play sound and refresh
       if (newCount > prevCountRef.current && prevCountRef.current !== 0) {
         setUnread(newCount)
+        playNotifSound()
         // If panel is open refresh notifications too
         if (open) fetchAll()
       }
