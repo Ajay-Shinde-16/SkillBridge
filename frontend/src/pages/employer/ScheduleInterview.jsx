@@ -2,17 +2,6 @@ import React, { useState, useEffect } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import { scheduleInterview } from '../../services/api'
 
-const generateMeetLink = () => {
-  const chars = 'abcdefghijklmnopqrstuvwxyz'
-  const rand = (n) => Array.from({ length: n }, () => chars[Math.floor(Math.random() * chars.length)]).join('')
-  return `https://meet.google.com/${rand(3)}-${rand(4)}-${rand(3)}`
-}
-
-const generateZoomLink = () => {
-  const id = Math.floor(Math.random() * 9000000000) + 1000000000
-  return `https://zoom.us/j/${id}`
-}
-
 export default function ScheduleInterview() {
   const { applicationId } = useParams()
   const navigate = useNavigate()
@@ -26,28 +15,17 @@ export default function ScheduleInterview() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
-  const [linkType, setLinkType] = useState('googlemeet')
   const [copied, setCopied] = useState(false)
+  const [linkPlatform, setLinkPlatform] = useState('googlemeet')
 
   useEffect(() => {
-    // Set default datetime to tomorrow 10:00 AM
     const tomorrow = new Date()
     tomorrow.setDate(tomorrow.getDate() + 1)
-    tomorrow.setHours(10, 0, 0, 0)
-    // Format: "yyyy-MM-ddTHH:mm" for datetime-local input
     const yr = tomorrow.getFullYear()
     const mo = String(tomorrow.getMonth() + 1).padStart(2, '0')
     const dy = String(tomorrow.getDate()).padStart(2, '0')
-    const formatted = `${yr}-${mo}-${dy}T10:00`
-    setForm(f => ({ ...f, scheduledDateTime: formatted, meetingLink: generateMeetLink() }))
+    setForm(f => ({ ...f, scheduledDateTime: `${yr}-${mo}-${dy}T10:00` }))
   }, [])
-
-  const handleLinkTypeChange = (type) => {
-    setLinkType(type)
-    if (type === 'googlemeet') setForm(f => ({ ...f, meetingLink: generateMeetLink() }))
-    else if (type === 'zoom') setForm(f => ({ ...f, meetingLink: generateZoomLink() }))
-    else setForm(f => ({ ...f, meetingLink: '' }))
-  }
 
   const handleCopy = () => {
     navigator.clipboard.writeText(form.meetingLink)
@@ -55,37 +33,50 @@ export default function ScheduleInterview() {
     setTimeout(() => setCopied(false), 2000)
   }
 
+  // Quick insert placeholder links for reference
+  const PLATFORM_LINKS = {
+    googlemeet: 'https://meet.google.com/',
+    zoom:       'https://zoom.us/j/',
+    jitsi:      'https://meet.jit.si/',
+    teams:      'https://teams.microsoft.com/l/meetup-join/',
+  }
+
+  const handlePlatformClick = (platform) => {
+    setLinkPlatform(platform)
+    // Set placeholder so employer knows what format to use
+    setForm(f => ({ ...f, meetingLink: PLATFORM_LINKS[platform] }))
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault()
     setError('')
 
     if (!form.scheduledDateTime) { setError('Please select interview date and time'); return }
-    if (form.mode === 'VIDEO' && !form.meetingLink.trim()) { setError('Please provide a meeting link'); return }
-    if (form.mode === 'IN_PERSON' && !form.venue.trim()) { setError('Please provide venue/address'); return }
-
-    // Validate date is in the future
     if (new Date(form.scheduledDateTime) <= new Date()) {
       setError('Interview date must be in the future'); return
+    }
+    if (form.mode === 'VIDEO' && !form.meetingLink.trim()) {
+      setError('Please paste a real meeting link'); return
+    }
+    if (form.mode === 'VIDEO' && !form.meetingLink.startsWith('http')) {
+      setError('Please enter a valid URL starting with https://'); return
+    }
+    if (form.mode === 'IN_PERSON' && !form.venue.trim()) {
+      setError('Please provide venue/address'); return
     }
 
     setLoading(true)
     try {
-      // ─── Send payload with properly formatted datetime ───
-      const payload = {
+      await scheduleInterview({
         applicationId: form.applicationId,
         mode: form.mode,
-        meetingLink: form.mode === 'VIDEO' ? form.meetingLink.trim() : form.meetingLink,
+        meetingLink: form.mode === 'VIDEO' ? form.meetingLink.trim() : '',
         venue: form.mode === 'IN_PERSON' ? form.venue.trim() : '',
-        // Send as "yyyy-MM-dd'T'HH:mm" — matches @JsonFormat on backend
         scheduledDateTime: form.scheduledDateTime
-      }
-
-      console.log('Scheduling interview with payload:', payload)
-      await scheduleInterview(payload)
+      })
       setSuccess(true)
-      setTimeout(() => navigate('/employer/dashboard'), 2000)
+      setTimeout(() => navigate('/employer/dashboard'), 2500)
     } catch (err) {
-      console.error('Schedule interview error:', err)
       setError(err.response?.data || 'Failed to schedule interview. Please try again.')
     } finally {
       setLoading(false)
@@ -103,7 +94,7 @@ export default function ScheduleInterview() {
             </div>
             <h4 className="fw-bold mb-2">Interview Scheduled! 🎉</h4>
             <p className="text-muted mb-3">
-              Email with interview details has been sent to the candidate automatically.
+              Candidate has been notified with all interview details.
             </p>
             <div className="spinner-border spinner-border-sm" style={{ color: '#0A66C2' }}></div>
             <div className="text-muted small mt-2">Redirecting to dashboard...</div>
@@ -116,16 +107,15 @@ export default function ScheduleInterview() {
   return (
     <div className="container-fluid p-0">
       <div className="d-flex">
-        {/* Sidebar */}
         <div className="sidebar d-none d-md-block">
           <p className="text-muted small fw-bold text-uppercase px-2 mb-2"
             style={{ fontSize: '0.7rem', letterSpacing: '0.8px' }}>Menu</p>
           <nav className="nav flex-column">
             {[
-              { to: '/employer/dashboard', icon: 'bi-speedometer2', label: 'Dashboard' },
-              { to: '/employer/post-job', icon: 'bi-plus-circle', label: 'Post a Job' },
-              { to: '/employer/interviews', icon: 'bi-camera-video', label: 'Interviews' },
-              { to: '/profile', icon: 'bi-building', label: 'Company Profile' },
+              { to: '/employer/dashboard',      icon: 'bi-speedometer2', label: 'Dashboard' },
+              { to: '/employer/post-job',        icon: 'bi-plus-circle',  label: 'Post a Job' },
+              { to: '/employer/interviews',      icon: 'bi-camera-video', label: 'Interviews' },
+              { to: '/employer/company-profile', icon: 'bi-building',     label: 'Company Profile' },
             ].map((item, i) => (
               <Link key={i} to={item.to} className="nav-link">
                 <i className={`bi ${item.icon}`}></i>{item.label}
@@ -136,30 +126,27 @@ export default function ScheduleInterview() {
 
         <div className="flex-fill main-content p-3">
           <div className="d-flex align-items-center gap-3 mb-4 flex-wrap">
-            <Link to="/employer/dashboard" className="btn btn-sm btn-outline-secondary rounded-pill">
+            <button onClick={() => navigate(-1)} className="btn btn-sm btn-outline-secondary rounded-pill">
               <i className="bi bi-arrow-left me-1"></i>Back
-            </Link>
+            </button>
             <div>
               <h4 className="fw-bold mb-0">
                 <i className="bi bi-calendar-plus me-2" style={{ color: '#0A66C2' }}></i>
                 Schedule Interview
               </h4>
-              <p className="text-muted small mb-0">
-                Candidate will receive email notification automatically
-              </p>
+              <p className="text-muted small mb-0">Candidate will be notified automatically</p>
             </div>
           </div>
 
           {error && (
             <div className="alert alert-danger rounded-3 mb-4 d-flex align-items-center gap-2">
-              <i className="bi bi-exclamation-triangle-fill fs-5"></i>
+              <i className="bi bi-exclamation-triangle-fill"></i>
               <span>{error}</span>
               <button className="btn-close ms-auto" onClick={() => setError('')}></button>
             </div>
           )}
 
           <div className="row g-4">
-            {/* Form */}
             <div className="col-lg-7">
               <div className="card border-0 shadow-sm rounded-4">
                 <div className="card-body p-4">
@@ -173,16 +160,16 @@ export default function ScheduleInterview() {
                       </label>
                       <div className="d-flex gap-3">
                         {[
-                          { value: 'VIDEO', icon: 'bi-camera-video-fill', label: 'Video Call', color: '#0A66C2' },
-                          { value: 'PHONE', icon: 'bi-telephone-fill', label: 'Phone Call', color: '#057642' },
-                          { value: 'IN_PERSON', icon: 'bi-geo-alt-fill', label: 'In Person', color: '#d97706' },
+                          { value: 'VIDEO',     icon: 'bi-camera-video-fill', label: 'Video Call', color: '#0A66C2' },
+                          { value: 'PHONE',     icon: 'bi-telephone-fill',    label: 'Phone Call', color: '#057642' },
+                          { value: 'IN_PERSON', icon: 'bi-geo-alt-fill',      label: 'In Person',  color: '#d97706' },
                         ].map(m => (
                           <div key={m.value}
                             className="flex-fill text-center rounded-3 p-3"
                             style={{
                               cursor: 'pointer',
                               border: form.mode === m.value ? `2px solid ${m.color}` : '1.5px solid #e2e8f0',
-                              background: form.mode === m.value ? m.color + '11' : '#fff',
+                              background: form.mode === m.value ? m.color + '11' : 'transparent',
                               transition: 'all 0.15s'
                             }}
                             onClick={() => setForm({ ...form, mode: m.value })}>
@@ -225,50 +212,41 @@ export default function ScheduleInterview() {
                     <div className="mb-4">
                       <label className="form-label fw-bold">
                         <span className="badge rounded-pill me-2 text-white" style={{ background: '#0A66C2' }}>3</span>
-                        {form.mode === 'VIDEO' ? 'Meeting Link' : form.mode === 'PHONE' ? 'Call Notes' : 'Venue / Address'}
+                        {form.mode === 'VIDEO' ? 'Meeting Link' : form.mode === 'PHONE' ? 'Call Instructions' : 'Venue / Address'}
                         {(form.mode === 'VIDEO' || form.mode === 'IN_PERSON') && <span className="text-danger ms-1">*</span>}
                       </label>
 
-                      {/* Video: Platform selector */}
                       {form.mode === 'VIDEO' && (
                         <>
+                          {/* Platform quick-select buttons */}
                           <div className="d-flex gap-2 mb-3 flex-wrap">
                             {[
-                              { type: 'googlemeet', emoji: '🎥', label: 'Google Meet' },
-                              { type: 'zoom', emoji: '📹', label: 'Zoom' },
-                              { type: 'custom', emoji: '🔗', label: 'Custom' },
+                              { type: 'googlemeet', label: 'Google Meet', emoji: '🎥' },
+                              { type: 'zoom',       label: 'Zoom',        emoji: '📹' },
+                              { type: 'jitsi',      label: 'Jitsi (Free)',emoji: '🆓' },
+                              { type: 'teams',      label: 'MS Teams',    emoji: '💼' },
                             ].map(p => (
                               <button key={p.type} type="button"
                                 className="btn btn-sm rounded-pill fw-semibold"
                                 style={{
-                                  background: linkType === p.type ? '#0A66C2' : '#EEF3F8',
-                                  color: linkType === p.type ? '#fff' : '#0A66C2',
-                                  border: 'none', fontSize: '0.8rem', padding: '6px 16px'
+                                  background: linkPlatform === p.type ? '#0A66C2' : '#EEF3F8',
+                                  color: linkPlatform === p.type ? '#fff' : '#0A66C2',
+                                  border: 'none', fontSize: '0.78rem', padding: '5px 14px'
                                 }}
-                                onClick={() => handleLinkTypeChange(p.type)}>
+                                onClick={() => handlePlatformClick(p.type)}>
                                 {p.emoji} {p.label}
                               </button>
                             ))}
                           </div>
-                          <div className="input-group">
-                            <input className="form-control rounded-start-3"
-                              placeholder="Paste or generate a meeting link..."
+
+                          {/* Link input */}
+                          <div className="input-group mb-2">
+                            <input
+                              className="form-control rounded-start-3"
+                              placeholder="Paste your real meeting link here..."
                               value={form.meetingLink}
                               onChange={e => setForm({ ...form, meetingLink: e.target.value })}
                               required />
-                            {linkType !== 'custom' && (
-                              <button type="button"
-                                className="btn btn-outline-secondary"
-                                title="Regenerate link"
-                                onClick={() => {
-                                  const generated = linkType === 'googlemeet' ? generateMeetLink() : generateZoomLink()
-                                  if (form.meetingLink && form.meetingLink !== generated &&
-                                      !window.confirm('Replace the current link with a newly generated one?')) return
-                                  handleLinkTypeChange(linkType)
-                                }}>
-                                <i className="bi bi-arrow-clockwise"></i>
-                              </button>
-                            )}
                             <button type="button"
                               className="btn rounded-end-3 text-white"
                               style={{ background: copied ? '#057642' : '#0A66C2' }}
@@ -278,37 +256,59 @@ export default function ScheduleInterview() {
                               {copied ? 'Copied!' : 'Copy'}
                             </button>
                           </div>
-                          {form.meetingLink && (
+
+                          {/* Warning - must be real link */}
+                          <div className="rounded-3 p-3 mb-2" style={{ background: '#FEF3C7', border: '1px solid #FCD34D' }}>
+                            <div className="fw-bold small mb-1" style={{ color: '#92400e' }}>
+                              <i className="bi bi-exclamation-triangle-fill me-1"></i>
+                              Important — Use a REAL meeting link!
+                            </div>
+                            <div className="small" style={{ color: '#78350f' }}>
+                              The link you paste here will be sent to the candidate via notification and email.
+                              Make sure it is a working link before submitting.
+                            </div>
+                          </div>
+
+                          {/* How to create links */}
+                          <div className="rounded-3 p-3" style={{ background: '#EEF3F8' }}>
+                            <div className="fw-bold small mb-2" style={{ color: '#0A66C2' }}>
+                              <i className="bi bi-lightbulb-fill me-1"></i>
+                              How to get a real link:
+                            </div>
+                            <ul className="mb-0 small ps-3" style={{ color: '#475569', lineHeight: 2 }}>
+                              <li><strong>Google Meet:</strong> Go to <a href="https://meet.google.com" target="_blank" rel="noreferrer" style={{ color: '#0A66C2' }}>meet.google.com</a> → Click "New Meeting" → Copy link</li>
+                              <li><strong>Zoom:</strong> Go to <a href="https://zoom.us" target="_blank" rel="noreferrer" style={{ color: '#0A66C2' }}>zoom.us</a> → Start/Schedule Meeting → Copy invite link</li>
+                              <li><strong>Jitsi (Free, no account):</strong> Go to <a href="https://meet.jit.si" target="_blank" rel="noreferrer" style={{ color: '#0A66C2' }}>meet.jit.si</a> → Type a room name → Copy link</li>
+                            </ul>
+                          </div>
+
+                          {/* Preview link */}
+                          {form.meetingLink && form.meetingLink.startsWith('http') && (
                             <div className="mt-2 p-2 rounded-3 d-flex align-items-center gap-2"
-                              style={{ background: '#EEF3F8' }}>
-                              <i className="bi bi-link-45deg" style={{ color: '#0A66C2' }}></i>
+                              style={{ background: '#D1FAE5', border: '1px solid #6EE7B7' }}>
+                              <i className="bi bi-link-45deg" style={{ color: '#057642' }}></i>
                               <a href={form.meetingLink} target="_blank" rel="noreferrer"
-                                className="text-truncate" style={{ color: '#0A66C2', fontSize: '0.82rem' }}>
+                                className="text-truncate small fw-semibold" style={{ color: '#057642' }}>
                                 {form.meetingLink}
                               </a>
+                              <span className="badge ms-auto" style={{ background: '#057642', color: '#fff', fontSize: '0.65rem' }}>
+                                Test link ↗
+                              </span>
                             </div>
                           )}
-                          <small className="text-muted mt-1 d-block">
-                            <i className="bi bi-info-circle me-1"></i>
-                            {linkType === 'custom'
-                              ? 'Paste your own Zoom/Teams/Google Meet link'
-                              : 'Auto-generated placeholder link — replace with your actual meeting room link'}
-                          </small>
                         </>
                       )}
 
-                      {/* Phone: notes */}
                       {form.mode === 'PHONE' && (
-                        <textarea className="form-control rounded-3" rows={2}
-                          placeholder="e.g. We will call you on your registered mobile number at the scheduled time"
+                        <textarea className="form-control rounded-3" rows={3}
+                          placeholder="e.g. We will call you on your registered mobile number at the scheduled time. Please keep your phone available."
                           value={form.meetingLink}
                           onChange={e => setForm({ ...form, meetingLink: e.target.value })} />
                       )}
 
-                      {/* In Person: venue */}
                       {form.mode === 'IN_PERSON' && (
                         <textarea className="form-control rounded-3" rows={3} required
-                          placeholder="e.g. 3rd Floor, TechCorp Office, MG Road, Bangalore - 560001&#10;Landmark: Near Forum Mall"
+                          placeholder="e.g. 3rd Floor, TechCorp Office, MG Road, Bangalore - 560001. Landmark: Near Forum Mall. Ask for HR at reception."
                           value={form.venue}
                           onChange={e => setForm({ ...form, venue: e.target.value })} />
                       )}
@@ -339,14 +339,14 @@ export default function ScheduleInterview() {
               <div className="card border-0 rounded-4 mb-3" style={{ background: '#EEF3F8' }}>
                 <div className="card-body p-4">
                   <h6 className="fw-bold mb-3" style={{ color: '#0A66C2' }}>
-                    <i className="bi bi-send-fill me-2"></i>What happens next?
+                    <i className="bi bi-send-fill me-2"></i>What happens after scheduling?
                   </h6>
                   <div className="d-flex flex-column gap-3">
                     {[
-                      { icon: 'bi-envelope-fill', color: '#0A66C2', text: 'Candidate gets email with date, time, mode and meeting link' },
-                      { icon: 'bi-kanban-fill', color: '#057642', text: "Application status updates to INTERVIEW SCHEDULED automatically" },
-                      { icon: 'bi-camera-video-fill', color: '#d97706', text: 'Interview appears in your Interviews tab for tracking' },
-                      { icon: 'bi-star-fill', color: '#7C3AED', text: 'After interview, update result (Pass/Fail) and add feedback' },
+                      { icon: 'bi-bell-fill',        color: '#0A66C2', text: 'Candidate gets instant notification in the app' },
+                      { icon: 'bi-envelope-fill',    color: '#057642', text: 'Email with date, time and meeting link is sent automatically' },
+                      { icon: 'bi-kanban-fill',      color: '#d97706', text: 'Application status updates to INTERVIEW SCHEDULED' },
+                      { icon: 'bi-camera-video-fill',color: '#7C3AED', text: 'Interview appears in your Interviews tab for tracking' },
                     ].map((item, i) => (
                       <div key={i} className="d-flex align-items-start gap-3">
                         <div className="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0"
@@ -357,20 +357,6 @@ export default function ScheduleInterview() {
                       </div>
                     ))}
                   </div>
-                </div>
-              </div>
-
-              <div className="card border-0 rounded-4" style={{ background: '#FEF3C7' }}>
-                <div className="card-body p-4">
-                  <h6 className="fw-bold mb-3" style={{ color: '#92400e' }}>
-                    <i className="bi bi-lightbulb-fill me-2"></i>How to get a real meeting link?
-                  </h6>
-                  <ul className="mb-0 small" style={{ paddingLeft: 16, lineHeight: 2, color: '#78350f' }}>
-                    <li><strong>Google Meet:</strong> meet.google.com → New Meeting → Copy link</li>
-                    <li><strong>Zoom:</strong> zoom.us → New Meeting → Copy invite link</li>
-                    <li><strong>MS Teams:</strong> teams.microsoft.com → Calendar → New Meeting</li>
-                    <li><strong>Jitsi (Free):</strong> meet.jit.si/YourRoomName</li>
-                  </ul>
                 </div>
               </div>
             </div>
