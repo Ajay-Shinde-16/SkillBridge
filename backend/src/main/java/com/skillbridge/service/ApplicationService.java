@@ -85,6 +85,21 @@ public class ApplicationService {
             throw new RuntimeException("Not authorized to withdraw this application");
         if (List.of("OFFERED", "ACCEPTED", "INTERVIEW_SCHEDULED").contains(app.getStatus()))
             throw new RuntimeException("Cannot withdraw — application is at " + app.getStatus() + " stage");
+
+        // Notify employer that seeker withdrew
+        try {
+            Job job = jobRepository.findById(app.getJobId()).orElse(null);
+            User seeker = userRepository.findById(seekerId).orElse(null);
+            if (job != null && seeker != null && job.getEmployerId() != null) {
+                notificationService.create(job.getEmployerId(),
+                    "↩️ " + seeker.getName() + " Withdrew Application",
+                    seeker.getName() + " has withdrawn their application for " + app.getJobTitle() + ". You may want to review other candidates.",
+                    "APPLICATION", "/employer/applications/" + app.getJobId());
+            }
+        } catch (Exception e) {
+            log.warn("Could not notify employer of withdrawal: {}", e.getMessage());
+        }
+
         applicationRepository.deleteById(appId);
     }
 

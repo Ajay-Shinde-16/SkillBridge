@@ -1,11 +1,15 @@
 package com.skillbridge.controller;
 
+import com.skillbridge.model.Application;
 import com.skillbridge.model.Job;
 import com.skillbridge.model.User;
+import com.skillbridge.repository.ApplicationRepository;
 import com.skillbridge.repository.JobRepository;
 import com.skillbridge.repository.UserRepository;
 import com.skillbridge.service.JobService;
+import com.skillbridge.service.NotificationService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -15,12 +19,15 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/jobs")
+@Slf4j
 @RequiredArgsConstructor
 public class JobController {
 
     private final JobService jobService;
-    private final com.skillbridge.repository.JobRepository jobRepository;
+    private final JobRepository jobRepository;
     private final UserRepository userRepository;
+    private final ApplicationRepository applicationRepository;
+    private final NotificationService notificationService;
 
     @GetMapping("/all")
     public ResponseEntity<List<Job>> getAllJobs() {
@@ -86,8 +93,34 @@ public class JobController {
                                            @RequestBody java.util.Map<String, String> body) {
         try {
             Job job = jobService.getJobById(id);
-            job.setStatus(body.get("status"));
-            return ResponseEntity.ok(jobRepository.save(job));
+            String prevStatus = job.getStatus();
+            String newStatus = body.get("status");
+            job.setStatus(newStatus);
+            Job saved = jobRepository.save(job);
+
+            // Notify all seekers who applied when job is PAUSED or CLOSED
+            if (("PAUSED".equals(newStatus) || "CLOSED".equals(newStatus)) && !newStatus.equals(prevStatus)) {
+                List<Application> applications = applicationRepository.findByJobId(id);
+                for (Application app : applications) {
+                    if (app.getSeekerId() != null &&
+                        !List.of("REJECTED","ACCEPTED","OFFERED").contains(app.getStatus())) {
+                        try {
+                            String msg = "PAUSED".equals(newStatus)
+                                ? "The job posting for " + job.getTitle() + " at " + job.getCompanyName() + " has been temporarily paused by the employer."
+                                : "The job posting for " + job.getTitle() + " at " + job.getCompanyName() + " has been closed.";
+                            notificationService.create(app.getSeekerId(),
+                                "PAUSED".equals(newStatus) ? "⏸️ Job Paused — " + job.getTitle() : "🔒 Job Closed — " + job.getTitle(),
+                                msg,
+                                "SYSTEM", "/seeker/applications");
+                        } catch (Exception e) {
+                            log.warn("Could not notify seeker {} of job status change", app.getSeekerId());
+                        }
+                    }
+                }
+                log.info("Notified {} seekers of job {} status change to {}", applications.size(), id, newStatus);
+            }
+
+            return ResponseEntity.ok(saved);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }

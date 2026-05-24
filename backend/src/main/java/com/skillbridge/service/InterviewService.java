@@ -6,6 +6,7 @@ import com.skillbridge.model.User;
 import com.skillbridge.repository.InterviewRepository;
 import com.skillbridge.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import com.skillbridge.service.NotificationService;
 
@@ -13,6 +14,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class InterviewService {
@@ -115,10 +117,35 @@ public class InterviewService {
     public Interview updateInterview(String id, String status, String feedback, String result) {
         Interview interview = interviewRepository.findById(id)
             .orElseThrow(() -> new RuntimeException("Interview not found"));
+
+        String previousStatus = interview.getStatus();
         if (status != null) interview.setStatus(status);
         if (feedback != null) interview.setFeedback(feedback);
         if (result != null) interview.setResult(result);
-        return interviewRepository.save(interview);
+        Interview saved = interviewRepository.save(interview);
+
+        // Notify seeker when employer cancels or reschedules interview
+        if (status != null && !status.equals(previousStatus)) {
+            User seeker = interview.getSeekerId() != null
+                ? userRepository.findById(interview.getSeekerId()).orElse(null) : null;
+
+            if ("CANCELLED".equals(status) && seeker != null) {
+                notificationService.create(seeker.getId(),
+                    "❌ Interview Cancelled",
+                    "Your interview for " + interview.getJobTitle() + " has been cancelled by the employer. Please check with the employer for further information.",
+                    "INTERVIEW", "/seeker/interviews");
+                log.info("Notified seeker {} of interview cancellation", seeker.getId());
+            }
+
+            if ("RESCHEDULED".equals(status) && seeker != null) {
+                notificationService.create(seeker.getId(),
+                    "📅 Interview Rescheduled",
+                    "Your interview for " + interview.getJobTitle() + " has been rescheduled. Please check My Interviews for the new details.",
+                    "INTERVIEW", "/seeker/interviews");
+            }
+        }
+
+        return saved;
     }
 
     public List<Interview> getAllInterviews() {
