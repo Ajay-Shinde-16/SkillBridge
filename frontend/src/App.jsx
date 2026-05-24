@@ -2,6 +2,7 @@ import React from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider, useAuth } from './context/AuthContext'
 import Navbar from './components/Navbar'
+import StandoutAnimations from './components/StandoutAnimations'
 
 import Home from './pages/Home'
 import Login from './pages/Login'
@@ -25,6 +26,7 @@ import EditJob from './pages/employer/EditJob'
 import ManageApplications from './pages/employer/ManageApplications'
 import ScheduleInterview from './pages/employer/ScheduleInterview'
 import EmployerInterviews from './pages/employer/EmployerInterviews'
+import CompanyProfile from './pages/employer/CompanyProfile'
 
 import AdminLogin from './pages/admin/AdminLogin'
 import AdminRegister from './pages/admin/AdminRegister'
@@ -33,6 +35,7 @@ import ManageUsers from './pages/admin/ManageUsers'
 import VerifySkills from './pages/admin/VerifySkills'
 import ManageJobs from './pages/admin/ManageJobs'
 import AllApplications from './pages/admin/AllApplications'
+import CareerRoom from './pages/CareerRoom'
 
 function ProtectedRoute({ children, roles }) {
   const { user, loading } = useAuth()
@@ -47,21 +50,33 @@ function ProtectedRoute({ children, roles }) {
 }
 
 function WithNav({ children }) {
-  return <><Navbar />{children}</>
+  return <>
+    <Navbar />
+    <StandoutAnimations />
+    <div className="sb-page-shell">{children}</div>
+  </>
+}
+
+function WithBackground({ children }) {
+  return <>
+    <StandoutAnimations />
+    <div className="sb-page-shell">{children}</div>
+  </>
 }
 
 function AppRoutes() {
   return (
     <Routes>
       {/* Admin standalone - no navbar */}
-      <Route path="/admin/login" element={<AdminLogin />} />
-      <Route path="/admin/register" element={<AdminRegister />} />
+      <Route path="/admin/login" element={<WithBackground><AdminLogin /></WithBackground>} />
+      <Route path="/admin/register" element={<WithBackground><AdminRegister /></WithBackground>} />
 
       {/* Public */}
       <Route path="/" element={<WithNav><Home /></WithNav>} />
       <Route path="/login" element={<WithNav><Login /></WithNav>} />
       <Route path="/register" element={<WithNav><Register /></WithNav>} />
       <Route path="/jobs" element={<WithNav><JobList /></WithNav>} />
+      <Route path="/career-room" element={<WithNav><CareerRoom /></WithNav>} />
       <Route path="/jobs/:id" element={<WithNav><JobDetail /></WithNav>} />
 
       {/* Forgot Password — public */}
@@ -85,6 +100,7 @@ function AppRoutes() {
       <Route path="/employer/applications/:jobId" element={<ProtectedRoute roles={['EMPLOYER']}><WithNav><ManageApplications /></WithNav></ProtectedRoute>} />
       <Route path="/employer/schedule/:applicationId" element={<ProtectedRoute roles={['EMPLOYER']}><WithNav><ScheduleInterview /></WithNav></ProtectedRoute>} />
       <Route path="/employer/interviews" element={<ProtectedRoute roles={['EMPLOYER']}><WithNav><EmployerInterviews /></WithNav></ProtectedRoute>} />
+      <Route path="/employer/company-profile" element={<ProtectedRoute roles={['EMPLOYER']}><WithNav><CompanyProfile /></WithNav></ProtectedRoute>} />
 
       {/* ── ADMIN ── */}
       <Route path="/admin/dashboard" element={<ProtectedRoute roles={['ADMIN']}><WithNav><AdminDashboard /></WithNav></ProtectedRoute>} />

@@ -75,8 +75,6 @@ export default function NotificationBell() {
     return `${Math.floor(hrs/24)}d ago`
   }
 
-  const isDark = document.body.classList.contains('dark-mode')
-
   return (
     <div ref={dropRef} style={{position:'relative'}}>
       {/* Bell Button */}
@@ -109,21 +107,18 @@ export default function NotificationBell() {
         <div style={{
           position:'absolute', right:0, top:'calc(100% + 8px)',
           width:340, maxHeight:480,
-          background:'var(--notif-bg, #fff)',
-          borderRadius:12,
-          boxShadow:'0 8px 32px rgba(0,0,0,0.2)',
-          border:'1px solid var(--notif-border, #e2e8f0)',
+          background:'var(--notif-bg,#fff)', borderRadius:12,
+          boxShadow:'0 8px 32px rgba(0,0,0,0.15)',
+          border:'1px solid var(--notif-border,#e2e8f0)',
           zIndex:9999, overflow:'hidden',
           display:'flex', flexDirection:'column'
         }}>
           {/* Header */}
           <div style={{
-            padding:'12px 16px',
-            borderBottom:'1px solid var(--notif-border, #e2e8f0)',
-            display:'flex', alignItems:'center', justifyContent:'space-between',
-            background:'var(--notif-bg, #fff)'
+            padding:'12px 16px', borderBottom:'1px solid var(--notif-border,#e2e8f0)',
+            display:'flex', alignItems:'center', justifyContent:'space-between'
           }}>
-            <span style={{fontWeight:600, fontSize:'0.95rem', color:'var(--notif-text, #191919)'}}>
+            <span style={{fontWeight:600, fontSize:'0.95rem'}}>
               <i className="bi bi-bell-fill me-2" style={{color:'#0A66C2'}}></i>
               Notifications
               {unread > 0 && (
@@ -150,13 +145,13 @@ export default function NotificationBell() {
           </div>
 
           {/* List */}
-          <div style={{overflowY:'auto', flex:1, background:'var(--notif-bg, #fff)'}}>
+          <div style={{overflowY:'auto', flex:1}}>
             {loading ? (
               <div style={{padding:32,textAlign:'center'}}>
                 <div className="spinner-border spinner-border-sm" style={{color:'#0A66C2'}}></div>
               </div>
             ) : notifications.length === 0 ? (
-              <div style={{padding:32,textAlign:'center',color:'var(--notif-muted, #adb5bd)'}}>
+              <div style={{padding:32,textAlign:'center',color:'#adb5bd'}}>
                 <i className="bi bi-bell-slash d-block mb-2" style={{fontSize:28}}></i>
                 <div style={{fontSize:'0.85rem'}}>No notifications yet</div>
               </div>
@@ -166,20 +161,14 @@ export default function NotificationBell() {
                   onClick={() => handleNotifClick(n)}
                   style={{
                     padding:'12px 16px',
-                    borderBottom:'1px solid var(--notif-border, #f3f2ef)',
+                    borderBottom:'1px solid var(--notif-border,#f3f2ef)',
                     cursor:'pointer',
-                    background: n.read
-                      ? 'var(--notif-bg, #fff)'
-                      : 'var(--notif-unread, #EEF3F8)',
+                    background: n.read ? 'var(--notif-bg,#fff)' : 'var(--notif-unread,#EEF3F8)',
                     display:'flex', gap:12, alignItems:'flex-start',
                     transition:'background 0.1s'
                   }}
-                  onMouseOver={e => e.currentTarget.style.background = n.read
-                    ? 'var(--notif-hover, #f8f9fa)'
-                    : '#e4ecf7'}
-                  onMouseOut={e => e.currentTarget.style.background = n.read
-                    ? 'var(--notif-bg, #fff)'
-                    : 'var(--notif-unread, #EEF3F8)'}>
+                  onMouseOver={e => e.currentTarget.style.background = n.read ? 'var(--notif-hover,#f8f9fa)' : '#e4ecf7'}
+                  onMouseOut={e => e.currentTarget.style.background = n.read ? 'var(--notif-bg,#fff)' : 'var(--notif-unread,#EEF3F8)'}>
                   {/* Icon */}
                   <div style={{
                     width:36, height:36, borderRadius:'50%', flexShrink:0,
@@ -191,32 +180,19 @@ export default function NotificationBell() {
                   </div>
                   {/* Content */}
                   <div style={{flex:1, minWidth:0}}>
-                    <div style={{
-                      fontWeight: n.read?500:700,
-                      fontSize:'0.85rem',
-                      color:'var(--notif-text, #191919)',
-                      marginBottom:2
-                    }}>
+                    <div style={{fontWeight: n.read?500:700, fontSize:'0.85rem', color:'var(--notif-text,#191919)', marginBottom:2}}>
                       {n.title}
                     </div>
-                    <div style={{
-                      fontSize:'0.78rem',
-                      color:'var(--notif-muted, #666)',
-                      lineHeight:1.4,
-                      marginBottom:4
-                    }}>
+                    <div style={{fontSize:'0.78rem',color:'var(--notif-muted,#666)',lineHeight:1.4, marginBottom:4}}>
                       {n.message}
                     </div>
-                    <div style={{fontSize:'0.7rem',color:'var(--notif-muted, #aaa)'}}>
+                    <div style={{fontSize:'0.7rem',color:'#aaa'}}>
                       {n.createdAt ? timeAgo(n.createdAt) : ''}
                     </div>
                   </div>
                   {/* Unread dot */}
                   {!n.read && (
-                    <div style={{
-                      width:8,height:8,borderRadius:'50%',
-                      background:'#0A66C2',flexShrink:0,marginTop:4
-                    }}></div>
+                    <div style={{width:8,height:8,borderRadius:'50%',background:'#0A66C2',flexShrink:0,marginTop:4}}></div>
                   )}
                 </div>
               ))

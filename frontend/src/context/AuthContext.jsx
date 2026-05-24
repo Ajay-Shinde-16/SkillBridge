@@ -11,14 +11,8 @@ export function AuthProvider({ children }) {
     const savedToken = localStorage.getItem('token')
     const savedUser = localStorage.getItem('user')
     if (savedToken && savedUser) {
-      try {
-        setToken(savedToken)
-        setUser(JSON.parse(savedUser))
-      } catch (e) {
-        // Corrupted data — clear and force re-login
-        localStorage.removeItem('token')
-        localStorage.removeItem('user')
-      }
+      setToken(savedToken)
+      setUser(JSON.parse(savedUser))
     }
     setLoading(false)
   }, [])
