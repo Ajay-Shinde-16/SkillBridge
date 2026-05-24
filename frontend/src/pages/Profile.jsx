@@ -61,14 +61,15 @@ export default function Profile() {
   const handleResumeUpload = async (e) => {
     const file = e.target.files[0]
     if (!file) return
-    if (file.type !== 'application/pdf') { setUploadMsg('error:Only PDF files allowed'); return }
+    if (!file.type.includes('pdf') && !file.name.toLowerCase().endsWith('.pdf')) { setUploadMsg('error:Only PDF files allowed'); return }
     if (file.size > 5 * 1024 * 1024) { setUploadMsg('error:File too large. Max 5MB'); return }
     setUploading(true); setUploadMsg('')
     try {
       const formData = new FormData()
       formData.append('file', file)
       const token = localStorage.getItem('token')
-      const { data } = await axios.post('/api/files/upload-resume', formData, {
+      const baseUrl = import.meta.env.VITE_API_URL || ''
+      const { data } = await axios.post(`${baseUrl}/api/files/upload-resume`, formData, {
         headers: { 'Content-Type': 'multipart/form-data', Authorization: `Bearer ${token}` }
       })
       setProfile(prev => ({ ...prev, resumeUrl: data.url }))
