@@ -73,18 +73,20 @@ export default function Navbar() {
               <li className="nav-item">
                 <Link className="nav-link text-white" to="/jobs"><i className="bi bi-briefcase me-1"></i>Browse Jobs</Link>
               </li>
-              <li className="nav-item">
-                <Link className="nav-link text-white d-flex align-items-center gap-1" to="/career-room">
-                  <i className="bi bi-stars me-1"></i>Career Room
-                  <span style={{
-                    background:'#22c55e', color:'#fff',
-                    fontSize:'0.6rem', fontWeight:700,
-                    padding:'1px 6px', borderRadius:20,
-                    letterSpacing:'0.5px', lineHeight:1.6,
-                    animation:'pulse 2s infinite'
-                  }}>NEW</span>
-                </Link>
-              </li>
+              {user?.role==='SEEKER' && (
+                <li className="nav-item">
+                  <Link className="nav-link text-white d-flex align-items-center gap-1" to="/career-room">
+                    <i className="bi bi-stars me-1"></i>Career Room
+                    <span style={{
+                      background:'#22c55e', color:'#fff',
+                      fontSize:'0.6rem', fontWeight:700,
+                      padding:'1px 6px', borderRadius:20,
+                      letterSpacing:'0.5px', lineHeight:1.6,
+                      animation:'pulse 2s infinite'
+                    }}>NEW</span>
+                  </Link>
+                </li>
+              )}
               {user && <li className="nav-item">
                 <Link className="nav-link text-white" to={getDash()}><i className="bi bi-speedometer2 me-1"></i>Dashboard</Link>
               </li>}
