@@ -32,6 +32,9 @@ export default function MyOffers() {
     try {
       await updateApplicationStatus(id, {status:'ACCEPTED'})
       setAll(prev => prev.map(a => a.id===id ? {...a, status:'ACCEPTED'} : a))
+      // 🎉 CONFETTI!
+      setShowConfetti(true)
+      setTimeout(() => setShowConfetti(false), 5000)
       showToast('🎉 Offer accepted! Congratulations on your new job!')
     } catch { showToast('Failed to accept. Try again.', 'danger') } finally { setUpdating(null) }
   }
@@ -77,7 +80,9 @@ export default function MyOffers() {
   )
 
   return (
-    <div className="container py-4">
+    <>
+      <Confetti active={showConfetti} />
+      <div className="container py-4">
 
       {/* Toast */}
       {toast.msg && (
@@ -264,6 +269,7 @@ export default function MyOffers() {
           <Link to="/jobs" className="btn text-white rounded-pill px-4 mt-2" style={{background:'#0A66C2'}}>Browse Jobs</Link>
         </div>
       )}
-    </div>
+      </div>
+    </>
   )
 }
