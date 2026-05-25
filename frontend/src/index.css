@@ -541,3 +541,386 @@ body.dark-mode .sidebar .nav-link.active {
   canvas { display: none !important; }
   * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
 }
+
+/* ─── SKELETON LOADING ─── */
+.skeleton-box {
+  background: linear-gradient(90deg, var(--bs-secondary-bg) 25%, var(--bs-tertiary-bg) 50%, var(--bs-secondary-bg) 75%);
+  background-size: 200% 100%;
+  animation: skeleton-shine 1.5s infinite;
+  border-radius: 6px;
+}
+@keyframes skeleton-shine {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ─── BUTTON LOADING STATE ─── */
+.btn:disabled {
+  opacity: 0.75 !important;
+  cursor: wait !important;
+}
+
+/* ─── FASTER PAGE TRANSITIONS ─── */
+.main-content {
+  animation: fadeIn 0.2s ease;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+
+/* ════════════════════════════════════════════════
+   COMPLETE DARK MODE — ALL PAGES ALL ELEMENTS
+   ════════════════════════════════════════════════ */
+
+/* ── Base body ── */
+body.dark-mode {
+  background: #0d1117 !important;
+  color: #e6edf3 !important;
+
+  /* Notification bell CSS vars */
+  --notif-bg: #161b22;
+  --notif-border: #2d333b;
+  --notif-text: #e6edf3;
+  --notif-muted: #768390;
+  --notif-unread: #1c2d3e;
+  --notif-hover: #1c2128;
+
+  /* Bootstrap overrides */
+  --bs-body-bg: #0d1117;
+  --bs-body-color: #e6edf3;
+  --bs-secondary-bg: #161b22;
+  --bs-tertiary-bg: #1c2128;
+  --bs-border-color: #2d333b;
+}
+
+/* ── ALL CARDS ── */
+body.dark-mode .card,
+body.dark-mode .stat-card,
+body.dark-mode .job-card {
+  background: #161b22 !important;
+  border-color: #2d333b !important;
+  color: #e6edf3 !important;
+  backdrop-filter: none !important;
+}
+body.dark-mode .card::before {
+  background: linear-gradient(90deg, #58a6ff, #14B8A6) !important;
+}
+
+/* ── ALL TEXT ── */
+body.dark-mode h1, body.dark-mode h2, body.dark-mode h3,
+body.dark-mode h4, body.dark-mode h5, body.dark-mode h6,
+body.dark-mode .fw-bold, body.dark-mode .fw-semibold,
+body.dark-mode .fw-medium {
+  color: #e6edf3 !important;
+}
+body.dark-mode .text-muted,
+body.dark-mode .text-secondary {
+  color: #768390 !important;
+}
+body.dark-mode .text-dark {
+  color: #e6edf3 !important;
+}
+body.dark-mode p {
+  color: #adbac7 !important;
+}
+body.dark-mode label {
+  color: #adbac7 !important;
+}
+body.dark-mode small {
+  color: #768390 !important;
+}
+
+/* ── TABLES ── */
+body.dark-mode .table {
+  color: #e6edf3 !important;
+  border-color: #2d333b !important;
+}
+body.dark-mode .table-light,
+body.dark-mode .table-light th {
+  background: #1c2128 !important;
+  color: #adbac7 !important;
+  border-color: #2d333b !important;
+}
+body.dark-mode .table tbody tr td {
+  color: #e6edf3 !important;
+  border-color: #2d333b !important;
+}
+body.dark-mode .table-hover tbody tr:hover td {
+  background: #1c2128 !important;
+}
+body.dark-mode .table-responsive {
+  border-color: #2d333b !important;
+}
+
+/* ── FORMS ── */
+body.dark-mode .form-control,
+body.dark-mode .form-select,
+body.dark-mode .form-control:disabled,
+body.dark-mode .form-control[readonly] {
+  background: #1c2128 !important;
+  color: #e6edf3 !important;
+  border-color: #2d333b !important;
+}
+body.dark-mode .form-control::placeholder {
+  color: #4d5966 !important;
+}
+body.dark-mode .form-control:focus,
+body.dark-mode .form-select:focus {
+  background: #1c2128 !important;
+  color: #e6edf3 !important;
+  border-color: #58a6ff !important;
+  box-shadow: 0 0 0 3px rgba(88,166,255,0.15) !important;
+}
+body.dark-mode .input-group-text {
+  background: #1c2128 !important;
+  color: #adbac7 !important;
+  border-color: #2d333b !important;
+}
+body.dark-mode .bg-light.form-control,
+body.dark-mode .form-control.bg-light {
+  background: #1c2128 !important;
+}
+body.dark-mode textarea {
+  background: #1c2128 !important;
+  color: #e6edf3 !important;
+  border-color: #2d333b !important;
+}
+
+/* ── BADGES ── */
+body.dark-mode .badge.bg-light,
+body.dark-mode .badge.text-dark {
+  background: #2d333b !important;
+  color: #e6edf3 !important;
+}
+body.dark-mode .badge.bg-secondary {
+  background: #2d333b !important;
+}
+
+/* ── BUTTONS ── */
+body.dark-mode .btn-outline-secondary {
+  color: #adbac7 !important;
+  border-color: #2d333b !important;
+}
+body.dark-mode .btn-outline-secondary:hover {
+  background: #2d333b !important;
+  color: #e6edf3 !important;
+}
+body.dark-mode .btn-light {
+  background: #2d333b !important;
+  color: #e6edf3 !important;
+  border-color: #2d333b !important;
+}
+body.dark-mode .btn-close {
+  filter: invert(1) !important;
+}
+
+/* ── SIDEBAR ── */
+body.dark-mode .sidebar {
+  background: #0d1117 !important;
+  border-right: 1px solid #2d333b !important;
+}
+body.dark-mode .sidebar .text-muted {
+  color: #4d5966 !important;
+}
+body.dark-mode .sidebar .nav-link {
+  color: #adbac7 !important;
+  border-left-color: transparent !important;
+}
+body.dark-mode .sidebar .nav-link:hover,
+body.dark-mode .sidebar .nav-link.active {
+  background: #1c2128 !important;
+  color: #58a6ff !important;
+  border-left-color: #58a6ff !important;
+}
+
+/* ── WELCOME HEADER / PAGE HEADER ── */
+body.dark-mode .welcome-header,
+body.dark-mode .page-header {
+  background: linear-gradient(135deg, #0f3460, #0A66C2) !important;
+}
+
+/* ── STAT CARDS ── */
+body.dark-mode .stat-card {
+  background: #161b22 !important;
+}
+body.dark-mode .stat-card .label {
+  color: #768390 !important;
+}
+
+/* ── ALERTS ── */
+body.dark-mode .alert-success {
+  background: #1a2e1a !important;
+  border-color: #2d5a2d !important;
+  color: #7ee787 !important;
+}
+body.dark-mode .alert-danger {
+  background: #2e1a1a !important;
+  border-color: #5a2d2d !important;
+  color: #f87171 !important;
+}
+body.dark-mode .alert-warning {
+  background: #2e2a1a !important;
+  border-color: #5a4a2d !important;
+  color: #fbbf24 !important;
+}
+body.dark-mode .alert-info {
+  background: #1a2535 !important;
+  border-color: #2d4a5a !important;
+  color: #60a5fa !important;
+}
+
+/* ── MODALS ── */
+body.dark-mode .modal-content {
+  background: #161b22 !important;
+  border-color: #2d333b !important;
+  color: #e6edf3 !important;
+}
+body.dark-mode .modal-header,
+body.dark-mode .modal-footer {
+  border-color: #2d333b !important;
+}
+body.dark-mode .modal-title {
+  color: #e6edf3 !important;
+}
+
+/* ── DROPDOWNS ── */
+body.dark-mode .dropdown-menu {
+  background: #161b22 !important;
+  border-color: #2d333b !important;
+}
+body.dark-mode .dropdown-item {
+  color: #adbac7 !important;
+}
+body.dark-mode .dropdown-item:hover {
+  background: #1c2128 !important;
+  color: #e6edf3 !important;
+}
+body.dark-mode .dropdown-divider {
+  border-color: #2d333b !important;
+}
+
+/* ── LIST GROUPS ── */
+body.dark-mode .list-group-item {
+  background: #161b22 !important;
+  border-color: #2d333b !important;
+  color: #e6edf3 !important;
+}
+body.dark-mode .list-group-item:hover {
+  background: #1c2128 !important;
+}
+
+/* ── BORDERS / DIVIDERS ── */
+body.dark-mode hr {
+  border-color: #2d333b !important;
+}
+body.dark-mode .border,
+body.dark-mode .border-bottom,
+body.dark-mode .border-top {
+  border-color: #2d333b !important;
+}
+body.dark-mode [style*="border-bottom: 1px solid #f1f5f9"],
+body.dark-mode [style*="borderBottom: '1px solid #f1f5f9'"] {
+  border-color: #2d333b !important;
+}
+
+/* ── PROGRESS BARS ── */
+body.dark-mode .progress {
+  background: #2d333b !important;
+}
+
+/* ── SPECIFIC PAGE FIXES ── */
+
+/* JobList search bg */
+body.dark-mode .bg-white.border-end-0,
+body.dark-mode .input-group .bg-white {
+  background: #1c2128 !important;
+}
+
+/* Job cards skill badges */
+body.dark-mode .skill-badge.unverified {
+  background: #2d333b !important;
+  color: #adbac7 !important;
+}
+body.dark-mode .skill-badge.verified {
+  background: #1a2e1a !important;
+  color: #7ee787 !important;
+}
+
+/* Career room checklist */
+body.dark-mode [style*="border-bottom: '1px solid #f1f5f9'"] {
+  border-color: #2d333b !important;
+}
+
+/* Profile disabled input */
+body.dark-mode .bg-light {
+  background: #1c2128 !important;
+}
+
+/* PostJob salary input-group */
+body.dark-mode .input-group-text.bg-light {
+  background: #1c2128 !important;
+  color: #adbac7 !important;
+}
+
+/* Home page light sections */
+body.dark-mode section[style*="background.*#f"],
+body.dark-mode section[style*="background.*#F"] {
+  background: #161b22 !important;
+}
+
+/* Bottom mobile nav */
+body.dark-mode .mobile-bottom-nav {
+  background: #0d1117 !important;
+  border-top: 1px solid #2d333b !important;
+}
+body.dark-mode .mobile-bottom-nav .nav-link {
+  color: #768390 !important;
+}
+body.dark-mode .mobile-bottom-nav .nav-link.active {
+  color: #58a6ff !important;
+}
+
+/* Rounded info boxes */
+body.dark-mode [style*="background: '#EEF3F8'"],
+body.dark-mode [style*="background:'#EEF3F8'"] {
+  background: #1c2128 !important;
+}
+body.dark-mode [style*="background: '#F1F5F9'"],
+body.dark-mode [style*="background:'#F1F5F9'"],
+body.dark-mode [style*="background: '#f8f9fa'"] {
+  background: #1c2128 !important;
+}
+
+/* Interview cards */
+body.dark-mode .rounded-3.border {
+  border-color: #2d333b !important;
+  background: #161b22 !important;
+}
+
+/* Notification dropdown */
+body.dark-mode .notif-dropdown {
+  background: #161b22 !important;
+}
+
+/* ── MAIN CONTENT AREA ── */
+body.dark-mode .main-content {
+  background: transparent !important;
+}
+
+/* ── SCROLLBAR ── */
+body.dark-mode ::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+body.dark-mode ::-webkit-scrollbar-track {
+  background: #0d1117;
+}
+body.dark-mode ::-webkit-scrollbar-thumb {
+  background: #2d333b;
+  border-radius: 4px;
+}
+body.dark-mode ::-webkit-scrollbar-thumb:hover {
+  background: #4d5966;
+}
