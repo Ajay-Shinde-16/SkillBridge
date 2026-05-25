@@ -924,3 +924,27 @@ body.dark-mode ::-webkit-scrollbar-thumb {
 body.dark-mode ::-webkit-scrollbar-thumb:hover {
   background: #4d5966;
 }
+
+
+
+/* ─── DARK MODE: INTERVIEW TEAL COLORS ─── */
+body.dark-mode [style*="background:'#CCFBF1'"],
+body.dark-mode [style*="background: '#CCFBF1'"],
+body.dark-mode [style*='background:"#CCFBF1"'] {
+  background: #0d2e2b !important;
+}
+body.dark-mode [style*="color:'#0F766E'"],
+body.dark-mode [style*="color: '#0F766E'"],
+body.dark-mode [style*='color:"#0F766E"'] {
+  color: #2dd4bf !important;
+}
+body.dark-mode [style*="border:1px solid #99F6E4"],
+body.dark-mode [style*="border: 1px solid #99F6E4"],
+body.dark-mode [style*="border:'1px solid #99F6E4'"] {
+  border-color: #0f766e !important;
+}
+/* Bootstrap info badge in dark mode */
+body.dark-mode .badge.bg-info {
+  background: #0d2e2b !important;
+  color: #2dd4bf !important;
+}

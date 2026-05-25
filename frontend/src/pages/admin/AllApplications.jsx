@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 import { getAllApplications } from '../../services/api'
 
 const statusColors = {
-  APPLIED: 'secondary', SHORTLISTED: 'info', INTERVIEW_SCHEDULED: 'warning',
+  APPLIED: 'secondary', SHORTLISTED: 'info', INTERVIEW_SCHEDULED: 'info',
   OFFERED: 'success', REJECTED: 'danger', ACCEPTED: 'primary'
 }
 const scoreColor = s => s >= 70 ? '#057642' : s >= 40 ? '#d97706' : '#dc3545'
@@ -60,7 +60,7 @@ export default function AllApplications() {
             {[
               { label: 'Applied', value: applications.filter(a => a.status === 'APPLIED').length, color: '#6c757d' },
               { label: 'Shortlisted', value: applications.filter(a => a.status === 'SHORTLISTED').length, color: '#0ea5e9' },
-              { label: 'Interviews', value: applications.filter(a => a.status === 'INTERVIEW_SCHEDULED').length, color: '#d97706' },
+              { label: 'Interviews', value: applications.filter(a => a.status === 'INTERVIEW_SCHEDULED').length, color: '#0F766E' },
               { label: 'Offered', value: applications.filter(a => a.status === 'OFFERED').length, color: '#057642' },
               { label: 'Accepted', value: applications.filter(a => a.status === 'ACCEPTED').length, color: '#0A66C2' },
               { label: 'Rejected', value: applications.filter(a => a.status === 'REJECTED').length, color: '#dc3545' },

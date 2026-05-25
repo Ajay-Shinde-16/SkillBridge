@@ -7,8 +7,8 @@ const STATUS_OPTIONS = ['APPLIED','SHORTLISTED','INTERVIEW_SCHEDULED','INTERVIEW
 const STATUS_STYLE = {
   APPLIED:              { bg:'#F1F5F9', color:'#475569', label:'Applied' },
   SHORTLISTED:          { bg:'#DBEAFE', color:'#1e40af', label:'Shortlisted' },
-  INTERVIEW_SCHEDULED:  { bg:'#FEF3C7', color:'#92400e', label:'Interviewed' },
-  INTERVIEW_COMPLETED:  { bg:'#EDE9FF', color:'#5B21B6', label:'Interview Done' },
+  INTERVIEW_SCHEDULED:  { bg:'#CCFBF1', color:'#0F766E', label:'Interviewed' },
+  INTERVIEW_COMPLETED:  { bg:'#CCFBF1', color:'#0F766E', label:'Interview Done' },
   OFFERED:              { bg:'#D1FAE5', color:'#065f46', label:'Offered' },
   REJECTED:             { bg:'#FEE2E2', color:'#991b1b', label:'Rejected' },
   ACCEPTED:             { bg:'#DBEAFE', color:'#1e40af', label:'Accepted' },
@@ -90,7 +90,7 @@ export default function ManageApplications() {
         return (
           <div className="d-flex gap-2 flex-wrap mt-2">
             <Link to={`/employer/schedule/${id}`} className="btn btn-sm rounded-pill fw-semibold"
-              style={{ background:'#FEF3C7',color:'#92400e',border:'1px solid #FCD34D',fontSize:'0.8rem' }}>
+              style={{ background:'#CCFBF1',color:'#0F766E',border:'1px solid #99F6E4',fontSize:'0.8rem' }}>
               <i className="bi bi-calendar-plus me-1"></i>Schedule Interview
             </Link>
             <button className="btn btn-sm rounded-pill fw-semibold"
@@ -104,9 +104,9 @@ export default function ManageApplications() {
         return (
           <div className="d-flex flex-column gap-2 mt-2">
             <div className="rounded-3 p-2 d-flex align-items-center gap-2"
-              style={{background:'#FEF3C7',border:'1px solid #FCD34D'}}>
-              <i className="bi bi-hourglass-split" style={{color:'#92400e'}}></i>
-              <span className="small fw-semibold" style={{color:'#92400e'}}>
+              style={{background:'#CCFBF1',border:'1px solid #99F6E4'}}>
+              <i className="bi bi-hourglass-split" style={{color:'#0F766E'}}></i>
+              <span className="small fw-semibold" style={{color:'#0F766E'}}>
                 Waiting for seeker to join interview... Offer letter will be available after interview is completed.
               </span>
             </div>
@@ -123,9 +123,9 @@ export default function ManageApplications() {
         return (
           <div className="d-flex flex-column gap-2 mt-2">
             <div className="rounded-3 p-2 d-flex align-items-center gap-2"
-              style={{background:'#EDE9FF',border:'1px solid #C4B5FD'}}>
-              <i className="bi bi-check-circle-fill" style={{color:'#5B21B6'}}></i>
-              <span className="small fw-semibold" style={{color:'#5B21B6'}}>
+              style={{background:'#CCFBF1',border:'1px solid #99F6E4'}}>
+              <i className="bi bi-check-circle-fill" style={{color:'#0F766E'}}></i>
+              <span className="small fw-semibold" style={{color:'#0F766E'}}>
                 Interview completed! Send offer or reject based on performance.
               </span>
             </div>
@@ -321,7 +321,7 @@ export default function ManageApplications() {
                             </span>
                             {idx===0 && (
                               <span className="badge rounded-pill"
-                                style={{background:'#FEF3C7',color:'#92400e',fontSize:'0.68rem'}}>
+                                style={{background:'#CCFBF1',color:'#0F766E',fontSize:'0.68rem'}}>
                                 Top Match
                               </span>
                             )}
@@ -392,11 +392,11 @@ export default function ManageApplications() {
 
                       {app.employerNote && (
                         <div className="mt-2 p-2 rounded-3"
-                          style={{background:'#FEF3C7',fontSize:'0.8rem',border:'1px solid #FCD34D'}}>
-                          <span className="fw-semibold" style={{color:'#92400e'}}>
+                          style={{background:'#CCFBF1',fontSize:'0.8rem',border:'1px solid #C4B5FD'}}>
+                          <span className="fw-semibold" style={{color:'#0F766E'}}>
                             <i className="bi bi-sticky me-1"></i>Your Note:{' '}
                           </span>
-                          <span style={{color:'#92400e'}}>{app.employerNote}</span>
+                          <span style={{color:'#0F766E'}}>{app.employerNote}</span>
                         </div>
                       )}
 

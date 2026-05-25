@@ -54,7 +54,7 @@ export default function EmployerInterviews() {
           {/* Stats */}
           <div className="row g-3 mb-4">
             {[
-              { label:'Scheduled', value: interviews.filter(i=>i.status==='SCHEDULED').length, color:'#d97706' },
+              { label:'Scheduled', value: interviews.filter(i=>i.status==='SCHEDULED').length, color:'#0F766E' },
               { label:'Completed', value: interviews.filter(i=>i.status==='COMPLETED').length, color:'#057642' },
               { label:'Cancelled', value: interviews.filter(i=>i.status==='CANCELLED').length, color:'#dc3545' },
               { label:'Passed', value: interviews.filter(i=>i.result==='PASS').length, color:'#0A66C2' },

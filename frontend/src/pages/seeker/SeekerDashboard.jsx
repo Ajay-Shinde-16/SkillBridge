@@ -1,11 +1,10 @@
-import React, { useState, useEffect, useCallback } from 'react'
+import React, { useState, useEffect, useCallback, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { getMyApplications, getMyInterviews, getProfile } from '../../services/api'
 import { useAuth } from '../../context/AuthContext'
-import CompanyLogo from '../../components/CompanyLogo'
 
 const STATUS_COLORS = {
-  APPLIED:'secondary', SHORTLISTED:'info', INTERVIEW_SCHEDULED:'warning',
+  APPLIED:'secondary', SHORTLISTED:'info', INTERVIEW_SCHEDULED:'primary',
   OFFERED:'success', REJECTED:'danger', ACCEPTED:'primary'
 }
 const scoreColor = s => s>=70?'#057642':s>=40?'#d97706':'#dc3545'
@@ -17,26 +16,42 @@ export default function SeekerDashboard() {
   const [interviews, setInterviews] = useState([])
   const [loading, setLoading] = useState(true)
   const [lastUpdated, setLastUpdated] = useState(null)
+  const prevDataRef = useRef('')
 
-  const fetchAll = useCallback(() => {
-    Promise.all([getProfile(), getMyApplications(), getMyInterviews()])
-      .then(([p, a, i]) => {
+  const fetchAll = useCallback(async (showLoader = false) => {
+    if (showLoader) setLoading(true)
+    try {
+      const [p, a, i] = await Promise.all([
+        getProfile(),
+        getMyApplications(),
+        getMyInterviews(),
+      ])
+      // Smart refresh — only update state if data actually changed
+      const newData = JSON.stringify({ apps: a.data, interviews: i.data })
+      if (newData !== prevDataRef.current) {
+        prevDataRef.current = newData
         setProfile(p.data)
-        setApplications(a.data)
-        setInterviews(i.data)
-        setLoading(false)
+        setApplications(a.data || [])
+        setInterviews(i.data || [])
         setLastUpdated(new Date())
-      })
-      .catch(() => setLoading(false))
+      } else {
+        // still update profile silently
+        setProfile(p.data)
+      }
+    } catch(e) {
+      console.error(e)
+    } finally {
+      setLoading(false)
+    }
   }, [])
 
   useEffect(() => {
-    fetchAll()
-    const timer = setInterval(fetchAll, 30000)
-    return () => clearInterval(timer)
+    fetchAll(true)
+    // Poll every 10 seconds for faster updates
+    const t = setInterval(() => fetchAll(false), 10000)
+    return () => clearInterval(t)
   }, [fetchAll])
 
-  // ── FIXED COUNTS: each status counted separately ──
   const counts = {
     applied:     applications.filter(a => a.status === 'APPLIED').length,
     shortlisted: applications.filter(a => a.status === 'SHORTLISTED').length,
@@ -45,7 +60,6 @@ export default function SeekerDashboard() {
     accepted:    applications.filter(a => a.status === 'ACCEPTED').length,
     rejected:    applications.filter(a => a.status === 'REJECTED').length,
     total:       applications.length,
-    interviewList: interviews.length,
   }
 
   if (loading) return (
@@ -57,21 +71,24 @@ export default function SeekerDashboard() {
   return (
     <div className="container-fluid p-0">
       <div className="d-flex">
-        {/* Sidebar */}
         <div className="sidebar d-none d-md-block">
-          <p className="text-muted small fw-bold text-uppercase px-2 mb-2" style={{fontSize:'0.7rem',letterSpacing:'0.8px'}}>Seeker Menu</p>
+          <p className="text-muted small fw-bold text-uppercase px-2 mb-2"
+            style={{fontSize:'0.7rem',letterSpacing:'0.8px'}}>Seeker Menu</p>
           <nav className="nav flex-column">
             {[
-              {to:'/seeker/dashboard',icon:'bi-speedometer2',label:'Dashboard'},
-              {to:'/jobs',icon:'bi-search',label:'Browse Jobs'},
-              {to:'/seeker/applications',icon:'bi-file-text',label:'My Applications'},
-              {to:'/seeker/interviews',icon:'bi-camera-video',label:'My Interviews'},
-              {to:'/seeker/offers',icon:'bi-trophy',label:'My Offers'},
-              {to:'/seeker/saved-jobs',icon:'bi-bookmark',label:'Saved Jobs'},
-              {to:'/profile',icon:'bi-person',label:'My Profile'},
-              {to:'/change-password',icon:'bi-shield-lock',label:'Change Password'},
+              {to:'/seeker/dashboard',    icon:'bi-speedometer2', label:'Dashboard'},
+              {to:'/jobs',                icon:'bi-search',       label:'Browse Jobs'},
+              {to:'/seeker/applications', icon:'bi-file-text',    label:'My Applications'},
+              {to:'/seeker/interviews',   icon:'bi-camera-video', label:'My Interviews'},
+              {to:'/seeker/offers',       icon:'bi-trophy',       label:'My Offers'},
+              {to:'/seeker/saved-jobs',   icon:'bi-bookmark',     label:'Saved Jobs'},
+              {to:'/career-room',         icon:'bi-stars',        label:'Career Room'},
+              {to:'/profile',             icon:'bi-person',       label:'My Profile'},
+              {to:'/change-password',     icon:'bi-shield-lock',  label:'Change Password'},
             ].map((item,i)=>(
-              <Link key={i} to={item.to} className="nav-link"><i className={`bi ${item.icon}`}></i>{item.label}</Link>
+              <Link key={i} to={item.to} className="nav-link">
+                <i className={`bi ${item.icon}`}></i>{item.label}
+              </Link>
             ))}
           </nav>
         </div>
@@ -82,10 +99,17 @@ export default function SeekerDashboard() {
               <div>
                 <h2 className="fw-bold mb-1">Welcome back, {user?.name?.split(' ')[0]}! 👋</h2>
                 <p className="mb-0">
-                  {lastUpdated && <small className="opacity-75">Last updated: {lastUpdated.toLocaleTimeString()}</small>}
+                  {lastUpdated && (
+                    <small className="opacity-75">
+                      Last updated: {lastUpdated.toLocaleTimeString()}
+                      <span className="ms-2 badge rounded-pill" style={{background:'rgba(255,255,255,0.2)',fontSize:'0.65rem'}}>
+                        Auto-refreshing every 10s
+                      </span>
+                    </small>
+                  )}
                 </p>
               </div>
-              <button className="btn btn-sm btn-outline-light rounded-pill" onClick={fetchAll}>
+              <button className="btn btn-sm btn-outline-light rounded-pill" onClick={() => fetchAll(false)}>
                 <i className="bi bi-arrow-clockwise me-1"></i>Refresh
               </button>
             </div>
@@ -94,16 +118,17 @@ export default function SeekerDashboard() {
           {/* ── ALL 6 STATUS COUNTS ── */}
           <div className="row g-2 mb-4">
             {[
-              {label:'Applied',    value:counts.applied,     color:'#0A66C2', bg:'#EEF3F8', icon:'bi-send',              link:'/seeker/applications?filter=APPLIED'},
-              {label:'Shortlisted',value:counts.shortlisted, color:'#0ea5e9', bg:'#E0F2FE', icon:'bi-star-fill',         link:'/seeker/applications?filter=SHORTLISTED'},
-              {label:'Interviews', value:counts.interviews,  color:'#d97706', bg:'#FEF3C7', icon:'bi-camera-video',      link:'/seeker/interviews'},
-              {label:'Offered',    value:counts.offered,     color:'#057642', bg:'#D1FAE5', icon:'bi-trophy-fill',       link:'/seeker/offers'},
-              {label:'Accepted',   value:counts.accepted,    color:'#1e40af', bg:'#DBEAFE', icon:'bi-check-circle-fill', link:'/seeker/offers'},
-              {label:'Rejected',   value:counts.rejected,    color:'#991b1b', bg:'#FEE2E2', icon:'bi-x-circle',         link:'/seeker/applications?filter=REJECTED'},
+              {label:'Applied',     value:counts.applied,     color:'#0A66C2', bg:'#EEF3F8', icon:'bi-send',              link:'/seeker/applications'},
+              {label:'Shortlisted', value:counts.shortlisted, color:'#0ea5e9', bg:'#E0F2FE', icon:'bi-star-fill',         link:'/seeker/applications'},
+              {label:'Interviews',  value:counts.interviews,  color:'#0F766E', bg:'#CCFBF1', icon:'bi-camera-video',      link:'/seeker/interviews'},
+              {label:'Offered',     value:counts.offered,     color:'#057642', bg:'#D1FAE5', icon:'bi-trophy-fill',       link:'/seeker/offers'},
+              {label:'Accepted',    value:counts.accepted,    color:'#1e40af', bg:'#DBEAFE', icon:'bi-check-circle-fill', link:'/seeker/offers'},
+              {label:'Rejected',    value:counts.rejected,    color:'#991b1b', bg:'#FEE2E2', icon:'bi-x-circle',         link:'/seeker/applications'},
             ].map((s,i)=>(
               <div key={i} className="col-4 col-md-2">
                 <Link to={s.link} className="text-decoration-none">
-                  <div className="text-center p-2 rounded-3 h-100" style={{background:s.bg,cursor:'pointer',transition:'transform 0.15s'}}
+                  <div className="text-center p-2 rounded-3 h-100"
+                    style={{background:s.bg,cursor:'pointer',transition:'transform 0.15s'}}
                     onMouseOver={e=>e.currentTarget.style.transform='translateY(-2px)'}
                     onMouseOut={e=>e.currentTarget.style.transform='translateY(0)'}>
                     <i className={`bi ${s.icon} d-block mb-1`} style={{color:s.color,fontSize:'1.1rem'}}></i>
@@ -147,7 +172,9 @@ export default function SeekerDashboard() {
               </div>
               <div className="d-flex flex-wrap gap-2">
                 {(profile?.skillsList||[]).length===0 ? (
-                  <span className="text-muted small">No skills yet. <Link to="/profile" style={{color:'#0A66C2'}}>Add skills →</Link></span>
+                  <span className="text-muted small">
+                    No skills yet. <Link to="/profile" style={{color:'#0A66C2'}}>Add skills →</Link>
+                  </span>
                 ) : (
                   (profile?.skillsList||[]).map((s,i)=>(
                     <span key={i} className={`skill-badge ${(profile?.verifiedSkillsList||[]).includes(s)?'verified':'unverified'}`}>
@@ -169,13 +196,17 @@ export default function SeekerDashboard() {
               <div className="d-flex justify-content-between align-items-center mb-3">
                 <h6 className="fw-bold mb-0">Recent Applications ({counts.total})</h6>
                 <Link to="/seeker/applications" className="btn btn-sm rounded-pill fw-semibold"
-                  style={{background:'#EEF3F8',color:'#0A66C2',border:'none',fontSize:'0.78rem'}}>View All</Link>
+                  style={{background:'#EEF3F8',color:'#0A66C2',border:'none',fontSize:'0.78rem'}}>
+                  View All
+                </Link>
               </div>
               {applications.length===0 ? (
                 <div className="text-center py-3">
                   <i className="bi bi-file-text fs-2 text-muted mb-2 d-block"></i>
                   <p className="text-muted small mb-2">No applications yet</p>
-                  <Link to="/jobs" className="btn btn-sm text-white rounded-pill" style={{background:'#0A66C2'}}>Browse Jobs</Link>
+                  <Link to="/jobs" className="btn btn-sm text-white rounded-pill" style={{background:'#0A66C2'}}>
+                    Browse Jobs
+                  </Link>
                 </div>
               ) : (
                 <div className="table-responsive">
@@ -195,7 +226,8 @@ export default function SeekerDashboard() {
                           <td className="d-none d-md-table-cell text-muted">{app.companyName}</td>
                           <td><span className="fw-bold" style={{color:scoreColor(app.skillMatchScore)}}>{app.skillMatchScore}%</span></td>
                           <td>
-                            <span className={`badge bg-${STATUS_COLORS[app.status]||'secondary'} rounded-pill`} style={{fontSize:'0.7rem'}}>
+                            <span className={`badge bg-${STATUS_COLORS[app.status]||'secondary'} rounded-pill`}
+                              style={{fontSize:'0.7rem'}}>
                               {app.status?.replace(/_/g,' ')}
                             </span>
                           </td>
@@ -212,9 +244,11 @@ export default function SeekerDashboard() {
           <div className="card border-0 shadow-sm rounded-3">
             <div className="card-body p-4">
               <div className="d-flex justify-content-between align-items-center mb-3">
-                <h6 className="fw-bold mb-0">Upcoming Interviews ({counts.interviewList})</h6>
+                <h6 className="fw-bold mb-0">Upcoming Interviews ({interviews.length})</h6>
                 <Link to="/seeker/interviews" className="btn btn-sm rounded-pill fw-semibold"
-                  style={{background:'#EEF3F8',color:'#0A66C2',border:'none',fontSize:'0.78rem'}}>View All</Link>
+                  style={{background:'#EEF3F8',color:'#0A66C2',border:'none',fontSize:'0.78rem'}}>
+                  View All
+                </Link>
               </div>
               {interviews.length===0 ? (
                 <p className="text-muted small text-center py-2 mb-0">No interviews scheduled yet</p>
@@ -226,11 +260,14 @@ export default function SeekerDashboard() {
                         <div className="fw-bold mb-1">{iv.jobTitle}</div>
                         <div className="text-muted small mb-2">
                           <i className="bi bi-calendar me-1"></i>
-                          {iv.scheduledDateTime ? new Date(iv.scheduledDateTime).toLocaleString('en-IN') : 'TBD'}
+                          {iv.scheduledDateTime
+                            ? new Date(iv.scheduledDateTime).toLocaleString('en-IN')
+                            : 'TBD'}
                         </div>
                         {iv.meetingLink && (
                           <a href={iv.meetingLink} target="_blank" rel="noreferrer"
-                            className="btn btn-sm w-100 text-white rounded-pill" style={{background:'#0A66C2',fontSize:'0.75rem'}}>
+                            className="btn btn-sm w-100 text-white rounded-pill"
+                            style={{background:'#0A66C2',fontSize:'0.75rem'}}>
                             <i className="bi bi-camera-video me-1"></i>Join Meeting
                           </a>
                         )}
@@ -241,6 +278,7 @@ export default function SeekerDashboard() {
               )}
             </div>
           </div>
+
         </div>
       </div>
     </div>

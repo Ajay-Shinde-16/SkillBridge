@@ -4,10 +4,10 @@ import { getMyInterviews, joinInterview } from '../../services/api'
 const modeInfo = {
   VIDEO:     { icon:'bi-camera-video-fill', label:'Video Call',  color:'#0A66C2' },
   PHONE:     { icon:'bi-telephone-fill',    label:'Phone Call',  color:'#057642' },
-  IN_PERSON: { icon:'bi-geo-alt-fill',      label:'In Person',   color:'#d97706' },
+  IN_PERSON: { icon:'bi-geo-alt-fill',      label:'In Person',   color:'#0F766E' },
 }
 const statusStyle = {
-  SCHEDULED:   { bg:'#FEF3C7', color:'#92400e', label:'Scheduled' },
+  SCHEDULED:   { bg:'#CCFBF1', color:'#92400e', label:'Scheduled' },
   COMPLETED:   { bg:'#D1FAE5', color:'#065f46', label:'Completed' },
   CANCELLED:   { bg:'#FEE2E2', color:'#991b1b', label:'Cancelled' },
   RESCHEDULED: { bg:'#DBEAFE', color:'#1e40af', label:'Rescheduled' },
@@ -65,7 +65,7 @@ export default function MyInterviews() {
       {/* Stats */}
       <div className="row g-3 mb-4">
         {[
-          {label:'Upcoming',  value:upcoming.length,  color:'#d97706', bg:'#FEF3C7'},
+          {label:'Upcoming',  value:upcoming.length,  color:'#0F766E', bg:'#CCFBF1'},
           {label:'Completed', value:completed.length,  color:'#057642', bg:'#D1FAE5'},
           {label:'Passed',    value:interviews.filter(i=>i.result==='PASS').length, color:'#0A66C2', bg:'#DBEAFE'},
           {label:'Total',     value:interviews.length, color:'#475569', bg:'#F1F5F9'},
@@ -143,7 +143,7 @@ export default function MyInterviews() {
                       )}
                       {iv.venue && (
                         <div className="d-flex align-items-center gap-2">
-                          <i className="bi bi-geo-alt flex-shrink-0" style={{color:'#d97706',width:18}}></i>
+                          <i className="bi bi-geo-alt flex-shrink-0" style={{color:'#0F766E',width:18}}></i>
                           <span className="text-muted">{iv.venue}</span>
                         </div>
                       )}
