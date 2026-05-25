@@ -70,9 +70,11 @@ export default function Navbar() {
           </button>
           <div className="collapse navbar-collapse" id="navMenu">
             <ul className="navbar-nav me-auto gap-1">
-              <li className="nav-item">
-                <Link className="nav-link text-white" to="/jobs"><i className="bi bi-briefcase me-1"></i>Browse Jobs</Link>
-              </li>
+              {(!user || user?.role === 'SEEKER') && (
+                <li className="nav-item">
+                  <Link className="nav-link text-white" to="/jobs"><i className="bi bi-briefcase me-1"></i>Browse Jobs</Link>
+                </li>
+              )}
               {user?.role==='SEEKER' && (
                 <li className="nav-item">
                   <Link className="nav-link text-white d-flex align-items-center gap-1" to="/career-room">

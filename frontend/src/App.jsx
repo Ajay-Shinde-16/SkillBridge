@@ -76,7 +76,7 @@ function AppRoutes() {
       <Route path="/login" element={<WithNav><Login /></WithNav>} />
       <Route path="/register" element={<WithNav><Register /></WithNav>} />
       <Route path="/jobs" element={<WithNav><JobList /></WithNav>} />
-      <Route path="/career-room" element={<WithNav><CareerRoom /></WithNav>} />
+      <Route path="/career-room" element={<ProtectedRoute roles={['SEEKER']}><WithNav><CareerRoom /></WithNav></ProtectedRoute>} />
       <Route path="/jobs/:id" element={<WithNav><JobDetail /></WithNav>} />
 
       {/* Forgot Password — public */}

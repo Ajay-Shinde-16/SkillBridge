@@ -948,3 +948,9 @@ body.dark-mode .badge.bg-info {
   background: #0d2e2b !important;
   color: #2dd4bf !important;
 }
+
+/* ─── TYPING CURSOR BLINK ─── */
+@keyframes cursorBlink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}

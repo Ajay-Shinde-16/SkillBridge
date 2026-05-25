@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import Confetti from '../../components/Confetti'
 import { Link } from 'react-router-dom'
 import { getMyApplications, updateApplicationStatus, downloadOfferLetterPdf } from '../../services/api'
 
@@ -8,6 +9,7 @@ export default function MyOffers() {
   const [all, setAll] = useState([])
   const [loading, setLoading] = useState(true)
   const [updating, setUpdating] = useState(null)
+  const [showConfetti, setShowConfetti] = useState(false)
   const [downloading, setDownloading] = useState(null)
   const [toast, setToast] = useState({ msg:'', type:'success' })
 

@@ -1,7 +1,42 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 
 export default function Home() {
+  const phrases = [
+    'Find Your Dream Remote Job',
+    'Get Matched by Your Skills',
+    'Land Your Perfect Career',
+    'Build Your Future Today',
+  ]
+  const [phraseIdx, setPhraseIdx] = React.useState(0)
+  const [displayed, setDisplayed] = React.useState('')
+  const [deleting, setDeleting] = React.useState(false)
+  const [charIdx, setCharIdx] = React.useState(0)
+
+  React.useEffect(() => {
+    const current = phrases[phraseIdx]
+    let timeout
+
+    if (!deleting && charIdx < current.length) {
+      timeout = setTimeout(() => {
+        setDisplayed(current.slice(0, charIdx + 1))
+        setCharIdx(c => c + 1)
+      }, 55)
+    } else if (!deleting && charIdx === current.length) {
+      timeout = setTimeout(() => setDeleting(true), 2000)
+    } else if (deleting && charIdx > 0) {
+      timeout = setTimeout(() => {
+        setDisplayed(current.slice(0, charIdx - 1))
+        setCharIdx(c => c - 1)
+      }, 28)
+    } else if (deleting && charIdx === 0) {
+      setDeleting(false)
+      setPhraseIdx(i => (i + 1) % phrases.length)
+    }
+
+    return () => clearTimeout(timeout)
+  }, [charIdx, deleting, phraseIdx])
+
   return (
     <div>
       {/* Hero */}
@@ -19,7 +54,13 @@ export default function Home() {
             <img src="/logo.svg" alt="SkillBridge" width={52} height={52} style={{borderRadius:12}} onError={e=>e.target.style.display='none'}/>
             <h1 className="fw-bold mb-0" style={{fontSize:'2.2rem'}}>SkillBridge</h1>
           </div>
-          <p className="mb-2 fs-5 opacity-90">Remote Job Portal with Verified Skill Tagging</p>
+          <p className="mb-2 fs-5 opacity-90" style={{minHeight:'2rem'}}>
+            {displayed}<span style={{
+              display:'inline-block', width:2, height:'1.1em',
+              background:'#fff', marginLeft:2, verticalAlign:'middle',
+              animation:'cursorBlink 0.8s step-end infinite'
+            }}></span>
+          </p>
           <p className="mb-4 opacity-75 small">Find jobs that match your skills. Employers find real talent.</p>
           <div className="d-flex justify-content-center gap-3 flex-wrap">
             <Link to="/jobs" className="btn btn-light fw-bold px-4 rounded-pill" style={{color:'#0A66C2'}}>
