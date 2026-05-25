@@ -100,6 +100,7 @@ export default function Navbar() {
               </>}
               {user?.role==='EMPLOYER' && <>
                 <li className="nav-item"><Link className="nav-link text-white" to="/employer/post-job"><i className="bi bi-plus-circle me-1"></i>Post Job</Link></li>
+                <li className="nav-item"><Link className="nav-link text-white" to="/employer/dashboard"><i className="bi bi-people me-1"></i>Applicants</Link></li>
                 <li className="nav-item"><Link className="nav-link text-white" to="/employer/interviews"><i className="bi bi-camera-video me-1"></i>Interviews</Link></li>
                 <li className="nav-item"><Link className="nav-link text-white" to="/employer/company-profile"><i className="bi bi-building me-1"></i>Company</Link></li>
               </>}

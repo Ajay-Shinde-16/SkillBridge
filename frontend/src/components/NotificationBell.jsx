@@ -113,14 +113,21 @@ export default function NotificationBell() {
     if (notif.link) navigate(notif.link)
   }
 
-  const timeAgo = (dateStr) => {
-    const diff = Date.now() - new Date(dateStr).getTime()
-    const mins = Math.floor(diff / 60000)
-    if (mins < 1) return 'just now'
-    if (mins < 60) return `${mins}m ago`
-    const hrs = Math.floor(mins / 60)
-    if (hrs < 24) return `${hrs}h ago`
-    return `${Math.floor(hrs / 24)}d ago`
+  const formatTime = (dateStr) => {
+    if (!dateStr) return ''
+    // Backend sends LocalDateTime without Z — append Z to treat as UTC
+    const utcStr = dateStr.includes('Z') || dateStr.includes('+') ? dateStr : dateStr + 'Z'
+    const date = new Date(utcStr)
+    // Show exact time in IST (Indian timezone)
+    return date.toLocaleString('en-IN', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true,
+      timeZone: 'Asia/Kolkata'
+    })
   }
 
   return (
@@ -257,7 +264,7 @@ export default function NotificationBell() {
                     {n.message}
                   </div>
                   <div style={{ fontSize: '0.7rem', color: '#aaa' }}>
-                    {n.createdAt ? timeAgo(n.createdAt) : ''}
+                    {n.createdAt ? formatTime(n.createdAt) : ''}
                   </div>
                 </div>
                 {/* Unread dot */}
