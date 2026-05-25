@@ -151,21 +151,41 @@ export default function MyInterviews() {
 
                     {/* Join button for upcoming video interviews */}
                     {iv.meetingLink && iv.status==='SCHEDULED' && (
-                      <a href={iv.meetingLink} target="_blank" rel="noreferrer"
-                        onClick={async () => {
-                          if (joining === iv.id) return
-                          setJoining(iv.id)
-                          try {
-                            await joinInterview(iv.id)
-                            fetchInterviews()
-                          } catch(e) { console.error(e) }
-                          finally { setJoining(null) }
-                        }}
-                        className="btn w-100 text-white rounded-pill fw-semibold"
-                        style={{background:'#0A66C2',fontSize:'0.85rem'}}>
-                        <i className="bi bi-camera-video me-2"></i>
-                        {upcoming?'Join Interview':'Open Meeting Link'}
-                      </a>
+                      <div className="d-flex flex-column gap-2">
+                        <a href={iv.meetingLink} target="_blank" rel="noreferrer"
+                          className="btn w-100 text-white rounded-pill fw-semibold"
+                          style={{background:'#0A66C2',fontSize:'0.85rem'}}>
+                          <i className="bi bi-camera-video me-2"></i>Open Meeting Link
+                        </a>
+                        <button
+                          className="btn w-100 rounded-pill fw-semibold"
+                          style={{background:'#CCFBF1',color:'#0F766E',border:'1px solid #99F6E4',fontSize:'0.82rem'}}
+                          disabled={joining === iv.id}
+                          onClick={async () => {
+                            if (joining === iv.id) return
+                            if (!window.confirm('Mark this interview as completed? This will notify the employer to send you an offer.')) return
+                            setJoining(iv.id)
+                            try {
+                              await joinInterview(iv.id)
+                              fetchInterviews()
+                            } catch(e) { console.error(e) }
+                            finally { setJoining(null) }
+                          }}>
+                          {joining === iv.id
+                            ? <><span className="spinner-border spinner-border-sm me-2"></span>Marking...</>
+                            : <><i className="bi bi-check-circle me-2"></i>Mark Interview as Completed</>
+                          }
+                        </button>
+                      </div>
+                    )}
+                    {iv.status==='COMPLETED' && (
+                      <div className="rounded-3 p-2 text-center"
+                        style={{background:'#CCFBF1',border:'1px solid #99F6E4'}}>
+                        <i className="bi bi-check-circle-fill me-2" style={{color:'#0F766E'}}></i>
+                        <span className="small fw-semibold" style={{color:'#0F766E'}}>
+                          Interview completed! Waiting for employer decision.
+                        </span>
+                      </div>
                     )}
 
                     {/* Feedback from employer */}
