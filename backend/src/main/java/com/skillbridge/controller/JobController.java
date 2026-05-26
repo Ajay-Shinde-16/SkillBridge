@@ -66,7 +66,16 @@ public class JobController {
     public ResponseEntity<List<Job>> getMyJobs(Authentication auth) {
         User user = userRepository.findByEmail(auth.getName())
             .orElseThrow(() -> new RuntimeException("User not found"));
-        return ResponseEntity.ok(jobService.getJobsByEmployer(user.getId()));
+        List<Job> jobs = jobService.getJobsByEmployer(user.getId());
+        // Ensure companyName is always set from employer profile
+        String companyName = user.getCompanyName() != null && !user.getCompanyName().isEmpty()
+            ? user.getCompanyName() : user.getName();
+        jobs.forEach(j -> {
+            if (j.getCompanyName() == null || j.getCompanyName().isEmpty()) {
+                j.setCompanyName(companyName);
+            }
+        });
+        return ResponseEntity.ok(jobs);
     }
 
     @PutMapping("/{id}")
