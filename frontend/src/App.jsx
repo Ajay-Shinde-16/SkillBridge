@@ -112,7 +112,13 @@ function AllApplicants() {
                   style={{borderBottom:i<jobs.length-1?'1px solid #f1f5f9':'none'}}>
                   <div style={{flex:1}}>
                     <div className="fw-bold" style={{fontSize:'0.95rem'}}>{job.title}</div>
-                    <div className="text-muted small">{job.jobType?.replace('_',' ')} · {job.location||'Remote'}</div>
+                    <div className="d-flex align-items-center gap-2 flex-wrap mt-1">
+                      <span style={{background:'#EEF3F8',color:'#0A66C2',padding:'2px 10px',borderRadius:20,fontSize:'0.75rem',fontWeight:600,display:'inline-flex',alignItems:'center',gap:4}}>
+                        <i className="bi bi-building" style={{fontSize:'0.7rem'}}></i>
+                        {job.companyName || user?.name || 'Company'}
+                      </span>
+                      <span className="text-muted" style={{fontSize:'0.78rem'}}>{job.jobType?.replace('_',' ')} · {job.location||'Remote'}</span>
+                    </div>
                   </div>
                   <span className="badge rounded-pill px-3 py-2"
                     style={{background:statusBg[job.status]||'#F1F5F9',color:statusColor[job.status]||'#475569',fontSize:'0.75rem'}}>
