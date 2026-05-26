@@ -68,12 +68,16 @@ function WithBackground({ children }) {
 
 // ── Inline AllApplicants — no separate file needed ──
 function AllApplicants() {
+  const { user } = useAuth()
   const [jobs, setJobs] = React.useState([])
   const [loading, setLoading] = React.useState(true)
   React.useEffect(() => {
-    import('./services/api').then(({ getMyJobs }) => {
-      getMyJobs().then(({ data }) => { setJobs(data || []); setLoading(false) }).catch(() => setLoading(false))
+    fetch(`${import.meta.env.VITE_API_URL || ''}/api/jobs/my-jobs`, {
+      headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
     })
+    .then(r => r.json())
+    .then(data => { setJobs(Array.isArray(data) ? data : []); setLoading(false) })
+    .catch(() => setLoading(false))
   }, [])
   const statusBg    = { OPEN:'#D1FAE5', PAUSED:'#FEF3C7', CLOSED:'#FEE2E2' }
   const statusColor = { OPEN:'#057642', PAUSED:'#d97706', CLOSED:'#dc3545' }
