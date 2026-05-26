@@ -131,7 +131,7 @@ export default function MyOffers() {
                     {/* Job Info */}
                     <div className="col-12 col-md-5">
                       <div className="fw-bold" style={{fontSize:'1.1rem'}}>{app.jobTitle}</div>
-                      <div className="text-muted small"><i className="bi bi-building me-1"></i>{app.companyName}</div>
+                      <span className="company-badge"><i className="bi bi-building"></i>{app.companyName}</span>
                       <div className="mt-2">
                         <span className="badge rounded-pill px-3 py-2" style={{background:'#D1FAE5',color:'#065f46',fontSize:'0.8rem'}}>
                           <i className="bi bi-trophy-fill me-1"></i>Offer Received
@@ -214,7 +214,7 @@ export default function MyOffers() {
                   <div className="d-flex align-items-center justify-content-between flex-wrap gap-3">
                     <div>
                       <div className="fw-bold">{app.jobTitle}</div>
-                      <div className="text-muted small"><i className="bi bi-building me-1"></i>{app.companyName}</div>
+                      <span className="company-badge"><i className="bi bi-building"></i>{app.companyName}</span>
                     </div>
                     <div className="d-flex align-items-center gap-2 flex-wrap">
                       {/* Download button for accepted offers too */}

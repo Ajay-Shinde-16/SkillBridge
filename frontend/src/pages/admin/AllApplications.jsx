@@ -118,7 +118,7 @@ export default function AllApplications() {
                             <div className="text-muted" style={{ fontSize: '0.75rem' }}>{app.seekerEmail}</div>
                           </td>
                           <td className="fw-semibold">{app.jobTitle}</td>
-                          <td className="d-none d-md-table-cell text-muted">{app.companyName}</td>
+                          <td className="d-none d-md-table-cell"><span className="company-badge"><i className="bi bi-building"></i>{app.companyName}</span></td>
                           <td>
                             <span className="fw-bold" style={{ color: scoreColor(app.skillMatchScore) }}>
                               {app.skillMatchScore}%

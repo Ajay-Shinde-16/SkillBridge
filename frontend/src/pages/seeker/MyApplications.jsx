@@ -165,7 +165,7 @@ export default function MyApplications() {
                     <div className="col-12 col-md-4">
                       <div className="fw-bold" style={{ fontSize: '1rem' }}>{app.jobTitle}</div>
                       <div className="text-muted small">
-                        <i className="bi bi-building me-1"></i>{app.companyName}
+                        <span className="company-badge"><i className="bi bi-building"></i>{app.companyName}</span>
                       </div>
                       <div className="mt-2">
                         <span className="badge rounded-pill px-3 py-1"

@@ -954,3 +954,20 @@ body.dark-mode .badge.bg-info {
   0%, 100% { opacity: 1; }
   50%       { opacity: 0; }
 }
+
+/* ─── COMPANY NAME HIGHLIGHT ─── */
+.company-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: #EEF3F8;
+  color: #0A66C2;
+  padding: 2px 10px;
+  border-radius: 20px;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+body.dark-mode .company-badge {
+  background: #1c2d3e !important;
+  color: #60a5fa !important;
+}

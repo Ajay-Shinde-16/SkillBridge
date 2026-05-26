@@ -96,7 +96,7 @@ export default function ManageJobs() {
                       {filtered.map(job => (
                         <tr key={job.id} style={{ opacity: deleting === job.id ? 0.5 : 1 }}>
                           <td className="fw-semibold">{job.title}</td>
-                          <td className="text-muted">{job.companyName}</td>
+                          <td><span className="company-badge"><i className="bi bi-building"></i>{job.companyName}</span></td>
                           <td className="d-none d-md-table-cell text-muted small">
                             ₹{job.minSalary?.toLocaleString()}–{job.maxSalary?.toLocaleString()}
                           </td>
