@@ -117,17 +117,17 @@ export default function NotificationBell() {
     if (!dateStr) return ''
     // Backend sends LocalDateTime without Z — append Z to treat as UTC
     const utcStr = dateStr.includes('Z') || dateStr.includes('+') ? dateStr : dateStr + 'Z'
-    const date = new Date(utcStr)
-    // Show exact time in IST (Indian timezone)
-    return date.toLocaleString('en-IN', {
-      day: '2-digit',
-      month: 'short',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: true,
-      timeZone: 'Asia/Kolkata'
-    })
+    const diff = Date.now() - new Date(utcStr).getTime()
+    const secs = Math.floor(diff / 1000)
+    const mins = Math.floor(secs / 60)
+    const hrs  = Math.floor(mins / 60)
+    const days = Math.floor(hrs  / 24)
+    if (secs < 30)  return 'just now'
+    if (mins < 1)   return `${secs}s ago`
+    if (mins < 60)  return `${mins} min ago`
+    if (hrs  < 24)  return `${hrs} hr ago`
+    if (days < 7)   return `${days} day${days>1?'s':''} ago`
+    return new Date(utcStr).toLocaleDateString('en-IN', { day:'numeric', month:'short' })
   }
 
   return (

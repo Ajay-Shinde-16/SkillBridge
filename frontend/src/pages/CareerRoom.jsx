@@ -70,29 +70,36 @@ export default function CareerRoom() {
   const [matchedJobs, setMatchedJobs] = useState([])
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
-    const load = async () => {
-      try {
-        const [profRes, appRes] = await Promise.all([
-          getProfile(),
-          getMyApplications().catch(() => ({ data: [] })),
-        ])
-        setProfile(profRes.data)
-        setApplications(appRes.data || [])
+  const load = async () => {
+    try {
+      const [profRes, appRes] = await Promise.all([
+        getProfile(),
+        getMyApplications().catch(() => ({ data: [] })),
+      ])
+      setProfile(profRes.data)
+      const apps = appRes.data || []
+      setApplications(apps)
 
-        // fetch matched jobs using user's skills
-        const skills = profRes.data?.skillsList || []
-        if (skills.length > 0) {
-          const jobRes = await searchJobs({ keyword: skills.slice(0, 3).join(' ') }).catch(() => ({ data: [] }))
-          setMatchedJobs((jobRes.data || []).slice(0, 4))
-        }
-      } catch (e) {
-        console.error(e)
-      } finally {
-        setLoading(false)
+      // fetch matched jobs using user's skills
+      const skills = profRes.data?.skillsList ||
+        profRes.data?.skills?.split(',').filter(Boolean) || []
+      if (skills.length > 0) {
+        const jobRes = await searchJobs({ keyword: skills.slice(0, 3).join(' ') })
+          .catch(() => ({ data: [] }))
+        setMatchedJobs((jobRes.data || []).slice(0, 4))
       }
+    } catch (e) {
+      console.error(e)
+    } finally {
+      setLoading(false)
     }
+  }
+
+  useEffect(() => {
     load()
+    // Auto refresh every 30 seconds
+    const interval = setInterval(load, 30000)
+    return () => clearInterval(interval)
   }, [])
 
   // ── Compute real stats from actual data ──

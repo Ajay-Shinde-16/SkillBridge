@@ -3,7 +3,10 @@ import axios from 'axios'
 const BASE_URL = import.meta.env.VITE_API_URL
   ? `${import.meta.env.VITE_API_URL}/api`
   : '/api'
-const API = axios.create({ baseURL: BASE_URL })
+const API = axios.create({
+  baseURL: BASE_URL,
+  timeout: 15000, // 15 second timeout
+})
 
 API.interceptors.request.use((config) => {
   const token = localStorage.getItem('token')
