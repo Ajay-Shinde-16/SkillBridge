@@ -84,6 +84,7 @@ export default function EmployerInterviews() {
                     <div className="row align-items-start g-3">
                       <div className="col-12 col-md-4">
                         <div className="fw-bold">{iv.jobTitle}</div>
+                        {iv.companyName && <div className="text-muted small"><i className="bi bi-building me-1"></i>{iv.companyName}</div>}
                         <div className="text-muted small">
                           <i className="bi bi-person me-1"></i>{iv.seekerName}
                         </div>

@@ -168,6 +168,7 @@ export default function EmployerDashboard() {
                         <div className="flex-fill">
                           <div className="d-flex align-items-center gap-2 flex-wrap mb-1">
                             <span className="fw-bold">{job.title}</span>
+                            {job.companyName && <span className="text-muted" style={{fontSize:'0.8rem'}}>— {job.companyName}</span>}
                             <span className={`badge bg-${statusColors[job.status]||'secondary'} rounded-pill`}
                               style={{fontSize:'0.72rem'}}>
                               {job.status}
