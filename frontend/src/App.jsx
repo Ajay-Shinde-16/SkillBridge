@@ -166,7 +166,7 @@ function AppRoutes() {
       <Route path="/employer/schedule/:applicationId" element={<ProtectedRoute roles={['EMPLOYER']}><WithNav><ScheduleInterview /></WithNav></ProtectedRoute>} />
       <Route path="/employer/interviews" element={<ProtectedRoute roles={['EMPLOYER']}><WithNav><EmployerInterviews /></WithNav></ProtectedRoute>} />
       <Route path="/employer/company-profile" element={<ProtectedRoute roles={['EMPLOYER']}><WithNav><CompanyProfile /></WithNav></ProtectedRoute>} />
-      <Route path="/employer/applicants" element={<ProtectedRoute roles={['EMPLOYER']}><WithNav><EmployerDashboard /></WithNav></ProtectedRoute>} />
+      <Route path="/employer/applicants" element={<ProtectedRoute roles={['EMPLOYER']}><WithNav><AllApplicants /></WithNav></ProtectedRoute>} />
 
       {/* ── ADMIN ── */}
       <Route path="/admin/dashboard" element={<ProtectedRoute roles={['ADMIN']}><WithNav><AdminDashboard /></WithNav></ProtectedRoute>} />
