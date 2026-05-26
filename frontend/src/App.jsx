@@ -27,6 +27,7 @@ import ManageApplications from './pages/employer/ManageApplications'
 import ScheduleInterview from './pages/employer/ScheduleInterview'
 import EmployerInterviews from './pages/employer/EmployerInterviews'
 import CompanyProfile from './pages/employer/CompanyProfile'
+import AllApplicants from './pages/employer/AllApplicants'
 
 import AdminLogin from './pages/admin/AdminLogin'
 import AdminRegister from './pages/admin/AdminRegister'
@@ -101,6 +102,7 @@ function AppRoutes() {
       <Route path="/employer/schedule/:applicationId" element={<ProtectedRoute roles={['EMPLOYER']}><WithNav><ScheduleInterview /></WithNav></ProtectedRoute>} />
       <Route path="/employer/interviews" element={<ProtectedRoute roles={['EMPLOYER']}><WithNav><EmployerInterviews /></WithNav></ProtectedRoute>} />
       <Route path="/employer/company-profile" element={<ProtectedRoute roles={['EMPLOYER']}><WithNav><CompanyProfile /></WithNav></ProtectedRoute>} />
+      <Route path="/employer/applicants" element={<ProtectedRoute roles={['EMPLOYER']}><WithNav><AllApplicants /></WithNav></ProtectedRoute>} />
 
       {/* ── ADMIN ── */}
       <Route path="/admin/dashboard" element={<ProtectedRoute roles={['ADMIN']}><WithNav><AdminDashboard /></WithNav></ProtectedRoute>} />
