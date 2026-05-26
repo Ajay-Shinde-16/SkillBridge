@@ -27,6 +27,7 @@ import ManageApplications from './pages/employer/ManageApplications'
 import ScheduleInterview from './pages/employer/ScheduleInterview'
 import EmployerInterviews from './pages/employer/EmployerInterviews'
 import CompanyProfile from './pages/employer/CompanyProfile'
+import AllApplicants from './pages/employer/AllApplicants'
 
 
 import AdminLogin from './pages/admin/AdminLogin'
