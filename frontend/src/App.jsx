@@ -27,7 +27,6 @@ import ManageApplications from './pages/employer/ManageApplications'
 import ScheduleInterview from './pages/employer/ScheduleInterview'
 import EmployerInterviews from './pages/employer/EmployerInterviews'
 import CompanyProfile from './pages/employer/CompanyProfile'
-import AllApplicants from './pages/employer/AllApplicants'
 
 
 import AdminLogin from './pages/admin/AdminLogin'
@@ -64,6 +63,70 @@ function WithBackground({ children }) {
     <StandoutAnimations />
     <div className="sb-page-shell">{children}</div>
   </>
+}
+
+
+// ── Inline AllApplicants — no separate file needed ──
+function AllApplicants() {
+  const [jobs, setJobs] = React.useState([])
+  const [loading, setLoading] = React.useState(true)
+  React.useEffect(() => {
+    import('./services/api').then(({ getMyJobs }) => {
+      getMyJobs().then(({ data }) => { setJobs(data || []); setLoading(false) }).catch(() => setLoading(false))
+    })
+  }, [])
+  const statusBg    = { OPEN:'#D1FAE5', PAUSED:'#FEF3C7', CLOSED:'#FEE2E2' }
+  const statusColor = { OPEN:'#057642', PAUSED:'#d97706', CLOSED:'#dc3545' }
+  return (
+    <div className="container-fluid p-0"><div className="d-flex">
+      <div className="sidebar d-none d-md-block">
+        <p className="text-muted small fw-bold text-uppercase px-2 mb-2" style={{fontSize:'0.7rem',letterSpacing:'0.8px'}}>Menu</p>
+        <nav className="nav flex-column">
+          {[{to:'/employer/dashboard',icon:'bi-speedometer2',label:'Dashboard'},{to:'/employer/post-job',icon:'bi-plus-circle',label:'Post a Job'},{to:'/employer/applicants',icon:'bi-people-fill',label:'Applicants',active:true},{to:'/employer/interviews',icon:'bi-camera-video',label:'Interviews'},{to:'/employer/company-profile',icon:'bi-building',label:'Company'}].map((item,i)=>(
+            <a key={i} href={item.to} className={`nav-link${item.active?' active':''}`}><i className={`bi ${item.icon}`}></i>{item.label}</a>
+          ))}
+        </nav>
+      </div>
+      <div className="flex-fill main-content p-3">
+        <div className="welcome-header mb-4">
+          <h2 className="fw-bold mb-1"><i className="bi bi-people-fill me-2"></i>Applicants</h2>
+          <p className="mb-0 opacity-75 small">Select a job to view its applicants</p>
+        </div>
+        {loading ? (
+          <div className="text-center py-5"><div className="spinner-border" style={{color:'#0A66C2'}}></div></div>
+        ) : jobs.length === 0 ? (
+          <div className="text-center py-5">
+            <i className="bi bi-briefcase fs-1 text-muted mb-3 d-block"></i>
+            <p className="text-muted">No jobs posted yet</p>
+            <a href="/employer/post-job" className="btn text-white rounded-pill px-4" style={{background:'#0A66C2'}}>Post a Job</a>
+          </div>
+        ) : (
+          <div className="card border-0 shadow-sm rounded-4">
+            <div className="card-body p-0">
+              {jobs.map((job,i)=>(
+                <div key={job.id} className="d-flex align-items-center gap-3 p-3"
+                  style={{borderBottom:i<jobs.length-1?'1px solid #f1f5f9':'none'}}>
+                  <div style={{flex:1}}>
+                    <div className="fw-bold" style={{fontSize:'0.95rem'}}>{job.title}</div>
+                    <div className="text-muted small">{job.jobType?.replace('_',' ')} · {job.location||'Remote'}</div>
+                  </div>
+                  <span className="badge rounded-pill px-3 py-2"
+                    style={{background:statusBg[job.status]||'#F1F5F9',color:statusColor[job.status]||'#475569',fontSize:'0.75rem'}}>
+                    {job.status}
+                  </span>
+                  <a href={`/employer/applications/${job.id}`}
+                    className="btn rounded-pill fw-semibold"
+                    style={{background:'#0A66C2',color:'#fff',border:'none',fontSize:'0.85rem',padding:'7px 18px',whiteSpace:'nowrap'}}>
+                    <i className="bi bi-people me-2"></i>{job.applicationCount||0} Applicants
+                  </a>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+    </div></div>
+  )
 }
 
 function AppRoutes() {
