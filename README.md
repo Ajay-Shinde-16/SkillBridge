@@ -1,5 +1,5 @@
 # SkillBridge — Remote Job Portal with Verified Skill Tagging
-### CDAC Project | Group: PGCP-AC-002 | Leader: Sudarshan Bhandare
+### CDAC Project
 
 ---
 
@@ -80,10 +80,10 @@ UPDATE users SET role = 'ADMIN' WHERE email = 'admin@skillbridge.com';
 
 ---
 
-## Team Division — PGCP-AC-002
+## Team Division
 | Member | Module |
 |--------|--------|
-| Sudarshan Bhandare (Leader) | Auth + Admin Panel + Project Setup |
+| Ajay Shinde (Leader) | Auth + Admin Panel + Project Setup |
 | Member 2 | Job Module + Search + Skill Match Score |
 | Member 3 | Application Tracker + Interview + Offers |
 | Member 4 | React Frontend (16 pages) + Responsive UI |
@@ -93,8 +93,8 @@ UPDATE users SET role = 'ADMIN' WHERE email = 'admin@skillbridge.com';
 ## Hosting (Free)
 | Service | Purpose | URL |
 |---------|---------|-----|
-| Railway | Backend (Spring Boot) | railway.app |
-| PlanetScale / Clever Cloud | MySQL Database | Free MySQL cloud |
+| Render | Backend (Spring Boot) | Render.com |
+| Railway | MySQL Database | railway.app |
 | Vercel | Frontend (React) | vercel.com |
 
 *SkillBridge — CDAC PGCP Bangalore 2026*
