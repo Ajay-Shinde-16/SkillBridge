@@ -80,9 +80,12 @@ public class JobController {
 
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('EMPLOYER') or hasRole('ADMIN')")
-    public ResponseEntity<?> updateJob(@PathVariable String id, @RequestBody Job job) {
+    public ResponseEntity<?> updateJob(@PathVariable String id, @RequestBody Job job, Authentication auth) {
         try {
-            return ResponseEntity.ok(jobService.updateJob(id, job));
+            User user = userRepository.findByEmail(auth.getName())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+            boolean isAdmin = "ADMIN".equals(user.getRole());
+            return ResponseEntity.ok(jobService.updateJob(id, job, user.getId(), isAdmin));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
@@ -90,18 +93,32 @@ public class JobController {
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('EMPLOYER') or hasRole('ADMIN')")
-    public ResponseEntity<?> deleteJob(@PathVariable String id) {
-        jobService.deleteJob(id);
-        return ResponseEntity.ok("Job deleted successfully");
+    public ResponseEntity<?> deleteJob(@PathVariable String id, Authentication auth) {
+        try {
+            User user = userRepository.findByEmail(auth.getName())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+            boolean isAdmin = "ADMIN".equals(user.getRole());
+            jobService.deleteJob(id, user.getId(), isAdmin);
+            return ResponseEntity.ok("Job deleted successfully");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     // ─── Quick Status Toggle ───
     @PutMapping("/{id}/status")
     @PreAuthorize("hasRole('EMPLOYER') or hasRole('ADMIN')")
     public ResponseEntity<?> toggleStatus(@PathVariable String id,
-                                           @RequestBody java.util.Map<String, String> body) {
+                                           @RequestBody java.util.Map<String, String> body,
+                                           Authentication auth) {
         try {
+            User requestingUser = userRepository.findByEmail(auth.getName())
+                .orElseThrow(() -> new RuntimeException("User not found"));
             Job job = jobService.getJobById(id);
+            boolean isAdmin = "ADMIN".equals(requestingUser.getRole());
+            if (!isAdmin && (job.getEmployerId() == null || !job.getEmployerId().equals(requestingUser.getId()))) {
+                return ResponseEntity.status(403).body("You are not authorized to change this job's status.");
+            }
             String prevStatus = job.getStatus();
             String newStatus = body.get("status");
             job.setStatus(newStatus);

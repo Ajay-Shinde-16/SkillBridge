@@ -33,7 +33,7 @@ public class AuthService {
 
     public AuthDTOs.AuthResponse register(AuthDTOs.RegisterRequest request) {
         if (userRepository.existsByEmail(request.getEmail())) {
-            throw new RuntimeException("Email already registered. Please use a different email.");
+            throw new RuntimeException("This email is already registered. Please login instead.");
         }
 
         String role = request.getRole() != null ? request.getRole().toUpperCase() : "SEEKER";
@@ -75,7 +75,7 @@ public class AuthService {
     public AuthDTOs.AuthResponse login(AuthDTOs.LoginRequest request) {
         // Find user first
         User user = userRepository.findByEmail(request.getEmail())
-            .orElseThrow(() -> new RuntimeException("No account found with this email address"));
+            .orElseThrow(() -> new RuntimeException("No account found with this email. Please register first."));
 
         // ─── SMART PASSWORD CHECK ───
         // Handles BOTH cases:

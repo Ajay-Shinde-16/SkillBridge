@@ -53,10 +53,16 @@ public class SecurityConfig {
         return http.build();
     }
 
+    @org.springframework.beans.factory.annotation.Value("${app.frontend-url:http://localhost:5173}")
+    private String frontendUrl;
+
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOriginPatterns(List.of("*"));
+        // Wildcard "*" origins combined with allowCredentials(true) lets ANY website
+        // make authenticated requests using a logged-in user's cookies/token. Restrict
+        // to the actual deployed frontend (set via FRONTEND_URL env var) instead.
+        config.setAllowedOriginPatterns(List.of(frontendUrl, "http://localhost:5173"));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);

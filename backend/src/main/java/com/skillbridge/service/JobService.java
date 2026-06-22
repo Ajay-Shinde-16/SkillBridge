@@ -59,8 +59,11 @@ public class JobService {
             .orElseThrow(() -> new RuntimeException("Job not found with id: " + id));
     }
 
-    public Job updateJob(String id, Job updatedJob) {
+    public Job updateJob(String id, Job updatedJob, String requestingUserId, boolean isAdmin) {
         Job job = getJobById(id);
+        if (!isAdmin && (job.getEmployerId() == null || !job.getEmployerId().equals(requestingUserId))) {
+            throw new RuntimeException("You are not authorized to edit this job posting.");
+        }
         if (updatedJob.getTitle() != null) job.setTitle(updatedJob.getTitle());
         if (updatedJob.getDescription() != null) job.setDescription(updatedJob.getDescription());
         if (updatedJob.getRequiredSkills() != null) {
@@ -79,7 +82,11 @@ public class JobService {
         return jobRepository.save(job);
     }
 
-    public void deleteJob(String id) {
+    public void deleteJob(String id, String requestingUserId, boolean isAdmin) {
+        Job job = getJobById(id);
+        if (!isAdmin && (job.getEmployerId() == null || !job.getEmployerId().equals(requestingUserId))) {
+            throw new RuntimeException("You are not authorized to delete this job posting.");
+        }
         jobRepository.deleteById(id);
     }
 

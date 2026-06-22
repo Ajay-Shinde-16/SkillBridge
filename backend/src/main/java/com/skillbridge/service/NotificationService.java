@@ -40,10 +40,14 @@ public class NotificationService {
         notificationRepository.saveAll(unread);
     }
 
-    public void markRead(String id) {
+    public void markRead(String id, String requestingUserId) {
         notificationRepository.findById(id).ifPresent(n -> {
-            n.setRead(true);
-            notificationRepository.save(n);
+            if (n.getUserId() != null && n.getUserId().equals(requestingUserId)) {
+                n.setRead(true);
+                notificationRepository.save(n);
+            }
+            // Silently no-op if the notification doesn't belong to this user,
+            // rather than revealing whether that notification ID exists at all.
         });
     }
 

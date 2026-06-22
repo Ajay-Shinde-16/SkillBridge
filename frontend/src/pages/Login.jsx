@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { login as loginAPI } from '../services/api'
 import { useAuth } from '../context/AuthContext'
@@ -8,8 +8,15 @@ export default function Login() {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
-  const { login } = useAuth()
+  const { login, idleLoggedOut, setIdleLoggedOut } = useAuth()
   const navigate = useNavigate()
+
+  useEffect(() => {
+    if (idleLoggedOut) {
+      setError("You were logged out due to 5 minutes of inactivity. Please login again.")
+      setIdleLoggedOut(false)
+    }
+  }, [idleLoggedOut, setIdleLoggedOut])
 
   const handleSubmit = async (e) => {
     e.preventDefault()

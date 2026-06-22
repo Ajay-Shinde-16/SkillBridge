@@ -43,8 +43,10 @@ public class NotificationController {
     }
 
     @PutMapping("/{id}/read")
-    public ResponseEntity<?> markRead(@PathVariable String id) {
-        notificationService.markRead(id);
+    public ResponseEntity<?> markRead(@PathVariable String id, Authentication auth) {
+        User user = userRepository.findByEmail(auth.getName())
+            .orElseThrow(() -> new RuntimeException("User not found"));
+        notificationService.markRead(id, user.getId());
         return ResponseEntity.ok(Map.of("message", "Notification marked as read"));
     }
 
