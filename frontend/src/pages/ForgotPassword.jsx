@@ -11,7 +11,6 @@ export default function ForgotPassword() {
   const [step, setStep] = useState(1)
   const [email, setEmail] = useState('')
   const [otp, setOtp] = useState('')
-  const [screenOtp, setScreenOtp] = useState('')
   const [newPassword, setNewPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [loading, setLoading] = useState(false)
@@ -25,16 +24,12 @@ export default function ForgotPassword() {
     if (!email.trim()) { setError('Please enter your email'); return }
     setLoading(true)
     setError('')
-    setScreenOtp('')
     setOtp('')
     try {
-      const res = await axios.post(
+      await axios.post(
         `${BASE_URL}/users/forgot-password`,
         { email }
       )
-      const otpVal = String(res.data?.debug_otp || '').trim()
-      setScreenOtp(otpVal)
-      setOtp(otpVal)
       setStep(2)
     } catch (err) {
       setError(
@@ -165,43 +160,20 @@ export default function ForgotPassword() {
                 /* Step 2 - Show OTP + Reset Password */
                 <form onSubmit={handleReset}>
 
-                  {/* BIG OTP DISPLAY */}
+                  {/* Check-your-email notice */}
                   <div style={{
-                    background: '#FEF3C7',
-                    border: '3px solid #F59E0B',
+                    background: '#EEF3F8',
+                    border: '1px solid #0A66C2',
                     borderRadius: 16,
-                    padding: 24,
+                    padding: 20,
                     marginBottom: 20,
                     textAlign: 'center'
                   }}>
-                    <div style={{
-                      color: '#92400e',
-                      fontWeight: 700,
-                      fontSize: 14,
-                      marginBottom: 12
-                    }}>
-                      🔑 YOUR OTP CODE
+                    <div style={{ color: '#0A66C2', fontWeight: 700, fontSize: 14, marginBottom: 6 }}>
+                      📧 Check your inbox
                     </div>
-                    <div style={{
-                      background: '#ffffff',
-                      border: '3px solid #0A66C2',
-                      borderRadius: 12,
-                      padding: '16px 20px',
-                      fontSize: 42,
-                      fontWeight: 900,
-                      letterSpacing: 16,
-                      color: '#0A66C2',
-                      fontFamily: 'monospace',
-                      marginBottom: 10
-                    }}>
-                      {screenOtp}
-                    </div>
-                    <div style={{
-                      color: '#065f46',
-                      fontWeight: 600,
-                      fontSize: 13
-                    }}>
-                      ✅ Valid for 10 minutes
+                    <div style={{ color: '#444', fontSize: 13 }}>
+                      We sent a 6-digit code to <strong>{email}</strong>. It's valid for 10 minutes.
                     </div>
                   </div>
 
@@ -278,7 +250,6 @@ export default function ForgotPassword() {
                     onClick={() => {
                       setStep(1)
                       setError('')
-                      setScreenOtp('')
                       setOtp('')
                     }}>
                     ← Generate New OTP

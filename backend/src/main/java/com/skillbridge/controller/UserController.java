@@ -88,10 +88,8 @@ public class UserController {
         } catch (Exception e) {
             log.error("Email failed: {}", e.getMessage());
         }
-        // Always return OTP on screen as backup
         return ResponseEntity.ok(Map.of(
-            "message", "OTP generated successfully. Valid for 10 minutes.",
-            "debug_otp", otp
+            "message", "OTP generated successfully. Please check your email. Valid for 10 minutes."
         ));
     }
 
