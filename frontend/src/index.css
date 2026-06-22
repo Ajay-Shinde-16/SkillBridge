@@ -8,8 +8,17 @@
 
 body {
   background-color: #f3f2ef;
-  font-family: 'Segoe UI', Arial, sans-serif;
+  font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
   font-size: 14px;
+  font-feature-settings: 'tnum' 1, 'cv11' 1;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, h5, h6,
+.navbar-brand,
+.stat-card .number {
+  font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+  letter-spacing: -0.01em;
 }
 
 /* ─── SKILL BADGES ─── */
