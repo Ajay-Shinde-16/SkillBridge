@@ -24,6 +24,7 @@ public class ApplicationService {
     private final JobRepository jobRepository;
     private final JobService jobService;
     private final EmailService emailService;
+    private final PdfService pdfService;
     private final NotificationService notificationService;
 
     public Application applyToJob(String seekerId, String jobId, String coverLetter) {
@@ -187,7 +188,22 @@ public class ApplicationService {
                             ? userRepository.findById(job.getEmployerId()).orElse(null)
                             : null;
 
-                        // Send offer letter email to seeker
+                        // Generate the same offer letter PDF used for download, then attach it
+                        byte[] offerLetterPdf = pdfService.generateOfferLetter(
+                            seeker.getName(),
+                            seeker.getEmail(),
+                            app.getJobTitle(),
+                            app.getCompanyName(),
+                            employer != null ? employer.getCompanyWebsite() : "",
+                            employer != null ? employer.getName() : app.getCompanyName(),
+                            job != null ? job.getMinSalary() : 0,
+                            job != null ? job.getMaxSalary() : 0,
+                            job != null ? job.getJobType() : "FULL_TIME",
+                            job != null && job.isRemote(),
+                            employerNote
+                        );
+
+                        // Send offer letter email to seeker, with real PDF attached
                         emailService.sendOfferLetterEmail(
                             seeker.getEmail(),
                             seeker.getName(),
@@ -199,7 +215,8 @@ public class ApplicationService {
                             job != null ? job.getMaxSalary() : 0,
                             job != null ? job.getJobType() : "FULL_TIME",
                             job != null && job.isRemote(),
-                            employerNote
+                            employerNote,
+                            offerLetterPdf
                         );
 
                         // Notify seeker

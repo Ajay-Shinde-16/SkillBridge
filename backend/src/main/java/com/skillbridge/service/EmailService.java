@@ -6,6 +6,7 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,8 +29,14 @@ public class EmailService {
 
     private static final String BREVO_ENDPOINT = "https://api.brevo.com/v3/smtp/email";
 
-    // ─── Core send method using Brevo HTTP API ───
+    // ─── Core send method using Brevo HTTP API (no attachment) ───
     private void sendEmail(String to, String subject, String html) {
+        sendEmail(to, subject, html, null, null);
+    }
+
+    // ─── Core send method using Brevo HTTP API (with optional PDF attachment) ───
+    private void sendEmail(String to, String subject, String html,
+                            byte[] attachmentBytes, String attachmentFilename) {
         try {
             if (brevoApiKey == null || brevoApiKey.isBlank()) {
                 log.error("❌ Email not sent to {} — BREVO_API_KEY is not set", to);
@@ -55,6 +62,13 @@ public class EmailService {
             body.put("to", List.of(recipient));
             body.put("subject", subject);
             body.put("htmlContent", html);
+
+            if (attachmentBytes != null && attachmentBytes.length > 0) {
+                Map<String, Object> attachment = new HashMap<>();
+                attachment.put("content", Base64.getEncoder().encodeToString(attachmentBytes));
+                attachment.put("name", attachmentFilename != null ? attachmentFilename : "attachment.pdf");
+                body.put("attachment", List.of(attachment));
+            }
 
             HttpEntity<Map<String, Object>> request = new HttpEntity<>(body, headers);
 
@@ -111,16 +125,18 @@ public class EmailService {
                 scheduledDateTime, mode, meetingLink, venue));
     }
 
-    // ─── 5. Offer Letter Email ───
+    // ─── 5. Offer Letter Email (with real PDF attachment) ───
     public void sendOfferLetterEmail(String toEmail, String seekerName,
                                       String jobTitle, String companyName,
                                       String companyWebsite, String employerName,
                                       double minSalary, double maxSalary,
                                       String jobType, boolean remote,
-                                      String employerNote) {
+                                      String employerNote, byte[] offerLetterPdf) {
+        String filename = "OfferLetter_" + seekerName.replace(" ", "_") + ".pdf";
         sendEmail(toEmail,
             "Job Offer - " + jobTitle + " at " + companyName,
-            buildOfferHtml(seekerName, jobTitle, companyName, employerNote));
+            buildOfferHtml(seekerName, jobTitle, companyName, employerNote),
+            offerLetterPdf, filename);
     }
 
     // ─── HTML Templates ───
