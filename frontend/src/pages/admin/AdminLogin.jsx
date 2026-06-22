@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { useNavigate, Link } from 'react-router-dom'
+import { useNavigate, Link, Navigate } from 'react-router-dom'
 import { login as loginAPI } from '../../services/api'
 import { useAuth } from '../../context/AuthContext'
 
@@ -7,8 +7,13 @@ export default function AdminLogin() {
   const [form, setForm] = useState({ email: '', password: '' })
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
-  const { login } = useAuth()
+  const { user, login } = useAuth()
   const navigate = useNavigate()
+
+  // Seekers/employers who are already logged in should never see this page,
+  // even if they navigate here directly by URL.
+  if (user && user.role === 'SEEKER') return <Navigate to="/seeker/dashboard" replace />
+  if (user && user.role === 'EMPLOYER') return <Navigate to="/employer/dashboard" replace />
 
   const handleSubmit = async (e) => {
     e.preventDefault()
