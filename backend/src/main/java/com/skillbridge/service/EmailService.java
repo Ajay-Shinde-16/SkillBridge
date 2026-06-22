@@ -14,34 +14,52 @@ import java.util.Map;
 @Service
 public class EmailService {
 
-    @Value("${resend.api.key:re_Z6Vn8Nga_97znSsb57KbU8w9C8aXsS7KM}")
-    private String resendApiKey;
+    @Value("${brevo.api.key}")
+    private String brevoApiKey;
+
+    @Value("${brevo.sender.email}")
+    private String senderEmail;
+
+    @Value("${brevo.sender.name}")
+    private String senderName;
 
     @Value("${app.base-url:http://localhost:5173}")
     private String baseUrl;
 
-    private static final String FROM_EMAIL = "onboarding@resend.dev";
-    private static final String FROM_NAME  = "SkillBridge";
+    private static final String BREVO_ENDPOINT = "https://api.brevo.com/v3/smtp/email";
 
-    // ─── Core send method using Resend HTTP API ───
+    // ─── Core send method using Brevo HTTP API ───
     private void sendEmail(String to, String subject, String html) {
         try {
+            if (brevoApiKey == null || brevoApiKey.isBlank()) {
+                log.error("❌ Email not sent to {} — BREVO_API_KEY is not set", to);
+                return;
+            }
+
             RestTemplate restTemplate = new RestTemplate();
 
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
-            headers.setBearerAuth(resendApiKey);
+            headers.set("api-key", brevoApiKey);
+            headers.setAccept(List.of(MediaType.APPLICATION_JSON));
+
+            Map<String, Object> sender = new HashMap<>();
+            sender.put("name", senderName);
+            sender.put("email", senderEmail);
+
+            Map<String, Object> recipient = new HashMap<>();
+            recipient.put("email", to);
 
             Map<String, Object> body = new HashMap<>();
-            body.put("from", FROM_NAME + " <" + FROM_EMAIL + ">");
-            body.put("to", List.of(to));
+            body.put("sender", sender);
+            body.put("to", List.of(recipient));
             body.put("subject", subject);
-            body.put("html", html);
+            body.put("htmlContent", html);
 
             HttpEntity<Map<String, Object>> request = new HttpEntity<>(body, headers);
 
             ResponseEntity<String> response = restTemplate.postForEntity(
-                "https://api.resend.com/emails",
+                BREVO_ENDPOINT,
                 request,
                 String.class
             );
@@ -49,8 +67,11 @@ public class EmailService {
             if (response.getStatusCode().is2xxSuccessful()) {
                 log.info("✅ Email sent to {} | Subject: {}", to, subject);
             } else {
-                log.error("❌ Email failed: {}", response.getBody());
+                log.error("❌ Email failed ({}): {}", response.getStatusCode(), response.getBody());
             }
+        } catch (org.springframework.web.client.HttpClientErrorException e) {
+            // Brevo returns 4xx with a JSON error body — log it so misconfig is obvious
+            log.error("❌ Email error for {}: {} | Response: {}", to, e.getMessage(), e.getResponseBodyAsString());
         } catch (Exception e) {
             log.error("❌ Email error for {}: {}", to, e.getMessage());
         }
