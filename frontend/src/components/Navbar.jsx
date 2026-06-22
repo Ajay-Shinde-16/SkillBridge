@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useRef } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { useTheme } from '../context/ThemeContext'
@@ -26,6 +26,22 @@ export default function Navbar() {
     window.addEventListener('keydown', fn)
     return () => window.removeEventListener('keydown', fn)
   }, [navigate])
+
+  // ── Secret admin access: 5 clicks on the logo/brand within 1.5s ──
+  const logoClickCount = useRef(0)
+  const logoClickTimer = useRef(null)
+  const handleLogoClick = (e) => {
+    logoClickCount.current += 1
+    if (logoClickTimer.current) clearTimeout(logoClickTimer.current)
+    if (logoClickCount.current >= 5) {
+      e.preventDefault()
+      logoClickCount.current = 0
+      navigate('/admin/login')
+      return
+    }
+    // Reset the count if the user pauses for more than 1.5s between clicks
+    logoClickTimer.current = setTimeout(() => { logoClickCount.current = 0 }, 1500)
+  }
 
   const mobileNav = () => {
     if (!user) return [
@@ -61,7 +77,7 @@ export default function Navbar() {
     <>
       <nav className="navbar navbar-expand-lg sticky-top shadow-sm" style={{background:'#0A66C2'}}>
         <div className="container-fluid px-3">
-          <Link className="navbar-brand d-flex align-items-center gap-2 text-white fw-bold" to="/">
+          <Link className="navbar-brand d-flex align-items-center gap-2 text-white fw-bold" to="/" onClick={handleLogoClick}>
             <img src="/logo.svg" alt="SkillBridge" width={28} height={28} style={{borderRadius:6}} onError={e=>e.target.style.display='none'}/>
             SkillBridge
           </Link>

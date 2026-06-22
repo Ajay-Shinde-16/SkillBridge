@@ -14,6 +14,7 @@ public class AuthDTOs {
         private String phone;
         private String companyName;
         private List<String> skills;
+        private String secretCode; // required only when role=ADMIN
     }
 
     @Data

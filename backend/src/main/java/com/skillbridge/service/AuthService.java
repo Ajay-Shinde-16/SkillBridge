@@ -6,6 +6,7 @@ import com.skillbridge.repository.UserRepository;
 import com.skillbridge.security.JwtUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -25,6 +26,9 @@ public class AuthService {
     private final JwtUtils jwtUtils;
     private final AuthenticationManager authenticationManager;
 
+    @Value("${admin.registration.secret:}")
+    private String adminRegistrationSecret;
+
     private static final List<String> ALLOWED_ROLES = List.of("SEEKER", "EMPLOYER", "ADMIN");
 
     public AuthDTOs.AuthResponse register(AuthDTOs.RegisterRequest request) {
@@ -35,6 +39,20 @@ public class AuthService {
         String role = request.getRole() != null ? request.getRole().toUpperCase() : "SEEKER";
         if (!ALLOWED_ROLES.contains(role)) {
             throw new RuntimeException("Invalid role. Allowed: SEEKER, EMPLOYER, ADMIN");
+        }
+
+        // ─── Gate ADMIN self-registration behind a server-side secret ───
+        // Without this, anyone could POST role=ADMIN and get full admin access.
+        if (role.equals("ADMIN")) {
+            if (adminRegistrationSecret == null || adminRegistrationSecret.isBlank()) {
+                // Fail closed: if no secret is configured on the server, admin
+                // self-registration is disabled entirely rather than left open.
+                throw new RuntimeException("Admin registration is currently disabled.");
+            }
+            if (request.getSecretCode() == null || !adminRegistrationSecret.equals(request.getSecretCode())) {
+                log.warn("⚠️ Rejected admin registration attempt for email {} — invalid secret code", request.getEmail());
+                throw new RuntimeException("Invalid admin registration code.");
+            }
         }
 
         User user = new User();
