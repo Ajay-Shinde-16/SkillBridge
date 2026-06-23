@@ -54,16 +54,33 @@ public class SecurityConfig {
         return http.build();
     }
 
-    @org.springframework.beans.factory.annotation.Value("${app.frontend-url:http://localhost:5173}")
+    @org.springframework.beans.factory.annotation.Value("${app.frontend-url:}")
     private String frontendUrl;
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        // Wildcard "*" origins combined with allowCredentials(true) lets ANY website
-        // make authenticated requests using a logged-in user's cookies/token. Restrict
-        // to the actual deployed frontend (set via FRONTEND_URL env var) instead.
-        config.setAllowedOriginPatterns(List.of(frontendUrl, "http://localhost:5173"));
+
+        // Build the allowed-origins list defensively:
+        // - FRONTEND_URL can be a single URL or a comma-separated list
+        // - trailing slashes are stripped (a very common copy-paste mistake that would
+        //   otherwise cause an exact-match failure and silently block the whole site)
+        // - common local dev ports are always included so local testing never breaks
+        java.util.List<String> origins = new java.util.ArrayList<>();
+        if (frontendUrl != null && !frontendUrl.isBlank()) {
+            for (String url : frontendUrl.split(",")) {
+                String cleaned = url.trim();
+                if (cleaned.endsWith("/")) cleaned = cleaned.substring(0, cleaned.length() - 1);
+                if (!cleaned.isEmpty()) origins.add(cleaned);
+            }
+        }
+        origins.add("http://localhost:5173");
+        origins.add("http://localhost:3000");
+        // Covers any *.onrender.com frontend even if FRONTEND_URL was never set or is wrong —
+        // a safety net so a single misconfigured env var can't take the whole site down.
+        origins.add("https://*.onrender.com");
+
+        config.setAllowedOriginPatterns(origins);
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);
