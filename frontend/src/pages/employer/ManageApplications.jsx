@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react'
 import UserAvatar from '../../components/UserAvatar'
 import { useParams, Link } from 'react-router-dom'
 import { getJobApplications, updateApplicationStatus } from '../../services/api'
+import MessageThread from '../../components/MessageThread'
 
 const STATUS_OPTIONS = ['APPLIED','SHORTLISTED','INTERVIEW_SCHEDULED','INTERVIEW_COMPLETED','OFFERED','REJECTED','ACCEPTED']
 const STATUS_STYLE = {
@@ -23,6 +24,7 @@ export default function ManageApplications() {
   const [notes, setNotes] = useState({})
   const [search, setSearch] = useState('')
   const [toast, setToast] = useState({ msg:'', type:'success' })
+  const [chatOpenId, setChatOpenId] = useState(null)
 
   const prevDataRef = useRef('')
 
@@ -379,7 +381,19 @@ export default function ManageApplications() {
                             </a>
                           </div>
                         )}
+
+                        <button type="button" className="btn btn-sm rounded-pill"
+                          style={{background:'#EEF3F8',color:'#0A66C2',border:'1px solid #D0D9E0',fontSize:'0.75rem'}}
+                          onClick={() => setChatOpenId(chatOpenId === app.id ? null : app.id)}>
+                          <i className="bi bi-chat-dots me-1"></i>{chatOpenId === app.id ? 'Hide Chat' : 'Message'}
+                        </button>
                       </div>
+
+                      {chatOpenId === app.id && (
+                        <div className="mt-3">
+                          <MessageThread applicationId={app.id} />
+                        </div>
+                      )}
 
                       {app.coverLetter && (
                         <div className="mt-3 p-3 rounded-3" style={{background:'#EEF3F8',fontSize:'0.82rem'}}>

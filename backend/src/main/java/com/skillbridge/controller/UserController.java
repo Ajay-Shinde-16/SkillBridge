@@ -43,13 +43,22 @@ public class UserController {
 
     @PutMapping("/profile")
     public ResponseEntity<?> updateProfile(@RequestBody User updatedUser, Authentication auth) {
+        if (updatedUser.getName() == null || updatedUser.getName().isBlank()) {
+            return ResponseEntity.badRequest().body("Name cannot be empty.");
+        }
+        if (updatedUser.getExperienceYears() < 0) {
+            return ResponseEntity.badRequest().body("Experience years cannot be negative.");
+        }
         User user = userRepository.findByEmail(auth.getName())
             .orElseThrow(() -> new RuntimeException("User not found"));
         user.setName(updatedUser.getName());
         user.setPhone(updatedUser.getPhone());
         user.setLocation(updatedUser.getLocation());
         user.setBio(updatedUser.getBio());
-        user.setResumeUrl(updatedUser.getResumeUrl());
+        // Note: resumeUrl is intentionally NOT updated here — it's only managed by the
+        // dedicated upload-resume/delete-resume endpoints, which also own resumeData.
+        // Letting a generic profile save overwrite it could silently desync the link
+        // from the actual stored file.
         user.setCompanyName(updatedUser.getCompanyName());
         user.setCompanyWebsite(updatedUser.getCompanyWebsite());
         user.setExperienceYears(updatedUser.getExperienceYears());
@@ -148,10 +157,25 @@ public class UserController {
 
     @GetMapping("/all")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<List<User>> getAllUsers() {
-        List<User> users = userRepository.findAll();
-        users.forEach(u -> u.setPassword(null));
-        return ResponseEntity.ok(users);
+    public ResponseEntity<?> getAllUsers(@RequestParam(required = false) Integer page,
+                                          @RequestParam(required = false) Integer size) {
+        if (page == null) {
+            List<User> users = userRepository.findAll();
+            users.forEach(u -> u.setPassword(null));
+            return ResponseEntity.ok(users);
+        }
+        int pageSize = (size == null || size <= 0) ? 15 : size;
+        org.springframework.data.domain.Page<User> result = userRepository.findAll(
+            org.springframework.data.domain.PageRequest.of(page, pageSize,
+                org.springframework.data.domain.Sort.by("id").descending())
+        );
+        result.getContent().forEach(u -> u.setPassword(null));
+        return ResponseEntity.ok(Map.of(
+            "content", result.getContent(),
+            "totalElements", result.getTotalElements(),
+            "totalPages", result.getTotalPages(),
+            "currentPage", page
+        ));
     }
 
     @DeleteMapping("/{id}")

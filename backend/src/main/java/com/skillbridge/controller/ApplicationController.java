@@ -141,7 +141,18 @@ public class ApplicationController {
 
     @GetMapping("/all")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<List<Application>> allApplications() {
-        return ResponseEntity.ok(applicationService.getAllApplications());
+    public ResponseEntity<?> allApplications(@RequestParam(required = false) Integer page,
+                                              @RequestParam(required = false) Integer size) {
+        if (page == null) {
+            return ResponseEntity.ok(applicationService.getAllApplications());
+        }
+        int pageSize = (size == null || size <= 0) ? 15 : size;
+        org.springframework.data.domain.Page<Application> result = applicationService.getAllApplicationsPaged(page, pageSize);
+        return ResponseEntity.ok(Map.of(
+            "content", result.getContent(),
+            "totalElements", result.getTotalElements(),
+            "totalPages", result.getTotalPages(),
+            "currentPage", page
+        ));
     }
 }

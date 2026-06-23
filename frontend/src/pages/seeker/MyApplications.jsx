@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { getMyApplications, withdrawApplication } from '../../services/api'
+import MessageThread from '../../components/MessageThread'
 
 const STATUS_STYLE = {
   APPLIED:             { bg:'#F1F5F9', color:'#475569', label:'Applied',             icon:'bi-send' },
@@ -20,6 +21,7 @@ export default function MyApplications() {
   const [error, setError] = useState('')
   const [filter, setFilter] = useState('ALL')
   const [sortBy, setSortBy] = useState('newest')
+  const [chatOpenId, setChatOpenId] = useState(null)
 
   const fetchApps = () => {
     setLoading(true)
@@ -210,8 +212,19 @@ export default function MyApplications() {
                           Withdraw
                         </button>
                       )}
+                      <button type="button" className="btn btn-sm rounded-pill fw-semibold"
+                        style={{ background: '#EEF3F8', color: '#0A66C2', border: '1px solid #D0D9E0', fontSize: '0.8rem' }}
+                        onClick={() => setChatOpenId(chatOpenId === app.id ? null : app.id)}>
+                        <i className="bi bi-chat-dots me-1"></i>{chatOpenId === app.id ? 'Hide Chat' : 'Message'}
+                      </button>
                     </div>
                   </div>
+
+                  {chatOpenId === app.id && (
+                    <div className="mt-3">
+                      <MessageThread applicationId={app.id} />
+                    </div>
+                  )}
 
                   {/* Employer Note */}
                   {app.employerNote && (

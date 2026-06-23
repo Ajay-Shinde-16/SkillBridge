@@ -22,6 +22,19 @@ public class JobService {
     private final UserRepository userRepository;
 
     public Job createJob(Job job, String employerId) {
+        if (job.getTitle() == null || job.getTitle().isBlank()) {
+            throw new RuntimeException("Job title is required.");
+        }
+        if (job.getDescription() == null || job.getDescription().isBlank()) {
+            throw new RuntimeException("Job description is required.");
+        }
+        if (job.getMinSalary() < 0 || job.getMaxSalary() < 0) {
+            throw new RuntimeException("Salary cannot be negative.");
+        }
+        if (job.getMaxSalary() > 0 && job.getMaxSalary() < job.getMinSalary()) {
+            throw new RuntimeException("Maximum salary cannot be less than minimum salary.");
+        }
+
         User employer = userRepository.findById(employerId)
             .orElseThrow(() -> new RuntimeException("Employer not found"));
 
@@ -63,6 +76,15 @@ public class JobService {
         Job job = getJobById(id);
         if (!isAdmin && (job.getEmployerId() == null || !job.getEmployerId().equals(requestingUserId))) {
             throw new RuntimeException("You are not authorized to edit this job posting.");
+        }
+        if (updatedJob.getTitle() != null && updatedJob.getTitle().isBlank()) {
+            throw new RuntimeException("Job title cannot be empty.");
+        }
+        if (updatedJob.getMinSalary() < 0 || updatedJob.getMaxSalary() < 0) {
+            throw new RuntimeException("Salary cannot be negative.");
+        }
+        if (updatedJob.getMaxSalary() > 0 && updatedJob.getMaxSalary() < updatedJob.getMinSalary()) {
+            throw new RuntimeException("Maximum salary cannot be less than minimum salary.");
         }
         if (updatedJob.getTitle() != null) job.setTitle(updatedJob.getTitle());
         if (updatedJob.getDescription() != null) job.setDescription(updatedJob.getDescription());

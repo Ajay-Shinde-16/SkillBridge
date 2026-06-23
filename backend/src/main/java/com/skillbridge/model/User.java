@@ -40,6 +40,15 @@ public class User {
     private String bio;
 
     private String resumeUrl;
+    private String resumeFileName;
+
+    // Resume stored directly in the database instead of the app server's disk.
+    // Render's filesystem is ephemeral (wiped on every redeploy/restart), but the
+    // database persists independently, so this survives deploys.
+    @Lob
+    @Column(columnDefinition = "LONGBLOB")
+    private byte[] resumeData;
+
     private String companyName;
     private String companyWebsite;
     private int experienceYears;

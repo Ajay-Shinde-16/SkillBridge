@@ -24,9 +24,26 @@ public class InterviewService {
     private final UserRepository userRepository;
     private final EmailService emailService;
     private final NotificationService notificationService;
+    private final com.skillbridge.repository.JobRepository jobRepository;
 
-    public Interview scheduleInterview(Interview interview) {
+    public Interview scheduleInterview(Interview interview, String requestingEmployerId, boolean isAdmin) {
         Application app = applicationService.getById(interview.getApplicationId());
+
+        // Verify the requesting employer actually owns the job this application is for —
+        // without this, any employer could schedule (and email) a fake interview against
+        // any other company's applicant.
+        com.skillbridge.model.Job job = jobRepository.findById(app.getJobId())
+            .orElseThrow(() -> new RuntimeException("Job not found"));
+        if (!isAdmin && (job.getEmployerId() == null || !job.getEmployerId().equals(requestingEmployerId))) {
+            throw new RuntimeException("You are not authorized to schedule an interview for this application.");
+        }
+        if (interview.getScheduledDateTime() == null) {
+            throw new RuntimeException("Interview date/time is required.");
+        }
+        if (interview.getScheduledDateTime().isBefore(LocalDateTime.now())) {
+            throw new RuntimeException("Interview date/time cannot be in the past.");
+        }
+
         interview.setSeekerId(app.getSeekerId());
         interview.setSeekerName(app.getSeekerName());
         interview.setJobId(app.getJobId());

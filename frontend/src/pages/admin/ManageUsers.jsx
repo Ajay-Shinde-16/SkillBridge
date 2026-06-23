@@ -14,12 +14,17 @@ export default function ManageUsers() {
   const [search, setSearch] = useState('')
   const [roleFilter, setRoleFilter] = useState('')
   const [deleting, setDeleting] = useState(null)
+  const PAGE_SIZE = 20
+  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE)
 
   const fetchUsers = () => {
     setLoading(true)
     getAllUsers().then(({ data }) => { setUsers(data); setLoading(false) }).catch(() => setLoading(false))
   }
   useEffect(() => { fetchUsers() }, [])
+
+  // Reset to the first page whenever the search or role filter changes
+  useEffect(() => { setVisibleCount(PAGE_SIZE) }, [search, roleFilter])
 
   const handleDelete = async (id, name, role) => {
     if (role === 'ADMIN') {
@@ -46,6 +51,7 @@ export default function ManageUsers() {
      u.email?.toLowerCase().includes(search.toLowerCase())) &&
     (roleFilter === '' || u.role === roleFilter)
   )
+  const visibleUsers = filtered.slice(0, visibleCount)
 
   return (
     <div className="container-fluid p-0">
@@ -134,7 +140,7 @@ export default function ManageUsers() {
                       </tr>
                     </thead>
                     <tbody>
-                      {filtered.map(u => (
+                      {visibleUsers.map(u => (
                         <tr key={u.id} style={{ opacity: deleting === u.id ? 0.5 : 1 }}>
                           <td>
                             <div className="d-flex align-items-center gap-2">
@@ -193,6 +199,15 @@ export default function ManageUsers() {
                       ))}
                     </tbody>
                   </table>
+                </div>
+              )}
+              {!loading && filtered.length > visibleCount && (
+                <div className="text-center mt-3">
+                  <button className="btn btn-sm rounded-pill px-4"
+                    style={{background:'#EEF3F8',color:'#0A66C2',border:'1px solid #0A66C2'}}
+                    onClick={() => setVisibleCount(c => c + PAGE_SIZE)}>
+                    Show More ({filtered.length - visibleCount} remaining)
+                  </button>
                 </div>
               )}
             </div>

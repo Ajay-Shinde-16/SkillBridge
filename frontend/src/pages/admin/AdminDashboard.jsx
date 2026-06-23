@@ -12,6 +12,8 @@ const sidebarItems = [
 
 export default function AdminDashboard() {
   const [stats, setStats] = useState({users:0,jobs:0,applications:0,interviews:0,offers:0,accepted:0,seekers:0,employers:0})
+  const [pipeline, setPipeline] = useState({})
+  const [signupTrend, setSignupTrend] = useState([])
   const [loading, setLoading] = useState(true)
 
   const load = useCallback(() => {
@@ -31,6 +33,29 @@ export default function AdminDashboard() {
           accepted: a.data.filter(x=>x.status==='ACCEPTED').length,
           rejected: a.data.filter(x=>x.status==='REJECTED').length,
         })
+
+        // ─── Application pipeline funnel ───
+        setPipeline({
+          APPLIED: a.data.filter(x=>x.status==='APPLIED').length,
+          SHORTLISTED: a.data.filter(x=>x.status==='SHORTLISTED').length,
+          INTERVIEW_SCHEDULED: a.data.filter(x=>x.status==='INTERVIEW_SCHEDULED').length,
+          OFFERED: a.data.filter(x=>x.status==='OFFERED').length,
+          ACCEPTED: a.data.filter(x=>x.status==='ACCEPTED').length,
+          REJECTED: a.data.filter(x=>x.status==='REJECTED').length,
+        })
+
+        // ─── Signups over the last 7 days ───
+        const days = []
+        for (let d = 6; d >= 0; d--) {
+          const date = new Date()
+          date.setDate(date.getDate() - d)
+          const key = date.toISOString().slice(0, 10)
+          const label = date.toLocaleDateString('en-US', { weekday: 'short' })
+          const count = u.data.filter(x => x.createdAt && x.createdAt.slice(0, 10) === key).length
+          days.push({ label, count })
+        }
+        setSignupTrend(days)
+
         setLoading(false)
       }).catch(()=>setLoading(false))
   }, [])
@@ -86,6 +111,73 @@ export default function AdminDashboard() {
                     </div>
                   </div>
                 ))}
+              </div>
+
+              {/* ─── Charts ─── */}
+              <div className="row g-3 mb-4">
+                {/* Application Pipeline Funnel */}
+                <div className="col-12 col-lg-7">
+                  <div className="card border-0 shadow-sm rounded-4 h-100">
+                    <div className="card-body p-4">
+                      <h6 className="fw-bold mb-3"><i className="bi bi-funnel-fill me-2" style={{color:'#0A66C2'}}></i>Application Pipeline</h6>
+                      {(() => {
+                        const stages = [
+                          { key:'APPLIED', label:'Applied', color:'#0A66C2' },
+                          { key:'SHORTLISTED', label:'Shortlisted', color:'#0ea5e9' },
+                          { key:'INTERVIEW_SCHEDULED', label:'Interview', color:'#d97706' },
+                          { key:'OFFERED', label:'Offered', color:'#7C3AED' },
+                          { key:'ACCEPTED', label:'Accepted', color:'#057642' },
+                          { key:'REJECTED', label:'Rejected', color:'#dc3545' },
+                        ]
+                        const max = Math.max(1, ...stages.map(s => pipeline[s.key] || 0))
+                        return stages.map(s => {
+                          const value = pipeline[s.key] || 0
+                          const widthPct = (value / max) * 100
+                          return (
+                            <div key={s.key} className="mb-2">
+                              <div className="d-flex justify-content-between" style={{fontSize:'0.8rem'}}>
+                                <span className="fw-semibold">{s.label}</span>
+                                <span className="text-muted">{value}</span>
+                              </div>
+                              <div style={{background:'#EEF3F8', borderRadius:6, height:10, overflow:'hidden'}}>
+                                <div style={{
+                                  width:`${widthPct}%`, height:'100%', background:s.color,
+                                  borderRadius:6, transition:'width 0.4s ease'
+                                }}></div>
+                              </div>
+                            </div>
+                          )
+                        })
+                      })()}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Signups - Last 7 Days */}
+                <div className="col-12 col-lg-5">
+                  <div className="card border-0 shadow-sm rounded-4 h-100">
+                    <div className="card-body p-4">
+                      <h6 className="fw-bold mb-3"><i className="bi bi-graph-up me-2" style={{color:'#057642'}}></i>Signups — Last 7 Days</h6>
+                      <div className="d-flex align-items-end gap-2" style={{height:120}}>
+                        {(() => {
+                          const max = Math.max(1, ...signupTrend.map(d => d.count))
+                          return signupTrend.map((d, i) => (
+                            <div key={i} className="flex-fill d-flex flex-column align-items-center justify-content-end h-100">
+                              <span className="small text-muted mb-1">{d.count}</span>
+                              <div style={{
+                                width:'70%', minHeight: d.count > 0 ? 4 : 1,
+                                height:`${(d.count / max) * 80}px`,
+                                background: d.count > 0 ? '#0A66C2' : '#EEF3F8',
+                                borderRadius:'4px 4px 0 0', transition:'height 0.4s ease'
+                              }}></div>
+                              <span className="small text-muted mt-1" style={{fontSize:'0.7rem'}}>{d.label}</span>
+                            </div>
+                          ))
+                        })()}
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
 
               {/* Quick Access Cards */}

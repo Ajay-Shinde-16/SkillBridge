@@ -258,4 +258,11 @@ public class ApplicationService {
     public List<Application> getAllApplications() {
         return applicationRepository.findAll();
     }
+
+    public org.springframework.data.domain.Page<Application> getAllApplicationsPaged(int page, int size) {
+        org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(
+            page, size, org.springframework.data.domain.Sort.by("appliedAt").descending()
+        );
+        return applicationRepository.findAll(pageable);
+    }
 }

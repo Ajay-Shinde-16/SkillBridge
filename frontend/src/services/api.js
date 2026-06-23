@@ -84,3 +84,7 @@ export const resetPassword   = (data) => API.post('/users/reset-password', data)
 
 // ─── Job Status Toggle ───
 export const updateJobStatus = (id, status) => API.put(`/jobs/${id}/status`, { status })
+
+// ─── Messages ───
+export const getMessageThread = (applicationId) => API.get(`/messages/${applicationId}`)
+export const sendMessage      = (applicationId, content) => API.post(`/messages/${applicationId}`, { content })

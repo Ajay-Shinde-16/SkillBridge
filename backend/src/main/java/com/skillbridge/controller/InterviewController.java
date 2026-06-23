@@ -22,13 +22,14 @@ public class InterviewController {
     private final UserRepository userRepository;
 
     @PostMapping("/schedule")
-    @PreAuthorize("hasRole('EMPLOYER')")
+    @PreAuthorize("hasRole('EMPLOYER') or hasRole('ADMIN')")
     public ResponseEntity<?> schedule(@RequestBody Interview interview, Authentication auth) {
         try {
             User user = userRepository.findByEmail(auth.getName())
                 .orElseThrow(() -> new RuntimeException("User not found"));
             interview.setEmployerId(user.getId());
-            return ResponseEntity.ok(interviewService.scheduleInterview(interview));
+            boolean isAdmin = "ADMIN".equals(user.getRole());
+            return ResponseEntity.ok(interviewService.scheduleInterview(interview, user.getId(), isAdmin));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
