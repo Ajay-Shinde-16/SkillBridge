@@ -76,8 +76,9 @@ public class SecurityConfig {
         }
         origins.add("http://localhost:5173");
         origins.add("http://localhost:3000");
-        // Covers any *.onrender.com frontend even if FRONTEND_URL was never set or is wrong —
-        // a safety net so a single misconfigured env var can't take the whole site down.
+        // Safety net so a single misconfigured FRONTEND_URL can't take the whole site
+        // down — covers frontends hosted on Vercel or Render regardless of env var state.
+        origins.add("https://*.vercel.app");
         origins.add("https://*.onrender.com");
 
         config.setAllowedOriginPatterns(origins);
