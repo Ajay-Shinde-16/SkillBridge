@@ -40,13 +40,29 @@ public class JobController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<List<Job>> searchJobs(
+    public ResponseEntity<?> searchJobs(
             @RequestParam(required = false) String keyword,
             @RequestParam(required = false) Double minSalary,
             @RequestParam(required = false) Double maxSalary,
             @RequestParam(required = false) Boolean remote,
-            @RequestParam(required = false) String experienceLevel) {
-        return ResponseEntity.ok(jobService.searchJobs(keyword, minSalary, maxSalary, remote, experienceLevel));
+            @RequestParam(required = false) String experienceLevel,
+            @RequestParam(required = false) Integer page,
+            @RequestParam(required = false) Integer size) {
+        // Backward compatible: existing callers that don't pass page/size keep getting
+        // a plain List<Job> exactly as before. Pass page+size to get a paginated response
+        // shaped as { content, totalElements, totalPages, currentPage }.
+        if (page == null) {
+            return ResponseEntity.ok(jobService.searchJobs(keyword, minSalary, maxSalary, remote, experienceLevel));
+        }
+        int pageSize = (size == null || size <= 0) ? 9 : size;
+        org.springframework.data.domain.Page<Job> result =
+            jobService.searchJobsPaged(keyword, minSalary, maxSalary, remote, experienceLevel, page, pageSize);
+        return ResponseEntity.ok(java.util.Map.of(
+            "content", result.getContent(),
+            "totalElements", result.getTotalElements(),
+            "totalPages", result.getTotalPages(),
+            "currentPage", page
+        ));
     }
 
     @PostMapping("/create")

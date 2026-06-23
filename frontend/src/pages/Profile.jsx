@@ -15,6 +15,7 @@ export default function Profile() {
   const [newSkill, setNewSkill] = useState('')
   const [uploading, setUploading] = useState(false)
   const [uploadMsg, setUploadMsg] = useState('')
+  const [suggestedSkills, setSuggestedSkills] = useState([])
   const fileInputRef = useRef()
 
   // Change Password state — inside profile page
@@ -74,11 +75,28 @@ export default function Profile() {
       })
       setProfile(prev => ({ ...prev, resumeUrl: data.url }))
       setUploadMsg('success:Resume uploaded successfully!')
+      setSuggestedSkills(data.suggestedSkills || [])
     } catch { setUploadMsg('error:Upload failed. Only PDF, max 5MB.') } finally {
       setUploading(false)
       setTimeout(() => setUploadMsg(''), 4000)
       if (fileInputRef.current) fileInputRef.current.value = ''
     }
+  }
+
+  const acceptSuggestedSkill = async (skill) => {
+    const current = profile.skillsList || []
+    if (current.map(s => s.toLowerCase()).includes(skill.toLowerCase())) {
+      setSuggestedSkills(prev => prev.filter(s => s !== skill))
+      return
+    }
+    const updated = [...current, skill]
+    setProfile({ ...profile, skillsList: updated })
+    setSuggestedSkills(prev => prev.filter(s => s !== skill))
+    try { await updateMySkills(updated) } catch { setError('Failed to add skill') }
+  }
+
+  const dismissSuggestedSkill = (skill) => {
+    setSuggestedSkills(prev => prev.filter(s => s !== skill))
   }
 
   const handleDeleteResume = async () => {
@@ -436,6 +454,26 @@ export default function Profile() {
                 </div>
                 <input type="file" accept=".pdf" ref={fileInputRef} style={{ display:'none' }} onChange={handleResumeUpload}/>
               </div>
+
+              {suggestedSkills.length > 0 && (
+                <div className="mt-3 p-3 rounded-3" style={{ background:'#EEF3F8', border:'1px solid #0A66C2' }}>
+                  <div className="fw-semibold mb-2" style={{ color:'#0A66C2', fontSize:'0.85rem' }}>
+                    <i className="bi bi-stars me-1"></i> Found these skills in your resume — add them?
+                  </div>
+                  <div className="d-flex flex-wrap gap-2">
+                    {suggestedSkills.map((skill, i) => (
+                      <span key={i} className="d-inline-flex align-items-center gap-1 rounded-pill px-2 py-1"
+                        style={{ background:'#fff', border:'1px solid #0A66C2', fontSize:'0.78rem' }}>
+                        {skill}
+                        <i className="bi bi-check-circle-fill text-success" style={{ cursor:'pointer' }}
+                          title="Add to my skills" onClick={() => acceptSuggestedSkill(skill)}></i>
+                        <i className="bi bi-x-circle text-muted" style={{ cursor:'pointer' }}
+                          title="Dismiss" onClick={() => dismissSuggestedSkill(skill)}></i>
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           )}
 

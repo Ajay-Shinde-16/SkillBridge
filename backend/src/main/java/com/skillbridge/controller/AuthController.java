@@ -2,6 +2,8 @@ package com.skillbridge.controller;
 
 import com.skillbridge.dto.AuthDTOs;
 import com.skillbridge.service.AuthService;
+import com.skillbridge.service.RateLimiterService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -14,9 +16,22 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     private final AuthService authService;
+    private final RateLimiterService rateLimiterService;
+
+    private String clientIp(HttpServletRequest request) {
+        String forwarded = request.getHeader("X-Forwarded-For");
+        if (forwarded != null && !forwarded.isBlank()) {
+            return forwarded.split(",")[0].trim();
+        }
+        return request.getRemoteAddr();
+    }
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@Valid @RequestBody AuthDTOs.RegisterRequest request) {
+    public ResponseEntity<?> register(@Valid @RequestBody AuthDTOs.RegisterRequest request,
+                                       HttpServletRequest httpRequest) {
+        if (!rateLimiterService.allow("register:" + clientIp(httpRequest))) {
+            return ResponseEntity.status(429).body("Too many attempts. Please wait a minute and try again.");
+        }
         try {
             return ResponseEntity.ok(authService.register(request));
         } catch (Exception e) {
@@ -25,7 +40,11 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@Valid @RequestBody AuthDTOs.LoginRequest request) {
+    public ResponseEntity<?> login(@Valid @RequestBody AuthDTOs.LoginRequest request,
+                                    HttpServletRequest httpRequest) {
+        if (!rateLimiterService.allow("login:" + clientIp(httpRequest))) {
+            return ResponseEntity.status(429).body("Too many login attempts. Please wait a minute and try again.");
+        }
         try {
             return ResponseEntity.ok(authService.login(request));
         } catch (Exception e) {

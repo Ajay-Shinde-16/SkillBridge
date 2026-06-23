@@ -95,6 +95,16 @@ public class JobService {
         return jobRepository.searchJobs(keyword, remote, experienceLevel, minSalary, maxSalary);
     }
 
+    public org.springframework.data.domain.Page<Job> searchJobsPaged(
+            String keyword, Double minSalary, Double maxSalary,
+            Boolean remote, String experienceLevel, int page, int size) {
+        org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(
+            page, size,
+            org.springframework.data.domain.Sort.by("postedAt").descending()
+        );
+        return jobRepository.searchJobsPaged(keyword, remote, experienceLevel, minSalary, maxSalary, pageable);
+    }
+
     public int calculateSkillMatchScore(String seekerId, String jobId) {
         User seeker = userRepository.findById(seekerId)
             .orElseThrow(() -> new RuntimeException("Seeker not found"));

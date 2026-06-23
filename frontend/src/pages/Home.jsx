@@ -50,11 +50,17 @@ export default function Home() {
           backgroundImage:`url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.06'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
         }}></div>
         <div className="container py-5 text-center text-white" style={{position:'relative'}}>
+          {/* Trust pill badge */}
+          <div className="d-inline-flex align-items-center gap-2 px-3 py-1 rounded-pill mb-3"
+            style={{background:'rgba(255,255,255,0.12)', border:'1px solid rgba(255,255,255,0.3)', fontSize:'0.8rem'}}>
+            <span style={{width:6,height:6,borderRadius:'50%',background:'#4ade80',display:'inline-block'}}></span>
+            2000+ Active Seekers · Skill-Verified Job Matching
+          </div>
           <div className="d-flex align-items-center justify-content-center gap-3 mb-3">
             <img src="/logo.svg" alt="SkillBridge" width={52} height={52} style={{borderRadius:12}} onError={e=>e.target.style.display='none'}/>
-            <h1 className="fw-bold mb-0" style={{fontSize:'2.2rem'}}>SkillBridge</h1>
+            <h1 className="fw-bold mb-0" style={{fontSize:'2.6rem', letterSpacing:'-0.02em'}}>SkillBridge</h1>
           </div>
-          <p className="mb-2 fs-5 opacity-90" style={{minHeight:'2rem'}}>
+          <p className="mb-2 fs-4 opacity-90" style={{minHeight:'2.2rem', fontWeight:600}}>
             {displayed}<span style={{
               display:'inline-block', width:2, height:'1.1em',
               background:'#fff', marginLeft:2, verticalAlign:'middle',

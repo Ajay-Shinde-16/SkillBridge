@@ -10,6 +10,10 @@ export default function JobList() {
   const { user } = useAuth()
   const [jobs, setJobs] = useState([])
   const [loading, setLoading] = useState(true)
+  const [loadingMore, setLoadingMore] = useState(false)
+  const [page, setPage] = useState(0)
+  const [totalPages, setTotalPages] = useState(1)
+  const [totalElements, setTotalElements] = useState(0)
   const [savedIds, setSavedIds] = useState([])
   const [savingId, setSavingId] = useState(null)
   const [showFilters, setShowFilters] = useState(false)
@@ -19,10 +23,12 @@ export default function JobList() {
     remote:'', experienceLevel:'', jobType:'', location:''
   })
 
-  const fetchJobs = async (f = filters) => {
-    setLoading(true)
+  const PAGE_SIZE = 9
+
+  const fetchJobs = async (f = filters, pageNum = 0, append = false) => {
+    if (append) setLoadingMore(true); else setLoading(true)
     try {
-      const params = {}
+      const params = { page: pageNum, size: PAGE_SIZE }
       if (f.keyword)         params.keyword         = f.keyword
       if (f.minSalary)       params.minSalary       = f.minSalary
       if (f.maxSalary)       params.maxSalary       = f.maxSalary
@@ -31,9 +37,15 @@ export default function JobList() {
       if (f.jobType)         params.jobType         = f.jobType
       if (f.location)        params.location        = f.location
       const { data } = await searchJobs(params)
-      setJobs(data)
-    } catch (e) { console.error(e) } finally { setLoading(false) }
+      const newJobs = data.content || []
+      setJobs(prev => append ? [...prev, ...newJobs] : newJobs)
+      setTotalPages(data.totalPages ?? 1)
+      setTotalElements(data.totalElements ?? newJobs.length)
+      setPage(pageNum)
+    } catch (e) { console.error(e) } finally { setLoading(false); setLoadingMore(false) }
   }
+
+  const loadMore = () => fetchJobs(filters, page + 1, true)
 
   useEffect(() => {
     fetchJobs()
@@ -73,7 +85,7 @@ export default function JobList() {
         <div className="d-flex justify-content-between align-items-start flex-wrap gap-2">
           <div>
             <h2 className="fw-bold mb-1"><i className="bi bi-briefcase me-2"></i>Browse Remote Jobs</h2>
-            <p className="mb-0 opacity-75">{sortedJobs.length} positions available</p>
+            <p className="mb-0 opacity-75">{totalElements} positions available</p>
           </div>
           {user?.role === 'SEEKER' && (
             <Link to="/seeker/saved-jobs" className="btn btn-sm rounded-pill fw-semibold"
@@ -255,6 +267,18 @@ export default function JobList() {
               </div>
             )
           })}
+        </div>
+      )}
+
+      {!loading && jobs.length > 0 && page + 1 < totalPages && (
+        <div className="text-center mt-4">
+          <button className="btn rounded-pill px-5 fw-semibold" disabled={loadingMore}
+            style={{background:'#EEF3F8',color:'#0A66C2',border:'1px solid #0A66C2'}}
+            onClick={loadMore}>
+            {loadingMore
+              ? <><span className="spinner-border spinner-border-sm me-2"></span>Loading...</>
+              : <>Load More Jobs <i className="bi bi-arrow-down-circle ms-1"></i></>}
+          </button>
         </div>
       )}
     </div>

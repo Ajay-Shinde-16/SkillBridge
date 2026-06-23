@@ -1,6 +1,10 @@
 package com.skillbridge.controller;
 
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfReader;
+import com.itextpdf.kernel.pdf.canvas.parser.PdfTextExtractor;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -12,7 +16,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.skillbridge.model.Skill;
 import com.skillbridge.model.User;
+import com.skillbridge.repository.SkillRepository;
 import com.skillbridge.repository.UserRepository;
 
 import java.io.IOException;
@@ -21,9 +27,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/files")
 @RequiredArgsConstructor
@@ -33,6 +42,7 @@ public class FileUploadController {
     private String uploadDir;
 
     private final UserRepository userRepository;
+    private final SkillRepository skillRepository;
 
     @PostMapping("/upload-resume")
     @PreAuthorize("hasRole('SEEKER')")
@@ -78,16 +88,50 @@ public class FileUploadController {
             user.setResumeUrl(fileUrl);
             userRepository.save(user);
 
+            // ─── Suggest skills by scanning the resume text against the master skill list ───
+            // Best-effort: if text extraction fails for any reason (e.g. a scanned/image-only
+            // PDF with no real text layer), we still return the upload success — skill
+            // suggestions are a bonus, not a requirement for the upload to succeed.
+            List<String> suggestedSkills = new ArrayList<>();
+            try {
+                String resumeText = extractPdfText(filePath).toLowerCase();
+                List<Skill> allSkills = skillRepository.findAll();
+                List<String> alreadyTagged = user.getSkillsList();
+                for (Skill skill : allSkills) {
+                    String skillNameLower = skill.getName().toLowerCase();
+                    boolean mentionedInResume = resumeText.contains(skillNameLower);
+                    boolean notAlreadyTagged = alreadyTagged == null || !alreadyTagged.contains(skill.getName());
+                    if (mentionedInResume && notAlreadyTagged) {
+                        suggestedSkills.add(skill.getName());
+                    }
+                }
+            } catch (Exception ex) {
+                log.warn("⚠️ Could not extract text from resume {} for skill suggestions: {}", fileName, ex.getMessage());
+            }
+
             return ResponseEntity.ok(Map.of(
                 "url", fileUrl,
                 "fileName", fileName,
-                "message", "Resume uploaded successfully!"
+                "message", "Resume uploaded successfully!",
+                "suggestedSkills", suggestedSkills
             ));
 
         } catch (IOException e) {
             return ResponseEntity.internalServerError()
                 .body(Map.of("error", "Failed to upload file: " + e.getMessage()));
         }
+    }
+
+    /** Extracts all text from a PDF on disk using iText (already a project dependency). */
+    private String extractPdfText(Path filePath) throws IOException {
+        StringBuilder text = new StringBuilder();
+        try (PdfDocument pdfDoc = new PdfDocument(new PdfReader(filePath.toString()))) {
+            int pages = pdfDoc.getNumberOfPages();
+            for (int i = 1; i <= pages; i++) {
+                text.append(PdfTextExtractor.getTextFromPage(pdfDoc.getPage(i))).append(" ");
+            }
+        }
+        return text.toString();
     }
 
     @GetMapping("/resume/{fileName}")
