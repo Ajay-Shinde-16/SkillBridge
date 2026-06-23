@@ -21,6 +21,14 @@ h1, h2, h3, h4, h5, h6,
   letter-spacing: -0.01em;
 }
 
+/* Serif treatment for the big, formal page titles (auth pages, hero) — gives the
+   site a more institutional/official feel, distinct from dashboard UI headings
+   which stay in Inter for a cleaner data-dense look. */
+.heading-serif {
+  font-family: 'Lora', 'Georgia', serif;
+  letter-spacing: 0;
+}
+
 /* ─── SKILL BADGES ─── */
 .skill-badge {
   display: inline-block;

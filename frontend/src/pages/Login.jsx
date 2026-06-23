@@ -63,138 +63,154 @@ export default function Login() {
   return (
     <div className="container py-5">
       <div className="row justify-content-center">
-        <div className="col-md-5">
-          <div className="card shadow border-0 rounded-4">
-            <div className="card-body p-5">
+        <div className="col-lg-9">
+          <div className="card shadow border-0 rounded-4 overflow-hidden">
+            <div className="row g-0">
 
-              {/* Logo + Title */}
-              <div className="text-center mb-4">
-                <img src="/logo.svg" alt="SkillBridge" width="52" height="52"
-                  style={{ borderRadius: 14 }}
-                  onError={e => { e.target.style.display = 'none' }} />
-                <h3 className="fw-bold mt-2 mb-1">Welcome Back</h3>
-                <p className="text-muted small">Sign in to SkillBridge</p>
-              </div>
-
-              {/* Error */}
-              {error && (
-                <div className="alert alert-danger py-2 small rounded-3">
-                  <i className="bi bi-exclamation-triangle-fill me-2"></i>{error}
+              {/* ── LEFT PANEL: brand / info ── */}
+              <div className="col-lg-5 d-none d-lg-flex flex-column align-items-center justify-content-center text-center p-5"
+                style={{ background: 'linear-gradient(160deg, #003766 0%, #0A66C2 100%)', color: '#fff' }}>
+                <div className="bg-white rounded-4 p-3 mb-4 d-inline-flex">
+                  <img src="/logo.svg" alt="SkillBridge" width="56" height="56"
+                    onError={e => { e.target.style.display = 'none' }} />
                 </div>
-              )}
-
-              <form onSubmit={otpStep ? handleVerifyOtp : handleSubmit}>
-                {otpStep ? (
-                  <>
-                    <div className="alert alert-info py-2 small rounded-3">
-                      <i className="bi bi-shield-lock-fill me-2"></i>
-                      We sent a 6-digit code to <strong>{form.email}</strong>. Enter it below to finish signing in.
-                    </div>
-                    <div className="mb-4">
-                      <label className="form-label fw-semibold small">Verification Code</label>
-                      <input type="text" inputMode="numeric" maxLength={6}
-                        className="form-control form-control-lg rounded-3 text-center"
-                        style={{ letterSpacing: 6, fontSize: '1.3rem' }}
-                        required value={otp}
-                        onChange={e => setOtp(e.target.value.replace(/\D/g, ''))}
-                        placeholder="000000" autoFocus />
-                    </div>
-                    <button type="submit"
-                      className="btn btn-lg w-100 text-white fw-bold rounded-3 mb-2"
-                      style={{ background: '#0A66C2' }}
-                      disabled={loading || otp.length !== 6}>
-                      {loading
-                        ? <span className="spinner-border spinner-border-sm me-2"></span>
-                        : <i className="bi bi-shield-check me-2"></i>}
-                      Verify & Sign In
-                    </button>
-                    <button type="button" className="btn btn-sm w-100 btn-outline-secondary rounded-3"
-                      onClick={() => { setOtpStep(false); setOtp(''); setError('') }}>
-                      ← Back to login
-                    </button>
-                  </>
-                ) : (
-                  <>
-                    {/* Email */}
-                    <div className="mb-3">
-                      <label className="form-label fw-semibold small">Email Address</label>
-                      <input type="email" className="form-control form-control-lg rounded-3" required
-                        value={form.email}
-                        onChange={e => setForm({ ...form, email: e.target.value })}
-                        placeholder="your@email.com" />
-                    </div>
-
-                    {/* Password + Forgot Password link */}
-                    <div className="mb-1">
-                      <div className="d-flex justify-content-between align-items-center mb-1">
-                        <label className="form-label fw-semibold small mb-0">Password</label>
-                        {/* ── FORGOT PASSWORD LINK ── */}
-                        <Link to="/forgot-password"
-                          className="small fw-semibold"
-                          style={{ color: '#dc3545', textDecoration: 'none', fontSize: '0.82rem' }}>
-                          <i className="bi bi-key me-1"></i>Forgot Password?
-                        </Link>
-                      </div>
-                      <div className="input-group mb-4">
-                        <input
-                          type={showPassword ? 'text' : 'password'}
-                          className="form-control form-control-lg rounded-start-3"
-                          required
-                          value={form.password}
-                          onChange={e => setForm({ ...form, password: e.target.value })}
-                          placeholder="••••••••" />
-                        <button type="button"
-                          className="btn btn-outline-secondary rounded-end-3"
-                          onClick={() => setShowPassword(!showPassword)}>
-                          <i className={`bi ${showPassword ? 'bi-eye-slash' : 'bi-eye'}`}></i>
-                        </button>
-                      </div>
-                    </div>
-
-                    {/* Sign In Button */}
-                    <button type="submit"
-                      className="btn btn-lg w-100 text-white fw-bold rounded-3"
-                      style={{ background: '#0A66C2' }}
-                      disabled={loading}>
-                      {loading
-                        ? <span className="spinner-border spinner-border-sm me-2"></span>
-                        : <i className="bi bi-box-arrow-in-right me-2"></i>}
-                      Sign In
-                    </button>
-                  </>
-                )}
-              </form>
-
-              {!otpStep && (
-              <>
-              {/* Sign Up link */}
-              <p className="text-center mt-4 mb-3 small">
-                Don't have an account?{' '}
-                <Link to="/register" className="fw-semibold" style={{ color: '#0A66C2' }}>
-                  Create Account
-                </Link>
-              </p>
-
-              {/* Divider */}
-              <hr className="my-3" />
-
-              {/* Change Password - for logged in users who know current password */}
-              <div className="text-center">
-                <p className="text-muted small mb-2">Already logged in and want to change password?</p>
-                <Link to="/profile"
-                  className="btn btn-sm rounded-pill fw-semibold"
-                  style={{ background: '#EEF3F8', color: '#0A66C2', border: '1px solid #D0D9E0', fontSize: '0.82rem' }}>
-                  <i className="bi bi-shield-lock me-1"></i>Go to Profile → Change Password
-                </Link>
+                <h2 className="heading-serif fw-bold mb-2">SkillBridge</h2>
+                <p className="opacity-75 small mb-0" style={{ maxWidth: 240 }}>
+                  Remote jobs, matched to your verified skills.
+                </p>
               </div>
-              </>
-              )}
 
-              {/* Admin hint */}
-              <div className="text-center mt-3">
-                <small style={{ color: '#e9ecef', fontSize: '0.65rem', userSelect: 'none' }}>
-                  v1.0 · CDAC 2026
-                </small>
+              {/* ── RIGHT PANEL: form ── */}
+              <div className="col-lg-7">
+                <div className="p-4 p-lg-5">
+
+                  <div className="mb-4">
+                    <h3 className="heading-serif fw-bold mb-1">Sign In</h3>
+                    <p className="text-muted small mb-0">Enter your credentials to access SkillBridge</p>
+                  </div>
+
+                  {/* Error */}
+                  {error && (
+                    <div className="alert alert-danger py-2 small rounded-3">
+                      <i className="bi bi-exclamation-triangle-fill me-2"></i>{error}
+                    </div>
+                  )}
+
+                  <form onSubmit={otpStep ? handleVerifyOtp : handleSubmit}>
+                    {otpStep ? (
+                      <>
+                        <div className="alert alert-info py-2 small rounded-3">
+                          <i className="bi bi-shield-lock-fill me-2"></i>
+                          We sent a 6-digit code to <strong>{form.email}</strong>. Enter it below to finish signing in.
+                        </div>
+                        <div className="mb-4">
+                          <label className="form-label fw-semibold small">Verification Code</label>
+                          <input type="text" inputMode="numeric" maxLength={6}
+                            className="form-control form-control-lg rounded-3 text-center"
+                            style={{ letterSpacing: 6, fontSize: '1.3rem' }}
+                            required value={otp}
+                            onChange={e => setOtp(e.target.value.replace(/\D/g, ''))}
+                            placeholder="000000" autoFocus />
+                        </div>
+                        <button type="submit"
+                          className="btn btn-lg w-100 text-white fw-bold rounded-3 mb-2"
+                          style={{ background: '#0A66C2' }}
+                          disabled={loading || otp.length !== 6}>
+                          {loading
+                            ? <span className="spinner-border spinner-border-sm me-2"></span>
+                            : <i className="bi bi-shield-check me-2"></i>}
+                          Verify & Sign In
+                        </button>
+                        <button type="button" className="btn btn-sm w-100 btn-outline-secondary rounded-3"
+                          onClick={() => { setOtpStep(false); setOtp(''); setError('') }}>
+                          ← Back to login
+                        </button>
+                      </>
+                    ) : (
+                      <>
+                        {/* Email */}
+                        <div className="mb-3">
+                          <label className="form-label fw-semibold small">Email Address</label>
+                          <input type="email" className="form-control form-control-lg rounded-3" required
+                            value={form.email}
+                            onChange={e => setForm({ ...form, email: e.target.value })}
+                            placeholder="your@email.com" />
+                        </div>
+
+                        {/* Password + Forgot Password link */}
+                        <div className="mb-1">
+                          <div className="d-flex justify-content-between align-items-center mb-1">
+                            <label className="form-label fw-semibold small mb-0">Password</label>
+                            {/* ── FORGOT PASSWORD LINK ── */}
+                            <Link to="/forgot-password"
+                              className="small fw-semibold"
+                              style={{ color: '#dc3545', textDecoration: 'none', fontSize: '0.82rem' }}>
+                              <i className="bi bi-key me-1"></i>Forgot Password?
+                            </Link>
+                          </div>
+                          <div className="input-group mb-4">
+                            <input
+                              type={showPassword ? 'text' : 'password'}
+                              className="form-control form-control-lg rounded-start-3"
+                              required
+                              value={form.password}
+                              onChange={e => setForm({ ...form, password: e.target.value })}
+                              placeholder="••••••••" />
+                            <button type="button"
+                              className="btn btn-outline-secondary rounded-end-3"
+                              onClick={() => setShowPassword(!showPassword)}>
+                              <i className={`bi ${showPassword ? 'bi-eye-slash' : 'bi-eye'}`}></i>
+                            </button>
+                          </div>
+                        </div>
+
+                        {/* Sign In Button */}
+                        <button type="submit"
+                          className="btn btn-lg w-100 text-white fw-bold rounded-3"
+                          style={{ background: '#0A66C2' }}
+                          disabled={loading}>
+                          {loading
+                            ? <span className="spinner-border spinner-border-sm me-2"></span>
+                            : <i className="bi bi-box-arrow-in-right me-2"></i>}
+                          Sign In
+                        </button>
+                      </>
+                    )}
+                  </form>
+
+                  {!otpStep && (
+                  <>
+                  {/* Sign Up link */}
+                  <p className="text-center mt-4 mb-3 small">
+                    Don't have an account?{' '}
+                    <Link to="/register" className="fw-semibold" style={{ color: '#0A66C2' }}>
+                      Create Account
+                    </Link>
+                  </p>
+
+                  {/* Divider */}
+                  <hr className="my-3" />
+
+                  {/* Change Password - for logged in users who know current password */}
+                  <div className="text-center">
+                    <p className="text-muted small mb-2">Already logged in and want to change password?</p>
+                    <Link to="/profile"
+                      className="btn btn-sm rounded-pill fw-semibold"
+                      style={{ background: '#EEF3F8', color: '#0A66C2', border: '1px solid #D0D9E0', fontSize: '0.82rem' }}>
+                      <i className="bi bi-shield-lock me-1"></i>Go to Profile → Change Password
+                    </Link>
+                  </div>
+                  </>
+                  )}
+
+                  {/* Admin hint */}
+                  <div className="text-center mt-3">
+                    <small style={{ color: '#cbd5e1', fontSize: '0.65rem', userSelect: 'none' }}>
+                      v1.0 · CDAC 2026
+                    </small>
+                  </div>
+
+                </div>
               </div>
 
             </div>

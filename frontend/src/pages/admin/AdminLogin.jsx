@@ -46,7 +46,7 @@ export default function AdminLogin() {
                 style={{ width: 68, height: 68, background: '#0A66C2' }}>
                 <i className="bi bi-shield-lock-fill text-white" style={{ fontSize: 28 }}></i>
               </div>
-              <h4 className="fw-bold mb-1">Admin Portal</h4>
+              <h4 className="heading-serif fw-bold mb-1">Admin Portal</h4>
               <p className="text-muted small mb-0">SkillBridge — Restricted Access Only</p>
             </div>
 

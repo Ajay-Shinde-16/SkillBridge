@@ -58,7 +58,7 @@ export default function Home() {
           </div>
           <div className="d-flex align-items-center justify-content-center gap-3 mb-3">
             <img src="/logo.svg" alt="SkillBridge" width={52} height={52} style={{borderRadius:12}} onError={e=>e.target.style.display='none'}/>
-            <h1 className="fw-bold mb-0" style={{fontSize:'2.6rem', letterSpacing:'-0.02em'}}>SkillBridge</h1>
+            <h1 className="heading-serif fw-bold mb-0" style={{fontSize:'2.6rem'}}>SkillBridge</h1>
           </div>
           <p className="mb-2 fs-4 opacity-90" style={{minHeight:'2.2rem', fontWeight:600}}>
             {displayed}<span style={{
