@@ -3,6 +3,7 @@ import UserAvatar from '../../components/UserAvatar'
 import { useParams, Link } from 'react-router-dom'
 import { getJobApplications, updateApplicationStatus } from '../../services/api'
 import MessageThread from '../../components/MessageThread'
+import { exportToCsv } from '../../utils/csvExport'
 
 const STATUS_OPTIONS = ['APPLIED','SHORTLISTED','INTERVIEW_SCHEDULED','INTERVIEW_COMPLETED','OFFERED','REJECTED','ACCEPTED']
 const STATUS_STYLE = {
@@ -182,6 +183,16 @@ export default function ManageApplications() {
     }
   }
 
+  const handleExport = () => {
+    exportToCsv('applicants.csv', filtered, [
+      { label: 'Name', accessor: a => a.seekerName },
+      { label: 'Email', accessor: a => a.seekerEmail },
+      { label: 'Status', accessor: a => STATUS_STYLE[a.status]?.label || a.status },
+      { label: 'Skill Match %', accessor: a => a.skillMatchScore ?? '' },
+      { label: 'Applied At', accessor: a => a.appliedAt ? new Date(a.appliedAt).toLocaleDateString() : '' },
+    ])
+  }
+
   const filtered = applications.filter(a =>
     a.seekerName?.toLowerCase().includes(search.toLowerCase()) ||
     a.seekerEmail?.toLowerCase().includes(search.toLowerCase())
@@ -272,7 +283,7 @@ export default function ManageApplications() {
           </div>
 
           {/* Search */}
-          <div className="mb-3">
+          <div className="mb-3 d-flex gap-2 align-items-center flex-wrap">
             <div className="input-group" style={{maxWidth:320}}>
               <span className="input-group-text bg-white border-end-0">
                 <i className="bi bi-search text-muted"></i>
@@ -281,6 +292,10 @@ export default function ManageApplications() {
                 placeholder="Search by name or email..."
                 value={search} onChange={e=>setSearch(e.target.value)}/>
             </div>
+            <button className="btn btn-sm rounded-pill" style={{background:'#EEF3F8',color:'#0A66C2',border:'1px solid #0A66C2'}}
+              onClick={handleExport}>
+              <i className="bi bi-download me-1"></i>Export CSV
+            </button>
           </div>
 
           {/* Applicant Cards */}

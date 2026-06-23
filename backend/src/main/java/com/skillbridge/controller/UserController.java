@@ -41,6 +41,19 @@ public class UserController {
         return ResponseEntity.ok(user);
     }
 
+    @PutMapping("/2fa")
+    public ResponseEntity<?> toggleTwoFactor(@RequestBody Map<String, Boolean> body, Authentication auth) {
+        User user = userRepository.findByEmail(auth.getName())
+            .orElseThrow(() -> new RuntimeException("User not found"));
+        boolean enabled = Boolean.TRUE.equals(body.get("enabled"));
+        user.setTwoFactorEnabled(enabled);
+        userRepository.save(user);
+        return ResponseEntity.ok(Map.of(
+            "message", enabled ? "Two-factor authentication enabled." : "Two-factor authentication disabled.",
+            "twoFactorEnabled", enabled
+        ));
+    }
+
     @PutMapping("/profile")
     public ResponseEntity<?> updateProfile(@RequestBody User updatedUser, Authentication auth) {
         if (updatedUser.getName() == null || updatedUser.getName().isBlank()) {
@@ -175,6 +188,22 @@ public class UserController {
             "totalElements", result.getTotalElements(),
             "totalPages", result.getTotalPages(),
             "currentPage", page
+        ));
+    }
+
+    @PutMapping("/{id}/toggle-active")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> toggleActive(@PathVariable String id) {
+        User user = userRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("User not found"));
+        if ("ADMIN".equals(user.getRole())) {
+            return ResponseEntity.badRequest().body("Cannot deactivate another Admin account.");
+        }
+        user.setActive(!user.isActive());
+        userRepository.save(user);
+        return ResponseEntity.ok(Map.of(
+            "message", user.isActive() ? "Account reactivated." : "Account deactivated.",
+            "active", user.isActive()
         ));
     }
 

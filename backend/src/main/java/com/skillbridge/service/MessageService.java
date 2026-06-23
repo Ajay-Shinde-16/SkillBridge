@@ -90,4 +90,76 @@ public class MessageService {
 
         return saved;
     }
+
+    // ─── Pre-application inquiries (no Application exists yet) ───
+
+    public List<Message> getJobThread(String jobId, String seekerId, User requestingUser) {
+        Job job = jobRepository.findById(jobId).orElseThrow(() -> new RuntimeException("Job not found"));
+        assertJobThreadParticipant(job, seekerId, requestingUser);
+        List<Message> thread = messageRepository.findByJobIdAndSeekerIdOrderByCreatedAtAsc(jobId, seekerId);
+        thread.stream()
+            .filter(m -> !m.getSenderId().equals(requestingUser.getId()) && !m.isReadByRecipient())
+            .forEach(m -> { m.setReadByRecipient(true); messageRepository.save(m); });
+        return thread;
+    }
+
+    public Message sendJobMessage(String jobId, String seekerId, String content, User requestingUser) {
+        if (content == null || content.isBlank()) {
+            throw new RuntimeException("Message cannot be empty.");
+        }
+        if (content.length() > 2000) {
+            throw new RuntimeException("Message is too long (max 2000 characters).");
+        }
+        Job job = jobRepository.findById(jobId).orElseThrow(() -> new RuntimeException("Job not found"));
+        assertJobThreadParticipant(job, seekerId, requestingUser);
+
+        Message message = new Message();
+        message.setJobId(jobId);
+        message.setSeekerId(seekerId);
+        message.setSenderId(requestingUser.getId());
+        message.setSenderName(requestingUser.getName());
+        message.setSenderRole(requestingUser.getRole());
+        message.setContent(content.trim());
+        message.setCreatedAt(LocalDateTime.now());
+        message.setReadByRecipient(false);
+        Message saved = messageRepository.save(message);
+
+        boolean senderIsSeeker = requestingUser.getId().equals(seekerId);
+        String recipientId = senderIsSeeker ? job.getEmployerId() : seekerId;
+        if (recipientId != null) {
+            notificationService.create(
+                recipientId,
+                "New message",
+                requestingUser.getName() + " sent you a message about \"" + job.getTitle() + "\"",
+                "MESSAGE",
+                senderIsSeeker ? "/employer/jobs" : "/jobs/" + jobId
+            );
+        }
+        return saved;
+    }
+
+    // Lists the seekers who have an inquiry thread for this job — used to build the
+    // employer's "Job Inquiries" inbox per job.
+    public List<String> getInquirySeekerIds(String jobId, User requestingUser) {
+        Job job = jobRepository.findById(jobId).orElseThrow(() -> new RuntimeException("Job not found"));
+        boolean isAdmin = "ADMIN".equals(requestingUser.getRole());
+        boolean isEmployerOwner = job.getEmployerId() != null && job.getEmployerId().equals(requestingUser.getId());
+        if (!isAdmin && !isEmployerOwner) {
+            throw new RuntimeException("You are not authorized to view inquiries for this job.");
+        }
+        return messageRepository.findByJobIdOrderByCreatedAtDesc(jobId).stream()
+            .map(Message::getSeekerId)
+            .filter(java.util.Objects::nonNull)
+            .distinct()
+            .toList();
+    }
+
+    private void assertJobThreadParticipant(Job job, String seekerId, User requestingUser) {
+        boolean isAdmin = "ADMIN".equals(requestingUser.getRole());
+        boolean isSeekerOwner = requestingUser.getId().equals(seekerId);
+        boolean isEmployerOwner = job.getEmployerId() != null && job.getEmployerId().equals(requestingUser.getId());
+        if (!isAdmin && !isSeekerOwner && !isEmployerOwner) {
+            throw new RuntimeException("You are not authorized to view this conversation.");
+        }
+    }
 }

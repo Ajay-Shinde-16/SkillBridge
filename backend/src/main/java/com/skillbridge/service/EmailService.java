@@ -92,6 +92,24 @@ public class EmailService {
     }
 
     // ─── 1. OTP Email ───
+    public void sendJobAlertEmail(String toEmail, String name, java.util.List<com.skillbridge.model.Job> matchingJobs) {
+        StringBuilder jobListHtml = new StringBuilder();
+        for (com.skillbridge.model.Job job : matchingJobs) {
+            jobListHtml.append("<div style='padding:12px;border:1px solid #eee;border-radius:8px;margin-bottom:8px;'>")
+                .append("<strong>").append(job.getTitle()).append("</strong> at ").append(job.getCompanyName())
+                .append("<br><span style='color:#666;font-size:13px;'>")
+                .append(job.getLocation() != null ? job.getLocation() : "Remote")
+                .append("</span></div>");
+        }
+        String html = "<div style='font-family:sans-serif;max-width:560px;margin:0 auto;'>"
+            + "<h2 style='color:#0A66C2;'>New jobs matching your alert 🔔</h2>"
+            + "<p>Hi " + name + ", " + matchingJobs.size() + " new job(s) match one of your saved alerts:</p>"
+            + jobListHtml
+            + "<p style='margin-top:16px;'><a href='" + baseUrl + "/jobs' style='background:#0A66C2;color:#fff;padding:10px 20px;border-radius:20px;text-decoration:none;'>Browse Jobs</a></p>"
+            + "</div>";
+        sendEmail(toEmail, "🔔 " + matchingJobs.size() + " new job(s) match your alert", html);
+    }
+
     public void sendOtpEmail(String toEmail, String name, String otp) {
         String subject = "Password Reset OTP - SkillBridge";
         sendEmail(toEmail, subject, buildOtpHtml(name, otp));

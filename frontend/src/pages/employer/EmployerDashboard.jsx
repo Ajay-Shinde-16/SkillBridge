@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react'
 import { Link } from 'react-router-dom'
-import { getMyJobs, deleteJob, updateJobStatus } from '../../services/api'
+import { getMyJobs, deleteJob, updateJobStatus, getJobInquiries } from '../../services/api'
 import { useAuth } from '../../context/AuthContext'
+import MessageThread from '../../components/MessageThread'
 
 export default function EmployerDashboard() {
   const { user } = useAuth()
@@ -11,6 +12,15 @@ export default function EmployerDashboard() {
   const [toast, setToast] = useState('')
   const [lastUpdated, setLastUpdated] = useState(null)
   const prevDataRef = useRef('')
+  const [inquiriesJobId, setInquiriesJobId] = useState(null)
+  const [inquiries, setInquiries] = useState([])
+  const [activeSeekerId, setActiveSeekerId] = useState(null)
+
+  const toggleInquiries = async (jobId) => {
+    if (inquiriesJobId === jobId) { setInquiriesJobId(null); setActiveSeekerId(null); return }
+    setInquiriesJobId(jobId); setActiveSeekerId(null)
+    try { const { data } = await getJobInquiries(jobId); setInquiries(data || []) } catch { setInquiries([]) }
+  }
 
   const fetchJobs = useCallback(async (showLoader = false) => {
     if (showLoader) setLoading(true)
@@ -198,6 +208,11 @@ export default function EmployerDashboard() {
                             style={{background:'#EEF3F8',color:'#0A66C2',border:'1px solid #D0D9E0',fontSize:'0.78rem'}}>
                             <i className="bi bi-people me-1"></i>{job.applicationCount||0} Applicants
                           </Link>
+                          <button type="button" onClick={() => toggleInquiries(job.id)}
+                            className="btn btn-sm rounded-pill fw-semibold"
+                            style={{background: inquiriesJobId===job.id ? '#0A66C2' : '#EEF3F8', color: inquiriesJobId===job.id ? '#fff' : '#0A66C2', border:'1px solid #0A66C2',fontSize:'0.78rem'}}>
+                            <i className="bi bi-chat-dots me-1"></i>Inquiries
+                          </button>
                           <Link to={`/employer/edit-job/${job.id}`}
                             className="btn btn-sm rounded-pill"
                             style={{background:'#CCFBF1',color:'#92400e',border:'1px solid #FCD34D',fontSize:'0.78rem',padding:'5px 10px'}}>
@@ -224,6 +239,35 @@ export default function EmployerDashboard() {
                           </button>
                         </div>
                       </div>
+
+                      {inquiriesJobId === job.id && (
+                        <div className="mt-3 p-3 rounded-3" style={{background:'#F8FAFC',border:'1px solid #E2E8F0'}}>
+                          <div className="fw-semibold small mb-2">Job Inquiries</div>
+                          {inquiries.length === 0 ? (
+                            <p className="text-muted small mb-0">No one has asked a question about this job yet.</p>
+                          ) : (
+                            <>
+                              <div className="d-flex gap-2 flex-wrap mb-2">
+                                {inquiries.map(inq => (
+                                  <button key={inq.seekerId} type="button"
+                                    onClick={() => setActiveSeekerId(inq.seekerId)}
+                                    className="btn btn-sm rounded-pill"
+                                    style={{
+                                      background: activeSeekerId===inq.seekerId ? '#0A66C2' : '#EEF3F8',
+                                      color: activeSeekerId===inq.seekerId ? '#fff' : '#0A66C2',
+                                      border:'1px solid #0A66C2', fontSize:'0.78rem'
+                                    }}>
+                                    {inq.seekerName}
+                                  </button>
+                                ))}
+                              </div>
+                              {activeSeekerId && (
+                                <MessageThread jobId={job.id} seekerId={activeSeekerId} />
+                              )}
+                            </>
+                          )}
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>

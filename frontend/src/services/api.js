@@ -17,6 +17,8 @@ API.interceptors.request.use((config) => {
 // ─── Auth ───
 export const register = (data) => API.post('/auth/register', data)
 export const login    = (data) => API.post('/auth/login', data)
+export const verifyLoginOtp = (data) => API.post('/auth/verify-login-otp', data)
+export const toggle2FA = (enabled) => API.put('/users/2fa', { enabled })
 
 // ─── Jobs ───
 export const getAllJobs    = ()           => API.get('/jobs/all')
@@ -58,12 +60,15 @@ export const updateProfile   = (data)   => API.put('/users/profile', data)
 export const changePassword  = (data)   => API.put('/users/change-password', data)
 export const getAllUsers      = ()       => API.get('/users/all')
 export const deleteUser      = (id)     => API.delete(`/users/${id}`)
+export const toggleUserActive = (id)    => API.put(`/users/${id}/toggle-active`)
 
-// ─── Resume ───
-export const uploadResume = (formData) => API.post('/files/upload-resume', formData, {
+// ─── Resume (multiple resumes per seeker) ───
+export const uploadResume   = (formData) => API.post('/files/upload-resume', formData, {
   headers: { 'Content-Type': 'multipart/form-data' }
 })
-export const deleteResume = () => API.delete('/files/resume')
+export const getResumes     = ()           => API.get('/files/resumes')
+export const setPrimaryResume = (resumeId) => API.put(`/files/resumes/${resumeId}/primary`)
+export const deleteResumeById = (resumeId) => API.delete(`/files/resumes/${resumeId}`)
 
 export default API
 
@@ -85,6 +90,18 @@ export const resetPassword   = (data) => API.post('/users/reset-password', data)
 // ─── Job Status Toggle ───
 export const updateJobStatus = (id, status) => API.put(`/jobs/${id}/status`, { status })
 
+// ─── Job Alerts ───
+export const createJobAlert = (data) => API.post('/job-alerts', data)
+export const getJobAlerts   = ()     => API.get('/job-alerts')
+export const deleteJobAlert = (id)   => API.delete(`/job-alerts/${id}`)
+
 // ─── Messages ───
 export const getMessageThread = (applicationId) => API.get(`/messages/${applicationId}`)
 export const sendMessage      = (applicationId, content) => API.post(`/messages/${applicationId}`, { content })
+
+// Pre-application inquiries (message a company before applying)
+export const getMyJobThread   = (jobId)            => API.get(`/messages/job/${jobId}`)
+export const sendMyJobMessage = (jobId, content)   => API.post(`/messages/job/${jobId}`, { content })
+export const getJobInquiries  = (jobId)            => API.get(`/messages/job/${jobId}/inquiries`)
+export const getInquiryThread = (jobId, seekerId)  => API.get(`/messages/job/${jobId}/seeker/${seekerId}`)
+export const replyToInquiry   = (jobId, seekerId, content) => API.post(`/messages/job/${jobId}/seeker/${seekerId}`, { content })

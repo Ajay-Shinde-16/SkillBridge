@@ -52,6 +52,19 @@ public class AuthController {
         }
     }
 
+    @PostMapping("/verify-login-otp")
+    public ResponseEntity<?> verifyLoginOtp(@RequestBody java.util.Map<String, String> body,
+                                             HttpServletRequest httpRequest) {
+        if (!rateLimiterService.allow("login-otp:" + clientIp(httpRequest))) {
+            return ResponseEntity.status(429).body("Too many attempts. Please wait a minute and try again.");
+        }
+        try {
+            return ResponseEntity.ok(authService.verifyLoginOtp(body.get("email"), body.get("otp")));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
     // Turns a 400 validation failure (e.g. blank email) into the same plain-string
     // error format the frontend already expects, instead of a raw Spring error blob.
     @ExceptionHandler(MethodArgumentNotValidException.class)

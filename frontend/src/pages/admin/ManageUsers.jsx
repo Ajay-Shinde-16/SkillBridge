@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import UserAvatar from '../../components/UserAvatar'
 import { Link } from 'react-router-dom'
-import { getAllUsers, deleteUser } from '../../services/api'
+import { getAllUsers, deleteUser, toggleUserActive } from '../../services/api'
+import { exportToCsv } from '../../utils/csvExport'
 import { useAuth } from '../../context/AuthContext'
 
 const roleColors = { SEEKER: 'primary', EMPLOYER: 'warning', ADMIN: 'danger' }
@@ -14,6 +15,7 @@ export default function ManageUsers() {
   const [search, setSearch] = useState('')
   const [roleFilter, setRoleFilter] = useState('')
   const [deleting, setDeleting] = useState(null)
+  const [toggling, setToggling] = useState(null)
   const PAGE_SIZE = 20
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE)
 
@@ -46,12 +48,39 @@ export default function ManageUsers() {
     }
   }
 
+  const handleToggleActive = async (id, currentlyActive) => {
+    const action = currentlyActive ? 'deactivate' : 'reactivate'
+    if (!window.confirm(`Are you sure you want to ${action} this account?`)) return
+    setToggling(id)
+    try {
+      await toggleUserActive(id)
+      fetchUsers()
+    } catch (e) {
+      alert(e.response?.data || `Failed to ${action} account.`)
+    } finally {
+      setToggling(null)
+    }
+  }
+
   const filtered = users.filter(u =>
     (u.name?.toLowerCase().includes(search.toLowerCase()) ||
      u.email?.toLowerCase().includes(search.toLowerCase())) &&
     (roleFilter === '' || u.role === roleFilter)
   )
   const visibleUsers = filtered.slice(0, visibleCount)
+
+  const handleExport = () => {
+    exportToCsv('skillbridge-users.csv', filtered, [
+      { label: 'Name', accessor: u => u.name },
+      { label: 'Email', accessor: u => u.email },
+      { label: 'Role', accessor: u => u.role },
+      { label: 'Company', accessor: u => u.companyName || '' },
+      { label: 'Skills Count', accessor: u => u.skillsList?.length || 0 },
+      { label: 'Verified Skills', accessor: u => u.verifiedSkillsList?.length || 0 },
+      { label: 'Active', accessor: u => u.active === false ? 'No' : 'Yes' },
+      { label: 'Joined', accessor: u => u.createdAt ? new Date(u.createdAt).toLocaleDateString() : '' },
+    ])
+  }
 
   return (
     <div className="container-fluid p-0">
@@ -116,6 +145,10 @@ export default function ManageUsers() {
                 <span className="text-muted small align-self-center ms-auto">
                   {filtered.length} result{filtered.length !== 1 ? 's' : ''}
                 </span>
+                <button className="btn btn-sm rounded-pill" style={{background:'#EEF3F8',color:'#0A66C2',border:'1px solid #0A66C2'}}
+                  onClick={handleExport}>
+                  <i className="bi bi-download me-1"></i>Export CSV
+                </button>
               </div>
 
               {loading ? (
@@ -163,6 +196,11 @@ export default function ManageUsers() {
                               <i className={`bi ${roleIcons[u.role] || 'bi-person'} me-1`}></i>
                               {u.role}
                             </span>
+                            {u.role !== 'ADMIN' && (
+                              <span className={`badge ms-1 ${u.active === false ? 'bg-secondary' : 'bg-success'}`} style={{ fontSize: '0.65rem' }}>
+                                {u.active === false ? 'Inactive' : 'Active'}
+                              </span>
+                            )}
                           </td>
                           <td className="d-none d-md-table-cell text-muted small">
                             {u.skillsList?.length || 0} skills
@@ -184,15 +222,33 @@ export default function ManageUsers() {
                             {u.id === currentUser?.id || u.role === 'ADMIN' ? (
                               <span className="text-muted small">—</span>
                             ) : (
-                              <button
-                                className="btn btn-sm rounded-pill"
-                                style={{ background: '#FEE2E2', color: '#991b1b', border: '1px solid #fca5a5', fontSize: '0.75rem' }}
-                                disabled={deleting === u.id}
-                                onClick={() => handleDelete(u.id, u.name, u.role)}>
-                                {deleting === u.id
-                                  ? <span className="spinner-border spinner-border-sm"></span>
-                                  : <><i className="bi bi-trash me-1"></i>Delete</>}
-                              </button>
+                              <div className="d-flex gap-1 flex-wrap">
+                                <button
+                                  className="btn btn-sm rounded-pill"
+                                  style={{
+                                    background: u.active === false ? '#D1FAE5' : '#FEF3C7',
+                                    color: u.active === false ? '#065f46' : '#92400e',
+                                    border: '1px solid ' + (u.active === false ? '#6EE7B7' : '#FCD34D'),
+                                    fontSize: '0.75rem'
+                                  }}
+                                  disabled={toggling === u.id}
+                                  onClick={() => handleToggleActive(u.id, u.active !== false)}>
+                                  {toggling === u.id
+                                    ? <span className="spinner-border spinner-border-sm"></span>
+                                    : u.active === false
+                                      ? <><i className="bi bi-check-circle me-1"></i>Reactivate</>
+                                      : <><i className="bi bi-pause-circle me-1"></i>Deactivate</>}
+                                </button>
+                                <button
+                                  className="btn btn-sm rounded-pill"
+                                  style={{ background: '#FEE2E2', color: '#991b1b', border: '1px solid #fca5a5', fontSize: '0.75rem' }}
+                                  disabled={deleting === u.id}
+                                  onClick={() => handleDelete(u.id, u.name, u.role)}>
+                                  {deleting === u.id
+                                    ? <span className="spinner-border spinner-border-sm"></span>
+                                    : <><i className="bi bi-trash me-1"></i>Delete</>}
+                                </button>
+                              </div>
                             )}
                           </td>
                         </tr>

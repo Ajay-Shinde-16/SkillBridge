@@ -18,8 +18,13 @@ public class Message {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
-    @Column(nullable = false)
+    // Exactly one of these two modes is used per message:
+    // 1. Application-scoped chat (applicationId set) — after the seeker has applied.
+    // 2. Pre-application inquiry (jobId + seekerId set, applicationId null) — a seeker
+    //    asking an employer a question about a job before applying.
     private String applicationId;
+    private String jobId;
+    private String seekerId;
 
     @Column(nullable = false)
     private String senderId;

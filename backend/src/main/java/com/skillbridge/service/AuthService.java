@@ -25,6 +25,7 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtUtils jwtUtils;
     private final AuthenticationManager authenticationManager;
+    private final EmailService emailService;
 
     @Value("${admin.registration.secret:}")
     private String adminRegistrationSecret;
@@ -109,6 +110,47 @@ public class AuthService {
         if (!user.isActive()) {
             throw new RuntimeException("Your account has been deactivated. Please contact admin.");
         }
+
+        // ─── Optional 2FA: if enabled, send an OTP instead of issuing a token directly ───
+        // Reuses the same otpCode/otpExpiry fields as forgot-password. Note: this means a
+        // simultaneous password-reset request and a 2FA login attempt would overwrite each
+        // other's OTP — an acceptable edge case at this scale, not worth a second column for.
+        if (user.isTwoFactorEnabled()) {
+            String otp = String.format("%06d", new java.util.Random().nextInt(999999));
+            user.setOtpCode(passwordEncoder.encode(otp));
+            user.setOtpExpiry(LocalDateTime.now().plusMinutes(10));
+            userRepository.save(user);
+            try {
+                emailService.sendOtpEmail(user.getEmail(), user.getName(), otp);
+            } catch (Exception e) {
+                log.error("Failed to send 2FA OTP email: {}", e.getMessage());
+            }
+            AuthDTOs.AuthResponse pending = new AuthDTOs.AuthResponse(null, user.getId(), user.getName(), user.getEmail(), user.getRole());
+            pending.setTwoFactorRequired(true);
+            return pending;
+        }
+
+        String token = jwtUtils.generateToken(user.getEmail(), user.getRole());
+        return new AuthDTOs.AuthResponse(token, user.getId(), user.getName(), user.getEmail(), user.getRole());
+    }
+
+    public AuthDTOs.AuthResponse verifyLoginOtp(String email, String otp) {
+        User user = userRepository.findByEmail(email)
+            .orElseThrow(() -> new RuntimeException("No account found with this email."));
+
+        if (user.getOtpCode() == null || user.getOtpExpiry() == null) {
+            throw new RuntimeException("No OTP was requested. Please log in again.");
+        }
+        if (LocalDateTime.now().isAfter(user.getOtpExpiry())) {
+            throw new RuntimeException("OTP has expired. Please log in again.");
+        }
+        if (!passwordEncoder.matches(otp, user.getOtpCode())) {
+            throw new RuntimeException("Incorrect OTP. Please try again.");
+        }
+
+        user.setOtpCode(null);
+        user.setOtpExpiry(null);
+        userRepository.save(user);
 
         String token = jwtUtils.generateToken(user.getEmail(), user.getRole());
         return new AuthDTOs.AuthResponse(token, user.getId(), user.getName(), user.getEmail(), user.getRole());

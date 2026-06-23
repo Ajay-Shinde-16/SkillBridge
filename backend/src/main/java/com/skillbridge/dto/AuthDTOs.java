@@ -45,6 +45,7 @@ public class AuthDTOs {
         private String name;
         private String email;
         private String role;
+        private boolean twoFactorRequired = false;
 
         public AuthResponse(String token, String id, String name, String email, String role) {
             this.token = token;

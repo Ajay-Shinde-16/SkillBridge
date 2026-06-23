@@ -77,6 +77,7 @@ public class User {
 
     private String otpCode;
     private LocalDateTime otpExpiry;
+    private boolean twoFactorEnabled = false;
 
     private LocalDateTime createdAt;
     private boolean active = true;

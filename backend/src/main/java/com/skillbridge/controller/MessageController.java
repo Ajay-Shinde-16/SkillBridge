@@ -45,4 +45,77 @@ public class MessageController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+
+    // ─── Pre-application inquiries (message a company before applying) ───
+
+    @GetMapping("/job/{jobId}")
+    @org.springframework.security.access.prepost.PreAuthorize("hasRole('SEEKER')")
+    public ResponseEntity<?> getMyJobThread(@PathVariable String jobId, Authentication auth) {
+        try {
+            User user = userRepository.findByEmail(auth.getName())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+            return ResponseEntity.ok(messageService.getJobThread(jobId, user.getId(), user));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/job/{jobId}")
+    @org.springframework.security.access.prepost.PreAuthorize("hasRole('SEEKER')")
+    public ResponseEntity<?> sendMyJobMessage(@PathVariable String jobId,
+                                               @RequestBody Map<String, String> body,
+                                               Authentication auth) {
+        try {
+            User user = userRepository.findByEmail(auth.getName())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+            return ResponseEntity.ok(messageService.sendJobMessage(jobId, user.getId(), body.get("content"), user));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/job/{jobId}/inquiries")
+    @org.springframework.security.access.prepost.PreAuthorize("hasRole('EMPLOYER') or hasRole('ADMIN')")
+    public ResponseEntity<?> listInquiries(@PathVariable String jobId, Authentication auth) {
+        try {
+            User user = userRepository.findByEmail(auth.getName())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+            List<String> seekerIds = messageService.getInquirySeekerIds(jobId, user);
+            List<Map<String, String>> result = new java.util.ArrayList<>();
+            for (String seekerId : seekerIds) {
+                User seeker = userRepository.findById(seekerId).orElse(null);
+                if (seeker != null) {
+                    result.add(Map.of("seekerId", seekerId, "seekerName", seeker.getName(), "seekerEmail", seeker.getEmail()));
+                }
+            }
+            return ResponseEntity.ok(result);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/job/{jobId}/seeker/{seekerId}")
+    @org.springframework.security.access.prepost.PreAuthorize("hasRole('EMPLOYER') or hasRole('ADMIN')")
+    public ResponseEntity<?> getInquiryThread(@PathVariable String jobId, @PathVariable String seekerId, Authentication auth) {
+        try {
+            User user = userRepository.findByEmail(auth.getName())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+            return ResponseEntity.ok(messageService.getJobThread(jobId, seekerId, user));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/job/{jobId}/seeker/{seekerId}")
+    @org.springframework.security.access.prepost.PreAuthorize("hasRole('EMPLOYER') or hasRole('ADMIN')")
+    public ResponseEntity<?> replyToInquiry(@PathVariable String jobId, @PathVariable String seekerId,
+                                             @RequestBody Map<String, String> body, Authentication auth) {
+        try {
+            User user = userRepository.findByEmail(auth.getName())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+            return ResponseEntity.ok(messageService.sendJobMessage(jobId, seekerId, body.get("content"), user));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
 }

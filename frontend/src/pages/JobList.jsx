@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { searchJobs, toggleSavedJob, getSavedJobs, getProfile } from '../services/api'
+import { searchJobs, toggleSavedJob, getSavedJobs, getProfile, createJobAlert, getJobAlerts, deleteJobAlert } from '../services/api'
 import { useAuth } from '../context/AuthContext'
 import CompanyLogo from '../components/CompanyLogo'
 
@@ -46,6 +46,40 @@ export default function JobList() {
   }
 
   const loadMore = () => fetchJobs(filters, page + 1, true)
+
+  // ─── Job Alerts ───
+  const [alerts, setAlerts] = useState([])
+  const [showAlerts, setShowAlerts] = useState(false)
+  const [savingAlert, setSavingAlert] = useState(false)
+  const [alertMsg, setAlertMsg] = useState('')
+
+  const loadAlerts = async () => {
+    try { const { data } = await getJobAlerts(); setAlerts(data || []) } catch { /* not a seeker, or not logged in */ }
+  }
+
+  useEffect(() => { if (user?.role === 'SEEKER') loadAlerts() }, [user])
+
+  const handleSaveAlert = async () => {
+    setSavingAlert(true); setAlertMsg('')
+    try {
+      await createJobAlert({
+        keyword: filters.keyword || null,
+        remote: filters.remote === '' ? null : filters.remote === 'true',
+        experienceLevel: filters.experienceLevel || null,
+      })
+      setAlertMsg('success:Alert saved! We\'ll email you when matching jobs are posted.')
+      await loadAlerts()
+    } catch (e) {
+      setAlertMsg('error:' + (e.response?.data || 'Failed to save alert.'))
+    } finally {
+      setSavingAlert(false)
+      setTimeout(() => setAlertMsg(''), 4000)
+    }
+  }
+
+  const handleDeleteAlert = async (id) => {
+    try { await deleteJobAlert(id); await loadAlerts() } catch { /* ignore */ }
+  }
 
   useEffect(() => {
     fetchJobs()
@@ -126,6 +160,21 @@ export default function JobList() {
               {activeCount>0 && <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style={{fontSize:'0.6rem'}}>{activeCount}</span>}
             </button>
             {activeCount>0 && <button className="btn btn-outline-secondary rounded-pill px-3" onClick={clearFilters}><i className="bi bi-x me-1"></i>Clear</button>}
+            {user?.role === 'SEEKER' && (
+              <>
+                <button className="btn rounded-pill px-3 fw-semibold" disabled={savingAlert}
+                  style={{background:'#EEF3F8',color:'#0A66C2',border:'1px solid #0A66C2'}}
+                  onClick={handleSaveAlert}>
+                  {savingAlert ? <span className="spinner-border spinner-border-sm"></span> : <><i className="bi bi-bell me-1"></i>Save as Alert</>}
+                </button>
+                <button className="btn rounded-pill px-3 fw-semibold position-relative"
+                  style={{background:showAlerts?'#0A66C2':'#EEF3F8',color:showAlerts?'#fff':'#0A66C2',border:'none'}}
+                  onClick={() => setShowAlerts(!showAlerts)}>
+                  <i className="bi bi-bell-fill me-1"></i>My Alerts
+                  {alerts.length>0 && <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style={{fontSize:'0.6rem'}}>{alerts.length}</span>}
+                </button>
+              </>
+            )}
           </div>
 
           {showFilters && (
@@ -183,6 +232,36 @@ export default function JobList() {
               <button className="btn btn-sm text-white rounded-pill px-4 mt-2 fw-semibold" style={{background:'#0A66C2'}} onClick={() => fetchJobs()}>
                 Apply Filters
               </button>
+            </div>
+          )}
+
+          {alertMsg && (
+            <div className={`alert alert-${alertMsg.startsWith('success')?'success':'danger'} py-2 small mt-2 mb-0`}>
+              {alertMsg.split(':').slice(1).join(':')}
+            </div>
+          )}
+
+          {showAlerts && (
+            <div className="border-top pt-3 mt-2">
+              <div className="fw-semibold small mb-2">Your Saved Alerts</div>
+              {alerts.length === 0 ? (
+                <p className="text-muted small mb-0">No alerts yet. Set filters above and click "Save as Alert".</p>
+              ) : (
+                alerts.map(a => (
+                  <div key={a.id} className="d-flex align-items-center justify-content-between p-2 rounded-3 mb-1"
+                    style={{background:'#F8FAFC',fontSize:'0.82rem'}}>
+                    <span>
+                      {a.keyword && <span className="badge bg-light text-dark me-1">"{a.keyword}"</span>}
+                      {a.remote !== null && <span className="badge bg-light text-dark me-1">{a.remote ? 'Remote' : 'On-site'}</span>}
+                      {a.experienceLevel && <span className="badge bg-light text-dark me-1">{a.experienceLevel}</span>}
+                      {!a.keyword && a.remote === null && !a.experienceLevel && <span className="text-muted">All jobs</span>}
+                    </span>
+                    <button className="btn btn-sm text-danger" onClick={() => handleDeleteAlert(a.id)}>
+                      <i className="bi bi-trash"></i>
+                    </button>
+                  </div>
+                ))
+              )}
             </div>
           )}
         </div>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
-import { getProfile, updateProfile, updateMySkills } from '../services/api'
+import { getProfile, updateProfile, updateMySkills, getResumes, setPrimaryResume, deleteResumeById, toggle2FA } from '../services/api'
 import { useAuth } from '../context/AuthContext'
 import { changePassword } from '../services/api'
 import axios from 'axios'
@@ -16,6 +16,25 @@ export default function Profile() {
   const [uploading, setUploading] = useState(false)
   const [uploadMsg, setUploadMsg] = useState('')
   const [suggestedSkills, setSuggestedSkills] = useState([])
+  const [resumes, setResumes] = useState([])
+  const [twoFALoading, setTwoFALoading] = useState(false)
+
+  const handleToggle2FA = async (e) => {
+    const enabled = e.target.checked
+    setTwoFALoading(true)
+    try {
+      await toggle2FA(enabled)
+      setProfile(prev => ({ ...prev, twoFactorEnabled: enabled }))
+    } catch {
+      setError('Failed to update two-factor authentication setting.')
+    } finally {
+      setTwoFALoading(false)
+    }
+  }
+
+  const loadResumes = async () => {
+    try { const { data } = await getResumes(); setResumes(data || []) } catch { /* ignore */ }
+  }
   const fileInputRef = useRef()
 
   // Change Password state — inside profile page
@@ -28,7 +47,10 @@ export default function Profile() {
 
   useEffect(() => {
     getProfile()
-      .then(({ data }) => { setProfile(data); setLoading(false) })
+      .then(({ data }) => {
+        setProfile(data); setLoading(false)
+        if (data?.role === 'SEEKER') loadResumes()
+      })
       .catch(() => { setError('Failed to load profile'); setLoading(false) })
   }, [])
 
@@ -73,10 +95,14 @@ export default function Profile() {
       const { data } = await axios.post(`${baseUrl}/api/files/upload-resume`, formData, {
         headers: { 'Content-Type': 'multipart/form-data', Authorization: `Bearer ${token}` }
       })
-      setProfile(prev => ({ ...prev, resumeUrl: data.url }))
+      setProfile(prev => ({ ...prev, resumeUrl: data.url || prev.resumeUrl }))
       setUploadMsg('success:Resume uploaded successfully!')
       setSuggestedSkills(data.suggestedSkills || [])
-    } catch { setUploadMsg('error:Upload failed. Only PDF, max 5MB.') } finally {
+      await loadResumes()
+    } catch (err) {
+      const msg = err.response?.data?.error || 'Upload failed. Only PDF, max 5MB.'
+      setUploadMsg('error:' + msg)
+    } finally {
       setUploading(false)
       setTimeout(() => setUploadMsg(''), 4000)
       if (fileInputRef.current) fileInputRef.current.value = ''
@@ -99,15 +125,25 @@ export default function Profile() {
     setSuggestedSkills(prev => prev.filter(s => s !== skill))
   }
 
-  const handleDeleteResume = async () => {
-    if (!window.confirm('Delete your current resume?')) return
+  const handleDeleteResumeById = async (resumeId) => {
+    if (!window.confirm('Delete this resume?')) return
     try {
-      const token = localStorage.getItem('token')
-      await axios.delete('/api/files/resume', { headers: { Authorization: `Bearer ${token}` } })
-      setProfile(prev => ({ ...prev, resumeUrl: null }))
+      await deleteResumeById(resumeId)
+      await loadResumes()
+      const { data } = await getProfile()
+      setProfile(data)
       setUploadMsg('success:Resume deleted')
       setTimeout(() => setUploadMsg(''), 3000)
     } catch { setUploadMsg('error:Failed to delete') }
+  }
+
+  const handleSetPrimary = async (resumeId) => {
+    try {
+      await setPrimaryResume(resumeId)
+      await loadResumes()
+      const { data } = await getProfile()
+      setProfile(data)
+    } catch { setUploadMsg('error:Failed to set as primary') }
   }
 
   const handleChangePassword = async (e) => {
@@ -375,6 +411,29 @@ export default function Profile() {
                     <li>Don't use your name or email as password</li>
                   </ul>
                 </div>
+
+                {/* 2FA Toggle */}
+                <div className="mt-4 p-3 rounded-3 d-flex align-items-center justify-content-between flex-wrap gap-2"
+                  style={{ background:'#F8FAFC', border:'1px solid #E2E8F0' }}>
+                  <div>
+                    <div className="fw-semibold small">
+                      <i className="bi bi-shield-lock-fill me-1" style={{color:'#0A66C2'}}></i>
+                      Two-Factor Authentication
+                    </div>
+                    <div className="text-muted" style={{fontSize:'0.78rem'}}>
+                      {profile?.twoFactorEnabled
+                        ? "Enabled — we'll email you a code each time you log in."
+                        : "Off — add an extra email-code step when logging in."}
+                    </div>
+                  </div>
+                  <div className="form-check form-switch">
+                    <input className="form-check-input" type="checkbox" role="switch"
+                      style={{width:42,height:22,cursor:'pointer'}}
+                      checked={!!profile?.twoFactorEnabled}
+                      disabled={twoFALoading}
+                      onChange={handleToggle2FA}/>
+                  </div>
+                </div>
               </div>
             </div>
           )}
@@ -395,31 +454,43 @@ export default function Profile() {
                   </div>
                 )}
 
-                {profile?.resumeUrl ? (
-                  <div className="rounded-3 p-3 mb-4 d-flex align-items-center gap-3 flex-wrap"
-                    style={{ background:'#D1FAE5', border:'1px solid #6EE7B7' }}>
-                    <div className="rounded-3 d-flex align-items-center justify-content-center"
-                      style={{ width:52, height:52, background:'#dc3545', flexShrink:0 }}>
-                      <i className="bi bi-file-earmark-pdf-fill text-white" style={{ fontSize:24 }}></i>
-                    </div>
-                    <div className="flex-fill">
-                      <div className="fw-bold" style={{ color:'#065f46' }}>✅ Resume Uploaded</div>
-                      <div className="text-muted small">Employers can view and download your PDF</div>
-                    </div>
-                    <div className="d-flex gap-2 flex-wrap">
-                      <a href={`${import.meta.env.VITE_API_URL || ''}${profile.resumeUrl}`} target="_blank" rel="noreferrer"
-                        className="btn btn-sm fw-semibold rounded-pill" style={{ background:'#0A66C2', color:'#fff', fontSize:'0.8rem' }}>
-                        <i className="bi bi-eye me-1"></i>View
-                      </a>
-                      <a href={`${import.meta.env.VITE_API_URL || ''}${profile.resumeUrl}`} download="My_Resume.pdf"
-                        className="btn btn-sm fw-semibold rounded-pill" style={{ background:'#057642', color:'#fff', fontSize:'0.8rem' }}>
-                        <i className="bi bi-download me-1"></i>Download
-                      </a>
-                      <button className="btn btn-sm rounded-pill" onClick={handleDeleteResume}
-                        style={{ background:'#FEE2E2', color:'#991b1b', border:'1px solid #fca5a5', fontSize:'0.8rem' }}>
-                        <i className="bi bi-trash me-1"></i>Delete
-                      </button>
-                    </div>
+                {resumes.length > 0 ? (
+                  <div className="mb-4">
+                    {resumes.map(r => (
+                      <div key={r.id} className="rounded-3 p-3 mb-2 d-flex align-items-center gap-3 flex-wrap"
+                        style={{ background: r.isPrimary ? '#D1FAE5' : '#F8FAFC', border: r.isPrimary ? '1px solid #6EE7B7' : '1px solid #E2E8F0' }}>
+                        <div className="rounded-3 d-flex align-items-center justify-content-center"
+                          style={{ width:44, height:44, background:'#dc3545', flexShrink:0 }}>
+                          <i className="bi bi-file-earmark-pdf-fill text-white" style={{ fontSize:20 }}></i>
+                        </div>
+                        <div className="flex-fill">
+                          <div className="fw-bold small">
+                            {r.fileName}
+                            {r.isPrimary && <span className="badge rounded-pill ms-2" style={{background:'#057642',fontSize:'0.65rem'}}>Primary — used when you apply</span>}
+                          </div>
+                          <div className="text-muted" style={{fontSize:'0.72rem'}}>
+                            {r.uploadedAt ? new Date(r.uploadedAt).toLocaleDateString() : ''}
+                          </div>
+                        </div>
+                        <div className="d-flex gap-2 flex-wrap">
+                          <a href={`${import.meta.env.VITE_API_URL || ''}/api/files/resumes/${r.id}/view`}
+                            target="_blank" rel="noreferrer"
+                            className="btn btn-sm fw-semibold rounded-pill" style={{ background:'#0A66C2', color:'#fff', fontSize:'0.75rem' }}>
+                            <i className="bi bi-eye me-1"></i>View
+                          </a>
+                          {!r.isPrimary && (
+                            <button className="btn btn-sm fw-semibold rounded-pill" onClick={() => handleSetPrimary(r.id)}
+                              style={{ background:'#EEF3F8', color:'#0A66C2', border:'1px solid #0A66C2', fontSize:'0.75rem' }}>
+                              <i className="bi bi-star me-1"></i>Set Primary
+                            </button>
+                          )}
+                          <button className="btn btn-sm rounded-pill" onClick={() => handleDeleteResumeById(r.id)}
+                            style={{ background:'#FEE2E2', color:'#991b1b', border:'1px solid #fca5a5', fontSize:'0.75rem' }}>
+                            <i className="bi bi-trash me-1"></i>Delete
+                          </button>
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 ) : (
                   <div className="rounded-3 p-3 mb-4 d-flex align-items-center gap-3"
@@ -432,6 +503,11 @@ export default function Profile() {
                   </div>
                 )}
 
+                {resumes.length >= 5 ? (
+                  <div className="rounded-3 p-3 text-center text-muted small" style={{border:'1px dashed #D0D9E0'}}>
+                    You've reached the 5-resume limit. Delete one to upload another.
+                  </div>
+                ) : (
                 <div className="rounded-3 p-4 text-center"
                   style={{ border:'2px dashed #D0D9E0', background:'#F8FAFC', cursor:'pointer' }}
                   onClick={()=>fileInputRef.current?.click()}
@@ -443,15 +519,17 @@ export default function Profile() {
                   ) : (
                     <>
                       <i className="bi bi-cloud-upload fs-1 mb-2 d-block" style={{ color:'#0A66C2' }}></i>
-                      <div className="fw-semibold mb-1">{profile?.resumeUrl?'Replace Resume':'Upload Resume'}</div>
+                      <div className="fw-semibold mb-1">{resumes.length>0 ? 'Add Another Resume' : 'Upload Resume'}</div>
                       <div className="text-muted small">Click or drag & drop your PDF here</div>
                       <div className="mt-2 d-flex gap-2 justify-content-center">
                         <span className="badge rounded-pill" style={{ background:'#EEF3F8', color:'#0A66C2', fontSize:'0.72rem' }}>PDF only</span>
                         <span className="badge rounded-pill" style={{ background:'#EEF3F8', color:'#0A66C2', fontSize:'0.72rem' }}>Max 5MB</span>
+                        <span className="badge rounded-pill" style={{ background:'#EEF3F8', color:'#0A66C2', fontSize:'0.72rem' }}>Up to 5 resumes</span>
                       </div>
                     </>
                   )}
                 </div>
+                )}
                 <input type="file" accept=".pdf" ref={fileInputRef} style={{ display:'none' }} onChange={handleResumeUpload}/>
               </div>
 

@@ -13,13 +13,16 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.skillbridge.model.Resume;
 import com.skillbridge.model.Skill;
 import com.skillbridge.model.User;
+import com.skillbridge.repository.ResumeRepository;
 import com.skillbridge.repository.SkillRepository;
 import com.skillbridge.repository.UserRepository;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -30,89 +33,150 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class FileUploadController {
 
+    private static final int MAX_RESUMES_PER_USER = 5;
+
     private final UserRepository userRepository;
     private final SkillRepository skillRepository;
+    private final ResumeRepository resumeRepository;
 
     @PostMapping("/upload-resume")
     @PreAuthorize("hasRole('SEEKER')")
     public ResponseEntity<?> uploadResume(@RequestParam("file") MultipartFile file,
                                           Authentication auth) {
         try {
-            // Validate file type
             String contentType = file.getContentType();
             if (contentType == null || !contentType.equals("application/pdf")) {
-                return ResponseEntity.badRequest()
-                    .body(Map.of("error", "Only PDF files are allowed"));
+                return ResponseEntity.badRequest().body(Map.of("error", "Only PDF files are allowed"));
             }
-
-            // Validate file size (5MB)
             if (file.getSize() > 5 * 1024 * 1024) {
-                return ResponseEntity.badRequest()
-                    .body(Map.of("error", "File size must be less than 5MB"));
+                return ResponseEntity.badRequest().body(Map.of("error", "File size must be less than 5MB"));
             }
-
-            byte[] fileBytes = file.getBytes();
-            String originalFilename = file.getOriginalFilename() != null
-                ? file.getOriginalFilename() : "resume.pdf";
 
             User user = userRepository.findByEmail(auth.getName())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-            // Store the resume directly in the database (persists across redeploys,
-            // unlike the app server's disk).
-            user.setResumeData(fileBytes);
-            user.setResumeFileName(originalFilename);
-            user.setResumeUrl("/api/files/resume/" + user.getId());
-            userRepository.save(user);
-
-            // ─── Suggest skills by scanning the resume text against the master skill list ───
-            // Best-effort: if text extraction fails (e.g. a scanned/image-only PDF with no
-            // real text layer), we still return upload success — suggestions are a bonus.
-            List<String> suggestedSkills = new ArrayList<>();
-            try {
-                String resumeText = extractPdfText(fileBytes).toLowerCase();
-                List<Skill> allSkills = skillRepository.findAll();
-                List<String> alreadyTagged = user.getSkillsList();
-                for (Skill skill : allSkills) {
-                    String skillNameLower = skill.getName().toLowerCase();
-                    boolean mentionedInResume = resumeText.contains(skillNameLower);
-                    boolean notAlreadyTagged = alreadyTagged == null || !alreadyTagged.contains(skill.getName());
-                    if (mentionedInResume && notAlreadyTagged) {
-                        suggestedSkills.add(skill.getName());
-                    }
-                }
-            } catch (Exception ex) {
-                log.warn("⚠️ Could not extract text from resume for skill suggestions: {}", ex.getMessage());
+            long existingCount = resumeRepository.countByUserId(user.getId());
+            if (existingCount >= MAX_RESUMES_PER_USER) {
+                return ResponseEntity.badRequest()
+                    .body(Map.of("error", "You can have at most " + MAX_RESUMES_PER_USER + " resumes. Delete one first."));
             }
 
+            byte[] fileBytes = file.getBytes();
+            String originalFilename = file.getOriginalFilename() != null ? file.getOriginalFilename() : "resume.pdf";
+
+            Resume resume = new Resume();
+            resume.setUserId(user.getId());
+            resume.setFileName(originalFilename);
+            resume.setFileData(fileBytes);
+            resume.setUploadedAt(LocalDateTime.now());
+            // First resume a seeker uploads automatically becomes primary
+            boolean makePrimary = existingCount == 0;
+            resume.setPrimary(makePrimary);
+            Resume saved = resumeRepository.save(resume);
+
+            if (makePrimary) {
+                syncPrimaryToUser(user, saved);
+            }
+
+            List<String> suggestedSkills = suggestSkills(fileBytes, user);
+
             return ResponseEntity.ok(Map.of(
-                "url", user.getResumeUrl(),
+                "resumeId", saved.getId(),
                 "fileName", originalFilename,
+                "isPrimary", saved.isPrimary(),
                 "message", "Resume uploaded successfully!",
                 "suggestedSkills", suggestedSkills
             ));
 
         } catch (IOException e) {
-            return ResponseEntity.internalServerError()
-                .body(Map.of("error", "Failed to upload file: " + e.getMessage()));
+            return ResponseEntity.internalServerError().body(Map.of("error", "Failed to upload file: " + e.getMessage()));
         }
     }
 
-    /** Extracts all text from PDF bytes using iText (already a project dependency). */
-    private String extractPdfText(byte[] pdfBytes) throws IOException {
-        StringBuilder text = new StringBuilder();
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfReader(new ByteArrayInputStream(pdfBytes)))) {
-            int pages = pdfDoc.getNumberOfPages();
-            for (int i = 1; i <= pages; i++) {
-                text.append(PdfTextExtractor.getTextFromPage(pdfDoc.getPage(i))).append(" ");
+    @GetMapping("/resumes")
+    @PreAuthorize("hasRole('SEEKER')")
+    public ResponseEntity<?> listResumes(Authentication auth) {
+        User user = userRepository.findByEmail(auth.getName())
+            .orElseThrow(() -> new RuntimeException("User not found"));
+        List<Map<String, Object>> result = new ArrayList<>();
+        for (Resume r : resumeRepository.findByUserIdOrderByUploadedAtDesc(user.getId())) {
+            result.add(Map.of(
+                "id", r.getId(),
+                "fileName", r.getFileName() != null ? r.getFileName() : "resume.pdf",
+                "isPrimary", r.isPrimary(),
+                "uploadedAt", r.getUploadedAt() != null ? r.getUploadedAt().toString() : ""
+            ));
+        }
+        return ResponseEntity.ok(result);
+    }
+
+    @PutMapping("/resumes/{resumeId}/primary")
+    @PreAuthorize("hasRole('SEEKER')")
+    public ResponseEntity<?> setPrimaryResume(@PathVariable String resumeId, Authentication auth) {
+        User user = userRepository.findByEmail(auth.getName())
+            .orElseThrow(() -> new RuntimeException("User not found"));
+        Resume target = resumeRepository.findById(resumeId)
+            .orElseThrow(() -> new RuntimeException("Resume not found"));
+        if (!target.getUserId().equals(user.getId())) {
+            return ResponseEntity.status(403).body("You are not authorized to modify this resume.");
+        }
+        for (Resume r : resumeRepository.findByUserIdOrderByUploadedAtDesc(user.getId())) {
+            if (r.isPrimary() && !r.getId().equals(resumeId)) {
+                r.setPrimary(false);
+                resumeRepository.save(r);
             }
         }
-        return text.toString();
+        target.setPrimary(true);
+        resumeRepository.save(target);
+        syncPrimaryToUser(user, target);
+        return ResponseEntity.ok(Map.of("message", "Primary resume updated."));
     }
 
-    // Resume is fetched by the seeker's user ID (a UUID — same unguessability as the
-    // random filenames used previously). Kept public so employers can view applicant
-    // resumes without extra friction, matching the original design.
+    @DeleteMapping("/resumes/{resumeId}")
+    @PreAuthorize("hasRole('SEEKER')")
+    public ResponseEntity<?> deleteResume(@PathVariable String resumeId, Authentication auth) {
+        User user = userRepository.findByEmail(auth.getName())
+            .orElseThrow(() -> new RuntimeException("User not found"));
+        Resume target = resumeRepository.findById(resumeId)
+            .orElseThrow(() -> new RuntimeException("Resume not found"));
+        if (!target.getUserId().equals(user.getId())) {
+            return ResponseEntity.status(403).body("You are not authorized to delete this resume.");
+        }
+        boolean wasPrimary = target.isPrimary();
+        resumeRepository.deleteById(resumeId);
+
+        if (wasPrimary) {
+            List<Resume> remaining = resumeRepository.findByUserIdOrderByUploadedAtDesc(user.getId());
+            if (!remaining.isEmpty()) {
+                Resume promoted = remaining.get(0);
+                promoted.setPrimary(true);
+                resumeRepository.save(promoted);
+                syncPrimaryToUser(user, promoted);
+            } else {
+                user.setResumeData(null);
+                user.setResumeFileName(null);
+                user.setResumeUrl(null);
+                userRepository.save(user);
+            }
+        }
+        return ResponseEntity.ok(Map.of("message", "Resume deleted."));
+    }
+
+    // Public view of a specific resume by its own ID — same trust model as the
+    // primary-resume endpoint below: the ID is an unguessable UUID, not auth-gated,
+    // so a plain link (no JS fetch/blob handling needed) works from the UI.
+    @GetMapping("/resumes/{resumeId}/view")
+    public ResponseEntity<byte[]> viewSpecificResume(@PathVariable String resumeId) {
+        return resumeRepository.findById(resumeId)
+            .map(r -> ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_PDF)
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + (r.getFileName() != null ? r.getFileName() : "resume.pdf") + "\"")
+                .body(r.getFileData()))
+            .orElse(ResponseEntity.notFound().build());
+    }
+
+    // Public-by-userId view — this is what employers see linked from an application's
+    // resumeUrl, and it always serves whichever resume is currently primary.
     @GetMapping("/resume/{userId}")
     public ResponseEntity<byte[]> viewResume(@PathVariable String userId) {
         return userRepository.findById(userId)
@@ -125,15 +189,41 @@ public class FileUploadController {
             .orElse(ResponseEntity.notFound().build());
     }
 
-    @DeleteMapping("/resume")
-    @PreAuthorize("hasRole('SEEKER')")
-    public ResponseEntity<?> deleteResume(Authentication auth) {
-        User user = userRepository.findByEmail(auth.getName())
-            .orElseThrow(() -> new RuntimeException("User not found"));
-        user.setResumeData(null);
-        user.setResumeFileName(null);
-        user.setResumeUrl(null);
+    private void syncPrimaryToUser(User user, Resume primary) {
+        user.setResumeData(primary.getFileData());
+        user.setResumeFileName(primary.getFileName());
+        user.setResumeUrl("/api/files/resume/" + user.getId());
         userRepository.save(user);
-        return ResponseEntity.ok(Map.of("message", "Resume deleted successfully"));
+    }
+
+    private List<String> suggestSkills(byte[] fileBytes, User user) {
+        List<String> suggestedSkills = new ArrayList<>();
+        try {
+            String resumeText = extractPdfText(fileBytes).toLowerCase();
+            List<Skill> allSkills = skillRepository.findAll();
+            List<String> alreadyTagged = user.getSkillsList();
+            for (Skill skill : allSkills) {
+                String skillNameLower = skill.getName().toLowerCase();
+                boolean mentionedInResume = resumeText.contains(skillNameLower);
+                boolean notAlreadyTagged = alreadyTagged == null || !alreadyTagged.contains(skill.getName());
+                if (mentionedInResume && notAlreadyTagged) {
+                    suggestedSkills.add(skill.getName());
+                }
+            }
+        } catch (Exception ex) {
+            log.warn("⚠️ Could not extract text from resume for skill suggestions: {}", ex.getMessage());
+        }
+        return suggestedSkills;
+    }
+
+    private String extractPdfText(byte[] pdfBytes) throws IOException {
+        StringBuilder text = new StringBuilder();
+        try (PdfDocument pdfDoc = new PdfDocument(new PdfReader(new ByteArrayInputStream(pdfBytes)))) {
+            int pages = pdfDoc.getNumberOfPages();
+            for (int i = 1; i <= pages; i++) {
+                text.append(PdfTextExtractor.getTextFromPage(pdfDoc.getPage(i))).append(" ");
+            }
+        }
+        return text.toString();
     }
 }

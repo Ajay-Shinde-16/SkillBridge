@@ -1,10 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { getMessageThread, sendMessage } from '../services/api'
+import { getMessageThread, sendMessage, getMyJobThread, sendMyJobMessage, getInquiryThread, replyToInquiry } from '../services/api'
 import { useAuth } from '../context/AuthContext'
 
-// Simple polling-based chat thread, scoped to one application.
-// Embed this inside an application detail view for both the seeker and the employer side.
-export default function MessageThread({ applicationId }) {
+// Simple polling-based chat thread.
+// Mode 1 (application chat): pass applicationId.
+// Mode 2 (pre-application inquiry): pass jobId (+ seekerId, only needed when an
+// employer is replying to a specific seeker's inquiry — omit it for the seeker's own view).
+export default function MessageThread({ applicationId, jobId, seekerId }) {
   const { user } = useAuth()
   const [messages, setMessages] = useState([])
   const [loading, setLoading] = useState(true)
@@ -14,10 +16,21 @@ export default function MessageThread({ applicationId }) {
   const bottomRef = useRef(null)
   const pollRef = useRef(null)
 
+  const fetchThread = () => {
+    if (applicationId) return getMessageThread(applicationId)
+    if (jobId && seekerId) return getInquiryThread(jobId, seekerId)
+    return getMyJobThread(jobId)
+  }
+  const postMessage = (content) => {
+    if (applicationId) return sendMessage(applicationId, content)
+    if (jobId && seekerId) return replyToInquiry(jobId, seekerId, content)
+    return sendMyJobMessage(jobId, content)
+  }
+
   const load = async (silent = false) => {
     if (!silent) setLoading(true)
     try {
-      const { data } = await getMessageThread(applicationId)
+      const { data } = await fetchThread()
       setMessages(Array.isArray(data) ? data : [])
     } catch (e) {
       if (!silent) setError(typeof e.response?.data === 'string' ? e.response.data : 'Failed to load messages.')
@@ -30,7 +43,7 @@ export default function MessageThread({ applicationId }) {
     load()
     pollRef.current = setInterval(() => load(true), 10000) // poll every 10s for new messages
     return () => clearInterval(pollRef.current)
-  }, [applicationId])
+  }, [applicationId, jobId, seekerId])
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -41,7 +54,7 @@ export default function MessageThread({ applicationId }) {
     if (!text.trim()) return
     setSending(true); setError('')
     try {
-      await sendMessage(applicationId, text.trim())
+      await postMessage(text.trim())
       setText('')
       await load(true)
     } catch (e) {
