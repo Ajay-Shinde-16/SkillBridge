@@ -269,13 +269,14 @@ export default function ManageUsers() {
             </div>
           </div>
 
-          {/* Info card */}
-          <div className="card border-0 mt-3 rounded-3" style={{ background: '#FEF3C7', border: '1px solid #FCD34D' }}>
-            <div className="card-body py-3 px-4">
-              <p className="mb-0 small" style={{ color: '#92400e' }}>
+          {/* Info card — plain div on purpose, not .card: its colors are self-contained
+              and shouldn't be swapped by dark mode, the way a normal card would be. */}
+          <div className="border-0 mt-3 rounded-3" style={{ background: '#FEF3C7', border: '1px solid #FCD34D' }}>
+            <div className="py-3 px-4">
+              <div className="mb-0 small" style={{ color: '#92400e' }}>
                 <i className="bi bi-info-circle-fill me-2"></i>
                 <strong>Cascade Delete:</strong> Deleting a user also permanently removes all their job postings, applications, and interviews from the database.
-              </p>
+              </div>
             </div>
           </div>
         </div>

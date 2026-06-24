@@ -2,6 +2,8 @@ import React, { useState } from 'react'
 import { useNavigate, Link, Navigate } from 'react-router-dom'
 import { register as registerAPI } from '../../services/api'
 import { useAuth } from '../../context/AuthContext'
+import PhoneInput from '../../components/PhoneInput'
+import { validatePassword, validatePhone, getPasswordStrength } from '../../utils/validation'
 
 export default function AdminRegister() {
   const [form, setForm] = useState({
@@ -29,9 +31,16 @@ export default function AdminRegister() {
       return
     }
 
-    if (form.password.length < 6) {
-      setError('Password must be at least 6 characters.')
+    const pwdCheck = validatePassword(form.password)
+    if (!pwdCheck.valid) {
+      setError(pwdCheck.message)
       return
+    }
+
+    if (form.phone) {
+      const [phoneCode, phoneNumber] = form.phone.split(' ')
+      const phoneCheck = validatePhone(phoneCode, phoneNumber)
+      if (!phoneCheck.valid) { setError(phoneCheck.message); return }
     }
 
     setLoading(true)
@@ -131,7 +140,18 @@ export default function AdminRegister() {
                   <input type="password" className="form-control rounded-3" required
                     value={form.password}
                     onChange={e => setForm({ ...form, password: e.target.value })}
-                    placeholder="Min 6 characters" />
+                    placeholder="At least 8 characters" />
+                  {form.password && (() => {
+                    const s = getPasswordStrength(form.password)
+                    return (
+                      <div className="mt-1">
+                        <div className="rounded-pill overflow-hidden" style={{ height: 5, background: '#e2e8f0' }}>
+                          <div className="rounded-pill h-100" style={{ width: s.width, background: s.color, transition: 'all 0.3s' }}></div>
+                        </div>
+                        <span style={{ color: s.color, fontSize: '0.78rem' }}>{s.label}</span>
+                      </div>
+                    )
+                  })()}
                 </div>
 
                 <div className="col-md-6">
@@ -143,6 +163,9 @@ export default function AdminRegister() {
                     value={form.confirmPassword}
                     onChange={e => setForm({ ...form, confirmPassword: e.target.value })}
                     placeholder="Repeat password" />
+                  {form.confirmPassword && form.password !== form.confirmPassword && (
+                    <span className="text-danger d-block mt-1" style={{ fontSize: '0.78rem' }}>Passwords don't match</span>
+                  )}
                 </div>
 
                 <div className="col-12">
@@ -150,10 +173,7 @@ export default function AdminRegister() {
                     style={{ letterSpacing: '0.5px', fontSize: '0.72rem' }}>
                     Phone Number
                   </label>
-                  <input className="form-control rounded-3"
-                    value={form.phone}
-                    onChange={e => setForm({ ...form, phone: e.target.value })}
-                    placeholder="+91 XXXXX XXXXX" />
+                  <PhoneInput value={form.phone} onChange={phone => setForm({ ...form, phone })} />
                 </div>
 
                 {/* Secret Code */}
@@ -202,9 +222,9 @@ export default function AdminRegister() {
           </div>
         </div>
         <div className="text-center mt-3">
-          <small style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.75rem' }}>
+          <span style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.75rem' }}>
             SkillBridge Admin Portal — CDAC PGCP-AC-002
-          </small>
+          </span>
         </div>
       </div>
     </div>

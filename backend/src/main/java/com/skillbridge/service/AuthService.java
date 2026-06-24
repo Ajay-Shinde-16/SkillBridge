@@ -37,6 +37,15 @@ public class AuthService {
             throw new RuntimeException("This email is already registered. Please login instead.");
         }
 
+        String passwordError = com.skillbridge.util.ValidationUtils.validatePassword(request.getPassword());
+        if (passwordError != null) {
+            throw new RuntimeException(passwordError);
+        }
+        String phoneError = com.skillbridge.util.ValidationUtils.validatePhone(request.getPhone());
+        if (phoneError != null) {
+            throw new RuntimeException(phoneError);
+        }
+
         String role = request.getRole() != null ? request.getRole().toUpperCase() : "SEEKER";
         if (!ALLOWED_ROLES.contains(role)) {
             throw new RuntimeException("Invalid role. Allowed: SEEKER, EMPLOYER, ADMIN");

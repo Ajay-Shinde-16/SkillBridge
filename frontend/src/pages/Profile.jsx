@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom'
 import { getProfile, updateProfile, updateMySkills, getResumes, setPrimaryResume, deleteResumeById, toggle2FA } from '../services/api'
 import { useAuth } from '../context/AuthContext'
 import { changePassword } from '../services/api'
+import PhoneInput from '../components/PhoneInput'
+import { validatePassword, getPasswordStrength } from '../utils/validation'
 import axios from 'axios'
 
 export default function Profile() {
@@ -150,7 +152,8 @@ export default function Profile() {
     e.preventDefault()
     setPwdError(''); setPwdSuccess(false)
     if (pwdForm.newPassword !== pwdForm.confirmPassword) { setPwdError('Passwords do not match'); return }
-    if (pwdForm.newPassword.length < 6) { setPwdError('New password must be at least 6 characters'); return }
+    const pwdCheck = validatePassword(pwdForm.newPassword)
+    if (!pwdCheck.valid) { setPwdError(pwdCheck.message); return }
     if (pwdForm.currentPassword === pwdForm.newPassword) { setPwdError('New password must be different from current'); return }
     setPwdLoading(true)
     try {
@@ -163,27 +166,9 @@ export default function Profile() {
     } finally { setPwdLoading(false) }
   }
 
-  const pwdStrength = (pwd) => {
-    if (!pwd) return { width:'0%', color:'#e2e8f0', label:'' }
-    let score = 0
-    if (pwd.length >= 6) score++
-    if (pwd.length >= 10) score++
-    if (/[A-Z]/.test(pwd)) score++
-    if (/[0-9]/.test(pwd)) score++
-    if (/[^A-Za-z0-9]/.test(pwd)) score++
-    const levels = [
-      { width:'20%', color:'#dc3545', label:'Very Weak' },
-      { width:'40%', color:'#d97706', label:'Weak' },
-      { width:'60%', color:'#f59e0b', label:'Fair' },
-      { width:'80%', color:'#0ea5e9', label:'Strong' },
-      { width:'100%', color:'#057642', label:'Very Strong' },
-    ]
-    return levels[score - 1] || levels[0]
-  }
-
   const msgType = uploadMsg.startsWith('success:') ? 'success' : uploadMsg.startsWith('error:') ? 'danger' : ''
   const msgText = uploadMsg.includes(':') ? uploadMsg.split(':').slice(1).join(':') : uploadMsg
-  const strength = pwdStrength(pwdForm.newPassword)
+  const strength = getPasswordStrength(pwdForm.newPassword)
 
   if (loading) return (
     <div className="d-flex justify-content-center align-items-center" style={{ minHeight:'60vh' }}>
@@ -255,7 +240,7 @@ export default function Profile() {
                   </div>
                   <div className="col-md-6">
                     <label className="form-label fw-semibold small">Phone</label>
-                    <input className="form-control rounded-3" value={profile?.phone||''} onChange={e=>setProfile({...profile,phone:e.target.value})} placeholder="+91 XXXXX XXXXX"/>
+                    <PhoneInput value={profile?.phone||''} onChange={phone => setProfile({...profile, phone})} />
                   </div>
                   <div className="col-md-6">
                     <label className="form-label fw-semibold small">Email</label>
@@ -345,7 +330,7 @@ export default function Profile() {
                         <input type={showPwd.new?'text':'password'} className="form-control rounded-start-3" required
                           value={pwdForm.newPassword}
                           onChange={e=>setPwdForm({...pwdForm,newPassword:e.target.value})}
-                          placeholder="Min 6 characters"/>
+                          placeholder="At least 8 characters"/>
                         <button type="button" className="btn btn-outline-secondary rounded-end-3"
                           onClick={()=>setShowPwd({...showPwd,new:!showPwd.new})}>
                           <i className={`bi ${showPwd.new?'bi-eye-slash':'bi-eye'}`}></i>
@@ -358,9 +343,9 @@ export default function Profile() {
                             <div className="progress-bar rounded-pill"
                               style={{ width:strength.width, background:strength.color, transition:'all 0.3s' }}></div>
                           </div>
-                          <small style={{ color:strength.color }}>
+                          <span style={{ color:strength.color, fontSize:'0.8rem' }}>
                             <i className="bi bi-shield me-1"></i>{strength.label}
-                          </small>
+                          </span>
                         </div>
                       )}
                     </div>

@@ -1,10 +1,12 @@
 import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { register as registerAPI } from '../services/api'
+import PhoneInput from '../components/PhoneInput'
+import { validatePassword, validatePhone, getPasswordStrength } from '../utils/validation'
 import { useAuth } from '../context/AuthContext'
 
 export default function Register() {
-  const [form, setForm] = useState({ name:'', email:'', password:'', role:'SEEKER', phone:'', companyName:'', skills:'' })
+  const [form, setForm] = useState({ name:'', email:'', password:'', confirmPassword:'', role:'SEEKER', phone:'', companyName:'', skills:'' })
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const { login } = useAuth()
@@ -12,11 +14,18 @@ export default function Register() {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    if (form.password.length < 6) { setError('Password must be at least 6 characters'); return }
+    const pwdCheck = validatePassword(form.password)
+    if (!pwdCheck.valid) { setError(pwdCheck.message); return }
+    if (form.password !== form.confirmPassword) { setError('Passwords do not match.'); return }
+    const [phoneCode, phoneNumber] = form.phone ? form.phone.split(' ') : ['+91', '']
+    const phoneCheck = validatePhone(phoneCode, phoneNumber)
+    if (!phoneCheck.valid) { setError(phoneCheck.message); return }
+
     setLoading(true); setError('')
     try {
+      const { confirmPassword, ...rest } = form
       const payload = {
-        ...form,
+        ...rest,
         skills: form.skills ? form.skills.split(',').map(s=>s.trim()).filter(Boolean) : []
       }
       const { data } = await registerAPI(payload)
@@ -26,6 +35,8 @@ export default function Register() {
       setError(err.response?.data || 'Registration failed. Email may already be used.')
     } finally { setLoading(false) }
   }
+
+  const pwdStrength = getPasswordStrength(form.password)
 
   return (
     <div className="container py-5">
@@ -98,12 +109,27 @@ export default function Register() {
                       <div className="col-md-6">
                         <label className="form-label fw-semibold small">Password <span className="text-danger">*</span></label>
                         <input type="password" className="form-control rounded-3" required value={form.password}
-                          onChange={e=>setForm({...form,password:e.target.value})} placeholder="Min 6 characters"/>
+                          onChange={e=>setForm({...form,password:e.target.value})} placeholder="At least 8 characters"/>
+                        {form.password && (
+                          <div className="mt-1">
+                            <div className="rounded-pill overflow-hidden" style={{ height:5, background:'#e2e8f0' }}>
+                              <div className="rounded-pill h-100" style={{ width:pwdStrength.width, background:pwdStrength.color, transition:'all 0.3s' }}></div>
+                            </div>
+                            <span style={{ color:pwdStrength.color, fontSize:'0.78rem' }}>{pwdStrength.label}</span>
+                          </div>
+                        )}
+                      </div>
+                      <div className="col-md-6">
+                        <label className="form-label fw-semibold small">Confirm Password <span className="text-danger">*</span></label>
+                        <input type="password" className="form-control rounded-3" required value={form.confirmPassword}
+                          onChange={e=>setForm({...form,confirmPassword:e.target.value})} placeholder="Re-enter password"/>
+                        {form.confirmPassword && form.password !== form.confirmPassword && (
+                          <span className="text-danger d-block mt-1" style={{ fontSize:'0.78rem' }}>Passwords don't match</span>
+                        )}
                       </div>
                       <div className="col-md-6">
                         <label className="form-label fw-semibold small">Phone Number</label>
-                        <input className="form-control rounded-3" value={form.phone}
-                          onChange={e=>setForm({...form,phone:e.target.value})} placeholder="+91 XXXXX XXXXX"/>
+                        <PhoneInput value={form.phone} onChange={phone => setForm({...form, phone})} />
                       </div>
                       {form.role==='EMPLOYER' && (
                         <div className="col-12">

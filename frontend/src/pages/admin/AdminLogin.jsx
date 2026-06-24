@@ -115,9 +115,9 @@ export default function AdminLogin() {
           </div>
         </div>
         <div className="text-center mt-3">
-          <small style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.75rem' }}>
+          <span style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.75rem' }}>
             SkillBridge Admin Portal — CDAC PGCP-AC-002
-          </small>
+          </span>
         </div>
       </div>
     </div>

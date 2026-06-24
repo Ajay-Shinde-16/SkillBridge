@@ -62,6 +62,10 @@ public class UserController {
         if (updatedUser.getExperienceYears() < 0) {
             return ResponseEntity.badRequest().body("Experience years cannot be negative.");
         }
+        String phoneError = com.skillbridge.util.ValidationUtils.validatePhone(updatedUser.getPhone());
+        if (phoneError != null) {
+            return ResponseEntity.badRequest().body(phoneError);
+        }
         User user = userRepository.findByEmail(auth.getName())
             .orElseThrow(() -> new RuntimeException("User not found"));
         user.setName(updatedUser.getName());
@@ -86,8 +90,9 @@ public class UserController {
             .orElseThrow(() -> new RuntimeException("User not found"));
         if (!passwordEncoder.matches(req.getCurrentPassword(), user.getPassword()))
             return ResponseEntity.badRequest().body("Current password is incorrect");
-        if (req.getNewPassword() == null || req.getNewPassword().length() < 6)
-            return ResponseEntity.badRequest().body("New password must be at least 6 characters");
+        String passwordError = com.skillbridge.util.ValidationUtils.validatePassword(req.getNewPassword());
+        if (passwordError != null)
+            return ResponseEntity.badRequest().body(passwordError);
         user.setPassword(passwordEncoder.encode(req.getNewPassword()));
         userRepository.save(user);
         return ResponseEntity.ok(Map.of("message", "Password changed successfully"));
@@ -129,8 +134,9 @@ public class UserController {
             return ResponseEntity.badRequest().body("OTP has expired. Please request a new one.");
         if (!passwordEncoder.matches(otp, user.getOtpCode()))
             return ResponseEntity.badRequest().body("Invalid OTP. Please check your email.");
-        if (newPassword == null || newPassword.length() < 6)
-            return ResponseEntity.badRequest().body("Password must be at least 6 characters.");
+        String passwordError = com.skillbridge.util.ValidationUtils.validatePassword(newPassword);
+        if (passwordError != null)
+            return ResponseEntity.badRequest().body(passwordError);
         user.setPassword(passwordEncoder.encode(newPassword));
         user.setOtpCode(null);
         user.setOtpExpiry(null);

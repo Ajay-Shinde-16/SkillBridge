@@ -190,10 +190,10 @@ export default function MyOffers() {
                   {/* Employer Message */}
                   {app.employerNote && (
                     <div className="mt-3 p-3 rounded-3" style={{background:'#D1FAE5',border:'1px solid #6EE7B7'}}>
-                      <small className="fw-semibold" style={{color:'#065f46'}}>
+                      <span className="fw-semibold" style={{color:'#065f46', fontSize:'0.8rem'}}>
                         <i className="bi bi-chat-square-text me-1"></i>Message from Employer:{' '}
-                      </small>
-                      <small style={{color:'#065f46'}}>{app.employerNote}</small>
+                      </span>
+                      <span style={{color:'#065f46', fontSize:'0.8rem'}}>{app.employerNote}</span>
                     </div>
                   )}
                 </div>

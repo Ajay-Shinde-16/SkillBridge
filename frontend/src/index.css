@@ -9,7 +9,7 @@
 body {
   background-color: #f3f2ef;
   font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
-  font-size: 14px;
+  font-size: 15px;
   font-feature-settings: 'tnum' 1, 'cv11' 1;
   -webkit-font-smoothing: antialiased;
 }

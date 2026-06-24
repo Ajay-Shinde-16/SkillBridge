@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import { resetPassword } from '../services/api'
+import { validatePassword } from '../utils/validation'
 
 const BASE_URL = import.meta.env.VITE_API_URL
   ? `${import.meta.env.VITE_API_URL}/api`
@@ -47,8 +48,9 @@ export default function ForgotPassword() {
       setError('Please enter the 6-digit OTP')
       return
     }
-    if (newPassword.length < 6) {
-      setError('Password must be at least 6 characters')
+    const pwdCheck = validatePassword(newPassword)
+    if (!pwdCheck.valid) {
+      setError(pwdCheck.message)
       return
     }
     if (newPassword !== confirmPassword) {
@@ -205,7 +207,7 @@ export default function ForgotPassword() {
                         required
                         value={newPassword}
                         onChange={e => setNewPassword(e.target.value)}
-                        placeholder="Min 6 characters"
+                        placeholder="At least 8 characters"
                       />
                       <button
                         type="button"

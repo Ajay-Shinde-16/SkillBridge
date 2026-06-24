@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { changePassword } from '../services/api'
+import { validatePassword, getPasswordStrength } from '../utils/validation'
 
 export default function ChangePassword() {
   const [form, setForm] = useState({ currentPassword:'', newPassword:'', confirmPassword:'' })
@@ -15,8 +16,9 @@ export default function ChangePassword() {
     if (form.newPassword !== form.confirmPassword) {
       setError('New passwords do not match'); return
     }
-    if (form.newPassword.length < 6) {
-      setError('New password must be at least 6 characters'); return
+    const pwdCheck = validatePassword(form.newPassword)
+    if (!pwdCheck.valid) {
+      setError(pwdCheck.message); return
     }
     if (form.currentPassword === form.newPassword) {
       setError('New password must be different from current password'); return
@@ -31,25 +33,7 @@ export default function ChangePassword() {
     } finally { setLoading(false) }
   }
 
-  const strength = (pwd) => {
-    if (!pwd) return { width:'0%', color:'#e2e8f0', label:'' }
-    let score = 0
-    if (pwd.length >= 6) score++
-    if (pwd.length >= 10) score++
-    if (/[A-Z]/.test(pwd)) score++
-    if (/[0-9]/.test(pwd)) score++
-    if (/[^A-Za-z0-9]/.test(pwd)) score++
-    const levels = [
-      { width:'20%', color:'#dc3545', label:'Very Weak' },
-      { width:'40%', color:'#d97706', label:'Weak' },
-      { width:'60%', color:'#f59e0b', label:'Fair' },
-      { width:'80%', color:'#0ea5e9', label:'Strong' },
-      { width:'100%', color:'#057642', label:'Very Strong' },
-    ]
-    return levels[score - 1] || levels[0]
-  }
-
-  const pwdStrength = strength(form.newPassword)
+  const pwdStrength = getPasswordStrength(form.newPassword)
 
   if (success) return (
     <div className="container py-5">
@@ -122,7 +106,7 @@ export default function ChangePassword() {
                       className="form-control rounded-start-3" required
                       value={form.newPassword}
                       onChange={e => setForm({ ...form, newPassword: e.target.value })}
-                      placeholder="Min 6 characters" />
+                      placeholder="At least 8 characters" />
                     <button type="button" className="btn btn-outline-secondary rounded-end-3"
                       onClick={() => setShow({ ...show, new: !show.new })}>
                       <i className={`bi ${show.new ? 'bi-eye-slash' : 'bi-eye'}`}></i>
@@ -136,7 +120,7 @@ export default function ChangePassword() {
                     <div className="rounded-pill overflow-hidden mb-1" style={{ height:6, background:'#e2e8f0' }}>
                       <div className="rounded-pill h-100" style={{ width:pwdStrength.width, background:pwdStrength.color, transition:'all 0.3s' }}></div>
                     </div>
-                    <small style={{ color:pwdStrength.color }}>{pwdStrength.label}</small>
+                    <span style={{ color:pwdStrength.color, fontSize:'0.8rem' }}>{pwdStrength.label}</span>
                   </div>
                 )}
 

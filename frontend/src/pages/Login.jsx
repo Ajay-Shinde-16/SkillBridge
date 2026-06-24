@@ -205,9 +205,9 @@ export default function Login() {
 
                   {/* Admin hint */}
                   <div className="text-center mt-3">
-                    <small style={{ color: '#cbd5e1', fontSize: '0.65rem', userSelect: 'none' }}>
+                    <span className="text-muted" style={{ fontSize: '0.65rem', userSelect: 'none' }}>
                       v1.0 · CDAC 2026
-                    </small>
+                    </span>
                   </div>
 
                 </div>
