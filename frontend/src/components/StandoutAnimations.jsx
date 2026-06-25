@@ -3,15 +3,15 @@ import { useLocation } from 'react-router-dom'
 
 // Color theme per page - rings change color based on page
 function getColors(pathname) {
-  if (pathname === '/') return ['#0A66C2','#7C3AED','#14B8A6','#06b6d4','#0ea5e9','#a855f7']
-  if (pathname.includes('/career-room')) return ['#22c55e','#0A66C2','#a855f7','#06b6d4','#f59e0b','#ec4899']
-  if (pathname.includes('/jobs')) return ['#14B8A6','#0A66C2','#06b6d4','#0ea5e9','#22c55e','#7C3AED']
-  if (pathname.includes('/seeker')) return ['#22c55e','#0A66C2','#14B8A6','#06b6d4','#a855f7','#0ea5e9']
-  if (pathname.includes('/employer')) return ['#f59e0b','#0A66C2','#7C3AED','#14B8A6','#ec4899','#06b6d4']
-  if (pathname.includes('/admin')) return ['#8b5cf6','#0A66C2','#14B8A6','#a855f7','#06b6d4','#22c55e']
+  if (pathname === '/') return ['#15487F','#7C3AED','#14B8A6','#06b6d4','#0ea5e9','#a855f7']
+  if (pathname.includes('/career-room')) return ['#22c55e','#15487F','#a855f7','#06b6d4','#f59e0b','#ec4899']
+  if (pathname.includes('/jobs')) return ['#14B8A6','#15487F','#06b6d4','#0ea5e9','#22c55e','#7C3AED']
+  if (pathname.includes('/seeker')) return ['#22c55e','#15487F','#14B8A6','#06b6d4','#a855f7','#0ea5e9']
+  if (pathname.includes('/employer')) return ['#f59e0b','#15487F','#7C3AED','#14B8A6','#ec4899','#06b6d4']
+  if (pathname.includes('/admin')) return ['#8b5cf6','#15487F','#14B8A6','#a855f7','#06b6d4','#22c55e']
   if (pathname.includes('/login') || pathname.includes('/register') || pathname.includes('password'))
-    return ['#0A66C2','#7C3AED','#06b6d4','#14B8A6','#a855f7','#0ea5e9']
-  return ['#0A66C2','#7C3AED','#14B8A6','#06b6d4','#0ea5e9','#a855f7']
+    return ['#15487F','#7C3AED','#06b6d4','#14B8A6','#a855f7','#0ea5e9']
+  return ['#15487F','#7C3AED','#14B8A6','#06b6d4','#0ea5e9','#a855f7']
 }
 
 // ── NEON RINGS CANVAS — on every page ──

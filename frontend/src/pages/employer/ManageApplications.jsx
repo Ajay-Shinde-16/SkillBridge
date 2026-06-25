@@ -292,7 +292,7 @@ export default function ManageApplications() {
                 placeholder="Search by name or email..."
                 value={search} onChange={e=>setSearch(e.target.value)}/>
             </div>
-            <button className="btn btn-sm rounded-pill" style={{background:'#EEF3F8',color:'#0A66C2',border:'1px solid #0A66C2'}}
+            <button className="btn btn-sm rounded-pill" style={{background:'#EEF3F8',color:'#15487F',border:'1px solid #15487F'}}
               onClick={handleExport}>
               <i className="bi bi-download me-1"></i>Export CSV
             </button>
@@ -301,7 +301,7 @@ export default function ManageApplications() {
           {/* Applicant Cards */}
           {loading ? (
             <div className="text-center py-5">
-              <div className="spinner-border" style={{color:'#0A66C2'}}></div>
+              <div className="spinner-border" style={{color:'#15487F'}}></div>
               <p className="text-muted mt-2 small">Loading applicants...</p>
             </div>
           ) : filtered.length === 0 ? (
@@ -318,7 +318,7 @@ export default function ManageApplications() {
                     style={{
                       opacity: updating===app.id?0.6:1,
                       transition:'opacity 0.2s',
-                      borderLeft: app.status==='INTERVIEW_SCHEDULED'?'4px solid #0A66C2'
+                      borderLeft: app.status==='INTERVIEW_SCHEDULED'?'4px solid #15487F'
                                 : app.status==='OFFERED'?'4px solid #057642'
                                 : app.status==='ACCEPTED'?'4px solid #1e40af'
                                 : '4px solid transparent'
@@ -327,7 +327,7 @@ export default function ManageApplications() {
 
                       <div className="d-flex align-items-start gap-3 flex-wrap">
                         <div className="rounded-circle text-white d-flex align-items-center justify-content-center fw-bold flex-shrink-0"
-                          style={{width:46,height:46,background:'#0A66C2',fontSize:17}}>
+                          style={{width:46,height:46,background:'#15487F',fontSize:17}}>
                           {app.seekerName?.charAt(0).toUpperCase()}
                         </div>
 
@@ -373,7 +373,7 @@ export default function ManageApplications() {
                             value={notes[app.id]||''}
                             onChange={e=>setNotes({...notes,[app.id]:e.target.value})}/>
                           <button className="btn btn-sm text-white"
-                            style={{background:'#0A66C2',fontSize:'0.75rem',borderRadius:'0 6px 6px 0'}}
+                            style={{background:'#15487F',fontSize:'0.75rem',borderRadius:'0 6px 6px 0'}}
                             onClick={()=>handleStatus(app.id, app.status)}
                             disabled={updating===app.id}>
                             Save
@@ -385,7 +385,7 @@ export default function ManageApplications() {
                             <a href={`${import.meta.env.VITE_API_URL || ''}${app.resumeUrl}`}
                               target="_blank" rel="noreferrer"
                               className="btn btn-sm rounded-pill"
-                              style={{background:'#EEF3F8',color:'#0A66C2',border:'1px solid #D0D9E0',fontSize:'0.75rem'}}>
+                              style={{background:'#EEF3F8',color:'#15487F',border:'1px solid #D0D9E0',fontSize:'0.75rem'}}>
                               <i className="bi bi-eye me-1"></i>Resume
                             </a>
                             <a href={`${import.meta.env.VITE_API_URL || ''}${app.resumeUrl}`}
@@ -398,7 +398,7 @@ export default function ManageApplications() {
                         )}
 
                         <button type="button" className="btn btn-sm rounded-pill"
-                          style={{background:'#EEF3F8',color:'#0A66C2',border:'1px solid #D0D9E0',fontSize:'0.75rem'}}
+                          style={{background:'#EEF3F8',color:'#15487F',border:'1px solid #D0D9E0',fontSize:'0.75rem'}}
                           onClick={() => setChatOpenId(chatOpenId === app.id ? null : app.id)}>
                           <i className="bi bi-chat-dots me-1"></i>{chatOpenId === app.id ? 'Hide Chat' : 'Message'}
                         </button>
@@ -412,7 +412,7 @@ export default function ManageApplications() {
 
                       {app.coverLetter && (
                         <div className="mt-3 p-3 rounded-3" style={{background:'#EEF3F8',fontSize:'0.82rem'}}>
-                          <span className="fw-semibold" style={{color:'#0A66C2'}}>
+                          <span className="fw-semibold" style={{color:'#15487F'}}>
                             <i className="bi bi-chat-square-quote me-1"></i>Cover Letter:{' '}
                           </span>
                           <span className="text-muted">{app.coverLetter}</span>

@@ -41,7 +41,7 @@ export default function Home() {
     <div>
       {/* Hero */}
       <div style={{
-        background:'linear-gradient(135deg, #0A66C2 0%, #004182 100%)',
+        background:'linear-gradient(135deg, #15487F 0%, #0C2C54 100%)',
         position:'relative', overflow:'hidden'
       }}>
         {/* Background pattern */}
@@ -69,11 +69,11 @@ export default function Home() {
           </p>
           <p className="mb-4 opacity-75 small">Find jobs that match your skills. Employers find real talent.</p>
           <div className="d-flex justify-content-center gap-3 flex-wrap">
-            <Link to="/jobs" className="btn btn-light fw-bold px-4 rounded-pill" style={{color:'#0A66C2'}}>
-              <i className="bi bi-search me-2"></i>Browse Jobs
-            </Link>
-            <Link to="/register" className="btn btn-outline-light fw-bold px-4 rounded-pill">
+            <Link to="/register" className="btn btn-accent fw-bold px-4 rounded-pill">
               <i className="bi bi-person-plus me-2"></i>Get Started Free
+            </Link>
+            <Link to="/jobs" className="btn btn-light fw-bold px-4 rounded-pill" style={{color:'#15487F'}}>
+              <i className="bi bi-search me-2"></i>Browse Jobs
             </Link>
           </div>
           {/* Trust badges */}
@@ -95,7 +95,7 @@ export default function Home() {
         <div className="row g-3 mb-5">
           {[
             {icon:'bi-patch-check-fill', color:'#057642', title:'Verified Skill Tagging', desc:'Admin-verified skill badges. Not just self-declared. Employers see real talent.'},
-            {icon:'bi-bar-chart-fill', color:'#0A66C2', title:'Skill Match Score', desc:'Auto-calculates your % match with every job. Know before you apply.'},
+            {icon:'bi-bar-chart-fill', color:'#15487F', title:'Skill Match Score', desc:'Auto-calculates your % match with every job. Know before you apply.'},
             {icon:'bi-kanban-fill', color:'#d97706', title:'Application Pipeline', desc:'Applied → Shortlisted → Interview → Offer. Track every stage.'},
             {icon:'bi-calendar-check-fill', color:'#0ea5e9', title:'Interview Scheduler', desc:'Employers schedule Video/Phone/In-Person. You get notified instantly.'},
             {icon:'bi-envelope-fill', color:'#7C3AED', title:'Auto Email Notifications', desc:'Get emails for shortlist, interview, offer. No manual messages needed.'},
@@ -125,7 +125,7 @@ export default function Home() {
         </div>
         <div className="row g-3 mb-5">
           {[
-            {step:'01', icon:'bi-person-plus', color:'#0A66C2', title:'Create Account', desc:'Register as Job Seeker or Employer. Free forever.'},
+            {step:'01', icon:'bi-person-plus', color:'#15487F', title:'Create Account', desc:'Register as Job Seeker or Employer. Free forever.'},
             {step:'02', icon:'bi-tools', color:'#057642', title:'Add Your Skills', desc:'Add skills to your profile. Admin verifies them for credibility.'},
             {step:'03', icon:'bi-search', color:'#d97706', title:'Browse & Apply', desc:'Find jobs matched to your skills. See % match before applying.'},
             {step:'04', icon:'bi-trophy', color:'#7C3AED', title:'Get Hired', desc:'Track applications. Get interview. Accept offer. Done!'},
@@ -145,11 +145,11 @@ export default function Home() {
         </div>
 
         {/* CTA */}
-        <div className="text-center p-5 rounded-4" style={{background:'linear-gradient(135deg,#0A66C2,#004182)'}}>
+        <div className="text-center p-5 rounded-4" style={{background:'linear-gradient(135deg,#15487F,#0C2C54)'}}>
           <h4 className="fw-bold text-white mb-2">Ready to find your remote job?</h4>
           <p className="text-white opacity-75 mb-4 small">Join thousands of professionals on SkillBridge</p>
           <div className="d-flex justify-content-center gap-3 flex-wrap">
-            <Link to="/register" className="btn btn-light fw-bold px-4 rounded-pill" style={{color:'#0A66C2'}}>
+            <Link to="/register" className="btn btn-accent fw-bold px-4 rounded-pill">
               <i className="bi bi-person-plus me-2"></i>Join as Job Seeker
             </Link>
             <Link to="/register" className="btn btn-outline-light fw-bold px-4 rounded-pill">

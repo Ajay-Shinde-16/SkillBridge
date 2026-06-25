@@ -77,7 +77,7 @@ export default function AdminRegister() {
               Your admin account has been created successfully. You can now login via the Admin Portal.
             </p>
             <Link to="/admin/login" className="btn w-100 text-white fw-bold rounded-3 py-2"
-              style={{ background: '#0A66C2' }}>
+              style={{ background: '#15487F' }}>
               <i className="bi bi-shield-check me-2"></i>Go to Admin Login
             </Link>
           </div>
@@ -208,7 +208,7 @@ export default function AdminRegister() {
             <div className="text-center">
               <small className="text-muted">
                 Already have an account?{' '}
-                <Link to="/admin/login" className="fw-semibold" style={{ color: '#0A66C2' }}>
+                <Link to="/admin/login" className="fw-semibold" style={{ color: '#15487F' }}>
                   Admin Login
                 </Link>
               </small>

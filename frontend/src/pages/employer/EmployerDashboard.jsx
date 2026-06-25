@@ -128,7 +128,7 @@ export default function EmployerDashboard() {
           {/* Stats */}
           <div className="row g-3 mb-4">
             {[
-              {label:'Total Jobs',      value:jobs.length,    color:'#0A66C2', icon:'bi-briefcase-fill'},
+              {label:'Total Jobs',      value:jobs.length,    color:'#15487F', icon:'bi-briefcase-fill'},
               {label:'Open Jobs',       value:openJobs,       color:'#057642', icon:'bi-door-open-fill'},
               {label:'Paused Jobs',     value:pausedJobs,     color:'#0F766E', icon:'bi-pause-circle-fill'},
               {label:'Total Applicants',value:totalApplicants,color:'#7C3AED', icon:'bi-people-fill'},
@@ -148,21 +148,21 @@ export default function EmployerDashboard() {
               <div className="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
                 <h6 className="fw-bold mb-0">My Job Postings</h6>
                 <Link to="/employer/post-job" className="btn text-white btn-sm rounded-pill fw-semibold"
-                  style={{background:'#0A66C2'}}>
+                  style={{background:'#15487F'}}>
                   <i className="bi bi-plus me-1"></i>Post New Job
                 </Link>
               </div>
 
               {loading ? (
                 <div className="text-center py-4">
-                  <div className="spinner-border" style={{color:'#0A66C2'}}></div>
+                  <div className="spinner-border" style={{color:'#15487F'}}></div>
                 </div>
               ) : jobs.length===0 ? (
                 <div className="text-center py-5">
                   <i className="bi bi-briefcase fs-1 text-muted mb-3 d-block"></i>
                   <p className="text-muted">No jobs posted yet.</p>
                   <Link to="/employer/post-job" className="btn text-white rounded-pill px-4"
-                    style={{background:'#0A66C2'}}>
+                    style={{background:'#15487F'}}>
                     Post Your First Job
                   </Link>
                 </div>
@@ -205,12 +205,12 @@ export default function EmployerDashboard() {
                         <div className="d-flex gap-2 align-items-start flex-shrink-0">
                           <Link to={`/employer/applications/${job.id}`}
                             className="btn btn-sm rounded-pill fw-semibold"
-                            style={{background:'#EEF3F8',color:'#0A66C2',border:'1px solid #D0D9E0',fontSize:'0.78rem'}}>
+                            style={{background:'#EEF3F8',color:'#15487F',border:'1px solid #D0D9E0',fontSize:'0.78rem'}}>
                             <i className="bi bi-people me-1"></i>{job.applicationCount||0} Applicants
                           </Link>
                           <button type="button" onClick={() => toggleInquiries(job.id)}
                             className="btn btn-sm rounded-pill fw-semibold"
-                            style={{background: inquiriesJobId===job.id ? '#0A66C2' : '#EEF3F8', color: inquiriesJobId===job.id ? '#fff' : '#0A66C2', border:'1px solid #0A66C2',fontSize:'0.78rem'}}>
+                            style={{background: inquiriesJobId===job.id ? '#15487F' : '#EEF3F8', color: inquiriesJobId===job.id ? '#fff' : '#15487F', border:'1px solid #15487F',fontSize:'0.78rem'}}>
                             <i className="bi bi-chat-dots me-1"></i>Inquiries
                           </button>
                           <Link to={`/employer/edit-job/${job.id}`}
@@ -253,9 +253,9 @@ export default function EmployerDashboard() {
                                     onClick={() => setActiveSeekerId(inq.seekerId)}
                                     className="btn btn-sm rounded-pill"
                                     style={{
-                                      background: activeSeekerId===inq.seekerId ? '#0A66C2' : '#EEF3F8',
-                                      color: activeSeekerId===inq.seekerId ? '#fff' : '#0A66C2',
-                                      border:'1px solid #0A66C2', fontSize:'0.78rem'
+                                      background: activeSeekerId===inq.seekerId ? '#15487F' : '#EEF3F8',
+                                      color: activeSeekerId===inq.seekerId ? '#fff' : '#15487F',
+                                      border:'1px solid #15487F', fontSize:'0.78rem'
                                     }}>
                                     {inq.seekerName}
                                   </button>

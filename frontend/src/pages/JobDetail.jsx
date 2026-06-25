@@ -68,7 +68,7 @@ export default function JobDetail() {
 
   if (loading) return (
     <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '60vh' }}>
-      <div className="spinner-border" style={{ color: '#0A66C2' }}></div>
+      <div className="spinner-border" style={{ color: '#15487F' }}></div>
     </div>
   )
 
@@ -151,7 +151,7 @@ export default function JobDetail() {
                     <div className="text-center p-2 rounded-3"
                       style={{ background: 'var(--meta-bg, #EEF3F8)' }}>
                       <i className={`bi ${item.icon} d-block mb-1`}
-                        style={{ color: '#0A66C2', fontSize: '1.2rem' }}></i>
+                        style={{ color: '#15487F', fontSize: '1.2rem' }}></i>
                       <div className="small fw-semibold">{item.value}</div>
                       <div className="text-muted" style={{ fontSize: '0.7rem' }}>{item.label}</div>
                     </div>
@@ -227,7 +227,7 @@ export default function JobDetail() {
                   </div>
                   <a href="/seeker/applications"
                     className="btn w-100 text-white rounded-pill fw-semibold"
-                    style={{ background: '#0A66C2' }}>
+                    style={{ background: '#15487F' }}>
                     <i className="bi bi-file-text me-2"></i>View My Applications
                   </a>
                 </div>
@@ -243,7 +243,7 @@ export default function JobDetail() {
                     <div>
                       <p className="text-muted small mb-3">Login to apply for this job</p>
                       <button className="btn w-100 text-white fw-semibold rounded-pill"
-                        style={{ background: '#0A66C2' }}
+                        style={{ background: '#15487F' }}
                         onClick={() => navigate('/login')}>
                         <i className="bi bi-person me-2"></i>Login to Apply
                       </button>
@@ -268,7 +268,7 @@ export default function JobDetail() {
                           onChange={e => setCoverLetter(e.target.value)} />
                       </div>
                       <button className="btn w-100 text-white fw-semibold rounded-pill py-2"
-                        style={{ background: '#0A66C2', fontSize: '1rem' }}
+                        style={{ background: '#15487F', fontSize: '1rem' }}
                         onClick={handleApply} disabled={applying}>
                         {applying
                           ? <><span className="spinner-border spinner-border-sm me-2"></span>Submitting...</>

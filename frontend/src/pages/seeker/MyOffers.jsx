@@ -75,7 +75,7 @@ export default function MyOffers() {
 
   if (loading) return (
     <div className="d-flex justify-content-center align-items-center" style={{minHeight:'60vh'}}>
-      <div className="spinner-border" style={{color:'#0A66C2'}}></div>
+      <div className="spinner-border" style={{color:'#15487F'}}></div>
     </div>
   )
 
@@ -102,7 +102,7 @@ export default function MyOffers() {
       <div className="row g-3 mb-4">
         {[
           {label:'Pending Offers', value:pending.length, color:'#057642', bg:'#D1FAE5'},
-          {label:'Accepted',       value:accepted.length, color:'#0A66C2', bg:'#DBEAFE'},
+          {label:'Accepted',       value:accepted.length, color:'#15487F', bg:'#DBEAFE'},
           {label:'Declined',       value:rejected.length, color:'#991b1b', bg:'#FEE2E2'},
           {label:'Total',          value:pending.length+accepted.length+rejected.length, color:'#475569', bg:'#F1F5F9'},
         ].map((s,i)=>(
@@ -158,7 +158,7 @@ export default function MyOffers() {
                         {/* ── DOWNLOAD OFFER LETTER ── prominent button */}
                         <button
                           className="btn fw-bold rounded-pill py-2 d-flex align-items-center justify-content-center gap-2"
-                          style={{background:'#0A66C2',color:'#fff',border:'none',fontSize:'0.95rem',boxShadow:'0 2px 8px rgba(10,102,194,0.3)'}}
+                          style={{background:'#15487F',color:'#fff',border:'none',fontSize:'0.95rem',boxShadow:'0 2px 8px rgba(10,102,194,0.3)'}}
                           disabled={downloading===app.id}
                           onClick={()=>handleDownloadPdf(app)}>
                           {downloading===app.id
@@ -206,10 +206,10 @@ export default function MyOffers() {
       {/* ── Accepted Offers ── */}
       {accepted.length > 0 && (
         <div className="mb-4">
-          <h5 className="fw-bold mb-3" style={{color:'#0A66C2'}}><i className="bi bi-check-circle-fill me-2"></i>Accepted Offers</h5>
+          <h5 className="fw-bold mb-3" style={{color:'#15487F'}}><i className="bi bi-check-circle-fill me-2"></i>Accepted Offers</h5>
           <div className="d-flex flex-column gap-3">
             {accepted.map(app=>(
-              <div key={app.id} className="card border-0 shadow-sm rounded-4" style={{borderLeft:'4px solid #0A66C2'}}>
+              <div key={app.id} className="card border-0 shadow-sm rounded-4" style={{borderLeft:'4px solid #15487F'}}>
                 <div className="card-body p-4">
                   <div className="d-flex align-items-center justify-content-between flex-wrap gap-3">
                     <div>
@@ -220,7 +220,7 @@ export default function MyOffers() {
                       {/* Download button for accepted offers too */}
                       <button
                         className="btn btn-sm rounded-pill fw-semibold d-flex align-items-center gap-1"
-                        style={{background:'#EEF3F8',color:'#0A66C2',border:'1px solid #D0D9E0'}}
+                        style={{background:'#EEF3F8',color:'#15487F',border:'1px solid #D0D9E0'}}
                         disabled={downloading===app.id}
                         onClick={()=>handleDownloadPdf(app)}>
                         {downloading===app.id
@@ -266,7 +266,7 @@ export default function MyOffers() {
           <i className="bi bi-trophy fs-1 text-muted mb-3 d-block"></i>
           <h5 className="text-muted">No offers yet</h5>
           <p className="text-muted small">Keep applying! When an employer offers you a job, it will appear here.</p>
-          <Link to="/jobs" className="btn text-white rounded-pill px-4 mt-2" style={{background:'#0A66C2'}}>Browse Jobs</Link>
+          <Link to="/jobs" className="btn text-white rounded-pill px-4 mt-2" style={{background:'#15487F'}}>Browse Jobs</Link>
         </div>
       )}
       </div>

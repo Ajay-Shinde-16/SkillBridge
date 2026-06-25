@@ -43,7 +43,7 @@ export default function AdminLogin() {
           <div className="card-body p-5">
             <div className="text-center mb-4">
               <div className="rounded-circle d-inline-flex align-items-center justify-content-center mb-3"
-                style={{ width: 68, height: 68, background: '#0A66C2' }}>
+                style={{ width: 68, height: 68, background: '#15487F' }}>
                 <i className="bi bi-shield-lock-fill text-white" style={{ fontSize: 28 }}></i>
               </div>
               <h4 className="heading-serif fw-bold mb-1">Admin Portal</h4>
@@ -79,7 +79,7 @@ export default function AdminLogin() {
               </div>
               <button type="submit"
                 className="btn w-100 text-white fw-bold py-2 rounded-3"
-                style={{ background: '#0A66C2', fontSize: '1rem' }}
+                style={{ background: '#15487F', fontSize: '1rem' }}
                 disabled={loading}>
                 {loading
                   ? <span className="spinner-border spinner-border-sm me-2"></span>
@@ -101,7 +101,7 @@ export default function AdminLogin() {
             <div className="text-center">
               <small className="text-muted">
                 Not an admin?{' '}
-                <Link to="/login" className="fw-semibold" style={{ color: '#0A66C2' }}>
+                <Link to="/login" className="fw-semibold" style={{ color: '#15487F' }}>
                   Go to normal login
                 </Link>
               </small>

@@ -62,7 +62,7 @@ export default function AllApplications() {
               { label: 'Shortlisted', value: applications.filter(a => a.status === 'SHORTLISTED').length, color: '#0ea5e9' },
               { label: 'Interviews', value: applications.filter(a => a.status === 'INTERVIEW_SCHEDULED').length, color: '#0F766E' },
               { label: 'Offered', value: applications.filter(a => a.status === 'OFFERED').length, color: '#057642' },
-              { label: 'Accepted', value: applications.filter(a => a.status === 'ACCEPTED').length, color: '#0A66C2' },
+              { label: 'Accepted', value: applications.filter(a => a.status === 'ACCEPTED').length, color: '#15487F' },
               { label: 'Rejected', value: applications.filter(a => a.status === 'REJECTED').length, color: '#dc3545' },
             ].map((s, i) => (
               <div key={i} className="col-4 col-md-2">
@@ -96,7 +96,7 @@ export default function AllApplications() {
               </div>
 
               {loading ? (
-                <div className="text-center py-4"><div className="spinner-border" style={{ color: '#0A66C2' }}></div></div>
+                <div className="text-center py-4"><div className="spinner-border" style={{ color: '#15487F' }}></div></div>
               ) : (
                 <div className="table-responsive">
                   <table className="table table-hover align-middle mb-0" style={{ fontSize: '0.85rem' }}>

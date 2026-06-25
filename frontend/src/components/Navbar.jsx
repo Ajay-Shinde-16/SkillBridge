@@ -75,7 +75,7 @@ export default function Navbar() {
 
   return (
     <>
-      <nav className="navbar navbar-expand-lg sticky-top shadow-sm" style={{background:'#0A66C2'}}>
+      <nav className="navbar navbar-expand-lg sticky-top shadow-sm" style={{background:'linear-gradient(90deg, #0C2C54 0%, #15487F 100%)'}}>
         <div className="container-fluid px-3">
           <Link className="navbar-brand d-flex align-items-center gap-2 text-white fw-bold" to="/" onClick={handleLogoClick}>
             <img src="/logo.svg" alt="SkillBridge" width={28} height={28} style={{borderRadius:6}} onError={e=>e.target.style.display='none'}/>
@@ -139,7 +139,7 @@ export default function Navbar() {
                     width: 36, height: 36, borderRadius: '50%',
                     background: dark ? '#f8f9fa' : 'rgba(255,255,255,0.15)',
                     border: '1.5px solid rgba(255,255,255,0.4)',
-                    color: dark ? '#0A66C2' : '#fff',
+                    color: dark ? '#15487F' : '#fff',
                     transition: 'all 0.3s ease',
                     fontSize: '1rem'
                   }}>
@@ -157,7 +157,7 @@ export default function Navbar() {
                   </li>
                   <li className="nav-item">
                     <Link to="/register" className="btn btn-sm fw-semibold px-3 rounded-pill"
-                      style={{background:'#fff',color:'#0A66C2',border:'1.5px solid #fff',fontSize:'0.82rem'}}>
+                      style={{background:'#fff',color:'#15487F',border:'1.5px solid #fff',fontSize:'0.82rem'}}>
                       <i className="bi bi-person-plus me-1"></i>Sign Up
                     </Link>
                   </li>

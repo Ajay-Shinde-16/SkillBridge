@@ -67,11 +67,11 @@ export default function MessageThread({ applicationId, jobId, seekerId }) {
   return (
     <div className="card border-0 shadow-sm rounded-4">
       <div className="card-body p-3">
-        <h6 className="fw-bold mb-3"><i className="bi bi-chat-dots-fill me-2" style={{color:'#0A66C2'}}></i>Messages</h6>
+        <h6 className="fw-bold mb-3"><i className="bi bi-chat-dots-fill me-2" style={{color:'#15487F'}}></i>Messages</h6>
 
         <div style={{maxHeight:280, overflowY:'auto', marginBottom:12}}>
           {loading ? (
-            <div className="text-center py-3"><div className="spinner-border spinner-border-sm" style={{color:'#0A66C2'}}></div></div>
+            <div className="text-center py-3"><div className="spinner-border spinner-border-sm" style={{color:'#15487F'}}></div></div>
           ) : messages.length === 0 ? (
             <p className="text-muted small text-center py-3 mb-0">No messages yet. Say hello 👋</p>
           ) : (
@@ -81,7 +81,7 @@ export default function MessageThread({ applicationId, jobId, seekerId }) {
                 <div key={m.id} className={`d-flex mb-2 ${isMine ? 'justify-content-end' : 'justify-content-start'}`}>
                   <div style={{
                     maxWidth:'75%', padding:'8px 12px', borderRadius:14,
-                    background: isMine ? '#0A66C2' : '#EEF3F8',
+                    background: isMine ? '#15487F' : '#EEF3F8',
                     color: isMine ? '#fff' : '#222',
                     fontSize:'0.85rem'
                   }}>
@@ -110,7 +110,7 @@ export default function MessageThread({ applicationId, jobId, seekerId }) {
             disabled={sending}
           />
           <button type="submit" className="btn rounded-circle flex-shrink-0"
-            style={{width:42, height:42, background:'#0A66C2', color:'#fff', border:'none'}}
+            style={{width:42, height:42, background:'#15487F', color:'#fff', border:'none'}}
             disabled={sending || !text.trim()}>
             {sending ? <span className="spinner-border spinner-border-sm" style={{width:14,height:14}}></span> : <i className="bi bi-send-fill"></i>}
           </button>

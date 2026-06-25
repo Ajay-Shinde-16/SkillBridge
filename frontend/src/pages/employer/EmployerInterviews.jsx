@@ -57,7 +57,7 @@ export default function EmployerInterviews() {
               { label:'Scheduled', value: interviews.filter(i=>i.status==='SCHEDULED').length, color:'#0F766E' },
               { label:'Completed', value: interviews.filter(i=>i.status==='COMPLETED').length, color:'#057642' },
               { label:'Cancelled', value: interviews.filter(i=>i.status==='CANCELLED').length, color:'#dc3545' },
-              { label:'Passed', value: interviews.filter(i=>i.result==='PASS').length, color:'#0A66C2' },
+              { label:'Passed', value: interviews.filter(i=>i.result==='PASS').length, color:'#15487F' },
             ].map((s,i) => (
               <div key={i} className="col-6 col-md-3">
                 <div className="stat-card">
@@ -69,7 +69,7 @@ export default function EmployerInterviews() {
           </div>
 
           {loading ? (
-            <div className="text-center py-5"><div className="spinner-border" style={{ color:'#0A66C2' }}></div></div>
+            <div className="text-center py-5"><div className="spinner-border" style={{ color:'#15487F' }}></div></div>
           ) : interviews.length === 0 ? (
             <div className="text-center py-5">
               <i className="bi bi-camera-video fs-1 text-muted mb-3 d-block"></i>
@@ -109,7 +109,7 @@ export default function EmployerInterviews() {
                         {iv.meetingLink && (
                           <a href={iv.meetingLink} target="_blank" rel="noreferrer"
                             className="btn btn-sm rounded-pill mt-2"
-                            style={{ background:'#EEF3F8', color:'#0A66C2', fontSize:'0.75rem' }}>
+                            style={{ background:'#EEF3F8', color:'#15487F', fontSize:'0.75rem' }}>
                             <i className="bi bi-link me-1"></i>Meeting Link
                           </a>
                         )}
@@ -146,7 +146,7 @@ export default function EmployerInterviews() {
                           </div>
                           <div className="col-12">
                             <button className="btn btn-sm w-100 text-white rounded-pill fw-semibold"
-                              style={{ background:'#0A66C2', fontSize:'0.8rem' }}
+                              style={{ background:'#15487F', fontSize:'0.8rem' }}
                               disabled={updating===iv.id}
                               onClick={() => handleUpdate(iv.id, iv.status, iv.result)}>
                               {updating===iv.id

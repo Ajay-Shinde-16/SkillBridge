@@ -47,7 +47,7 @@ export default function ChangePassword() {
             <h4 className="fw-bold mb-2">Password Changed!</h4>
             <p className="text-muted mb-4">Your password has been updated successfully.</p>
             <Link to="/profile" className="btn text-white fw-bold rounded-pill px-4"
-              style={{ background:'#0A66C2' }}>
+              style={{ background:'#15487F' }}>
               Back to Profile
             </Link>
           </div>
@@ -72,7 +72,7 @@ export default function ChangePassword() {
               <div className="text-center mb-4">
                 <div className="rounded-circle d-inline-flex align-items-center justify-content-center mb-3"
                   style={{ width:56, height:56, background:'#EEF3F8' }}>
-                  <i className="bi bi-shield-lock-fill fs-3" style={{ color:'#0A66C2' }}></i>
+                  <i className="bi bi-shield-lock-fill fs-3" style={{ color:'#15487F' }}></i>
                 </div>
                 <p className="text-muted small mb-0">Enter your current password and choose a new one</p>
               </div>
@@ -148,7 +148,7 @@ export default function ChangePassword() {
                 </div>
 
                 <button type="submit" className="btn w-100 text-white fw-bold rounded-pill py-2"
-                  style={{ background:'#0A66C2' }} disabled={loading}>
+                  style={{ background:'#15487F' }} disabled={loading}>
                   {loading ? <span className="spinner-border spinner-border-sm me-2"></span>
                            : <i className="bi bi-shield-check me-2"></i>}
                   Update Password
@@ -157,7 +157,7 @@ export default function ChangePassword() {
 
               <div className="mt-4 p-3 rounded-3" style={{ background:'#EEF3F8' }}>
                 <div className="text-muted small fw-semibold mb-2">
-                  <i className="bi bi-info-circle me-1" style={{ color:'#0A66C2' }}></i>
+                  <i className="bi bi-info-circle me-1" style={{ color:'#15487F' }}></i>
                   Password Tips:
                 </div>
                 <ul className="mb-0 text-muted small" style={{ paddingLeft:16 }}>

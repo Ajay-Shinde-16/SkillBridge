@@ -101,7 +101,7 @@ export default function VerifySkills() {
           {/* Add Skill to Catalogue */}
           <div className="card border-0 shadow-sm rounded-4 mb-4">
             <div className="card-body p-4">
-              <h6 className="fw-bold mb-3" style={{ color: '#0A66C2' }}>
+              <h6 className="fw-bold mb-3" style={{ color: '#15487F' }}>
                 <i className="bi bi-plus-circle me-2"></i>Add Skill to Catalogue
               </h6>
               <form onSubmit={handleAddSkill}>
@@ -154,14 +154,14 @@ export default function VerifySkills() {
           {/* Verify User Skills */}
           <div className="card border-0 shadow-sm rounded-4">
             <div className="card-body p-4">
-              <h6 className="fw-bold mb-3" style={{ color: '#0A66C2' }}>
+              <h6 className="fw-bold mb-3" style={{ color: '#15487F' }}>
                 <i className="bi bi-people me-2"></i>
                 Verify Seeker Skills ({seekersWithSkills.length} seekers with skills)
               </h6>
 
               {loading ? (
                 <div className="text-center py-5">
-                  <div className="spinner-border" style={{ color: '#0A66C2' }}></div>
+                  <div className="spinner-border" style={{ color: '#15487F' }}></div>
                   <p className="text-muted mt-2 small">Loading seekers...</p>
                 </div>
               ) : seekersWithSkills.length === 0 ? (
@@ -177,7 +177,7 @@ export default function VerifySkills() {
                       {/* User header */}
                       <div className="d-flex align-items-center gap-3 mb-3">
                         <div className="rounded-circle text-white d-flex align-items-center justify-content-center fw-bold flex-shrink-0"
-                          style={{ width: 42, height: 42, background: '#0A66C2', fontSize: 16 }}>
+                          style={{ width: 42, height: 42, background: '#15487F', fontSize: 16 }}>
                           {u.name?.charAt(0).toUpperCase()}
                         </div>
                         <div>

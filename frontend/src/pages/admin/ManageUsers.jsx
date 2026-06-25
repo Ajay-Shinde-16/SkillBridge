@@ -110,7 +110,7 @@ export default function ManageUsers() {
           {/* Stats Row */}
           <div className="row g-3 mb-4">
             {[
-              { label: 'Total', value: users.length, color: '#0A66C2' },
+              { label: 'Total', value: users.length, color: '#15487F' },
               { label: 'Seekers', value: users.filter(u => u.role === 'SEEKER').length, color: '#0ea5e9' },
               { label: 'Employers', value: users.filter(u => u.role === 'EMPLOYER').length, color: '#f59e0b' },
               { label: 'Admins', value: users.filter(u => u.role === 'ADMIN').length, color: '#dc3545' },
@@ -145,7 +145,7 @@ export default function ManageUsers() {
                 <span className="text-muted small align-self-center ms-auto">
                   {filtered.length} result{filtered.length !== 1 ? 's' : ''}
                 </span>
-                <button className="btn btn-sm rounded-pill" style={{background:'#EEF3F8',color:'#0A66C2',border:'1px solid #0A66C2'}}
+                <button className="btn btn-sm rounded-pill" style={{background:'#EEF3F8',color:'#15487F',border:'1px solid #15487F'}}
                   onClick={handleExport}>
                   <i className="bi bi-download me-1"></i>Export CSV
                 </button>
@@ -180,7 +180,7 @@ export default function ManageUsers() {
                               <div className="rounded-circle d-flex align-items-center justify-content-center text-white fw-bold flex-shrink-0"
                                 style={{
                                   width: 36, height: 36, fontSize: 14,
-                                  background: u.role === 'ADMIN' ? '#dc3545' : u.role === 'EMPLOYER' ? '#f59e0b' : '#0A66C2'
+                                  background: u.role === 'ADMIN' ? '#dc3545' : u.role === 'EMPLOYER' ? '#f59e0b' : '#15487F'
                                 }}>
                                 {u.name?.charAt(0).toUpperCase()}
                               </div>
@@ -260,7 +260,7 @@ export default function ManageUsers() {
               {!loading && filtered.length > visibleCount && (
                 <div className="text-center mt-3">
                   <button className="btn btn-sm rounded-pill px-4"
-                    style={{background:'#EEF3F8',color:'#0A66C2',border:'1px solid #0A66C2'}}
+                    style={{background:'#EEF3F8',color:'#15487F',border:'1px solid #15487F'}}
                     onClick={() => setVisibleCount(c => c + PAGE_SIZE)}>
                     Show More ({filtered.length - visibleCount} remaining)
                   </button>

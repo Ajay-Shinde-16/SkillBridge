@@ -11,7 +11,7 @@ export default function Confetti({ active }) {
     canvas.width = window.innerWidth
     canvas.height = window.innerHeight
 
-    const colors = ['#0A66C2','#22c55e','#f59e0b','#ec4899','#a855f7','#14B8A6','#ef4444','#fff']
+    const colors = ['#15487F','#22c55e','#f59e0b','#ec4899','#a855f7','#14B8A6','#ef4444','#fff']
     const pieces = Array.from({ length: 180 }, () => ({
       x: Math.random() * canvas.width,
       y: Math.random() * canvas.height - canvas.height,

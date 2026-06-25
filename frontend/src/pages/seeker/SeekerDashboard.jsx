@@ -64,7 +64,7 @@ export default function SeekerDashboard() {
 
   if (loading) return (
     <div className="d-flex justify-content-center align-items-center" style={{minHeight:'60vh'}}>
-      <div className="spinner-border" style={{color:'#0A66C2'}}></div>
+      <div className="spinner-border" style={{color:'#15487F'}}></div>
     </div>
   )
 
@@ -118,7 +118,7 @@ export default function SeekerDashboard() {
           {/* ── ALL 6 STATUS COUNTS ── */}
           <div className="row g-2 mb-4">
             {[
-              {label:'Applied',     value:counts.applied,     color:'#0A66C2', bg:'#EEF3F8', icon:'bi-send',              link:'/seeker/applications'},
+              {label:'Applied',     value:counts.applied,     color:'#15487F', bg:'#EEF3F8', icon:'bi-send',              link:'/seeker/applications'},
               {label:'Shortlisted', value:counts.shortlisted, color:'#0ea5e9', bg:'#E0F2FE', icon:'bi-star-fill',         link:'/seeker/applications'},
               {label:'Interviews',  value:counts.interviews,  color:'#0F766E', bg:'#CCFBF1', icon:'bi-camera-video',      link:'/seeker/interviews'},
               {label:'Offered',     value:counts.offered,     color:'#057642', bg:'#D1FAE5', icon:'bi-trophy-fill',       link:'/seeker/offers'},
@@ -166,14 +166,14 @@ export default function SeekerDashboard() {
               <div className="d-flex justify-content-between align-items-center mb-3">
                 <h6 className="fw-bold mb-0">My Skills</h6>
                 <Link to="/profile" className="btn btn-sm rounded-pill fw-semibold"
-                  style={{background:'#EEF3F8',color:'#0A66C2',border:'none',fontSize:'0.78rem'}}>
+                  style={{background:'#EEF3F8',color:'#15487F',border:'none',fontSize:'0.78rem'}}>
                   <i className="bi bi-pencil me-1"></i>Edit Skills
                 </Link>
               </div>
               <div className="d-flex flex-wrap gap-2">
                 {(profile?.skillsList||[]).length===0 ? (
                   <span className="text-muted small">
-                    No skills yet. <Link to="/profile" style={{color:'#0A66C2'}}>Add skills →</Link>
+                    No skills yet. <Link to="/profile" style={{color:'#15487F'}}>Add skills →</Link>
                   </span>
                 ) : (
                   (profile?.skillsList||[]).map((s,i)=>(
@@ -196,7 +196,7 @@ export default function SeekerDashboard() {
               <div className="d-flex justify-content-between align-items-center mb-3">
                 <h6 className="fw-bold mb-0">Recent Applications ({counts.total})</h6>
                 <Link to="/seeker/applications" className="btn btn-sm rounded-pill fw-semibold"
-                  style={{background:'#EEF3F8',color:'#0A66C2',border:'none',fontSize:'0.78rem'}}>
+                  style={{background:'#EEF3F8',color:'#15487F',border:'none',fontSize:'0.78rem'}}>
                   View All
                 </Link>
               </div>
@@ -204,7 +204,7 @@ export default function SeekerDashboard() {
                 <div className="text-center py-3">
                   <i className="bi bi-file-text fs-2 text-muted mb-2 d-block"></i>
                   <p className="text-muted small mb-2">No applications yet</p>
-                  <Link to="/jobs" className="btn btn-sm text-white rounded-pill" style={{background:'#0A66C2'}}>
+                  <Link to="/jobs" className="btn btn-sm text-white rounded-pill" style={{background:'#15487F'}}>
                     Browse Jobs
                   </Link>
                 </div>
@@ -246,7 +246,7 @@ export default function SeekerDashboard() {
               <div className="d-flex justify-content-between align-items-center mb-3">
                 <h6 className="fw-bold mb-0">Upcoming Interviews ({interviews.length})</h6>
                 <Link to="/seeker/interviews" className="btn btn-sm rounded-pill fw-semibold"
-                  style={{background:'#EEF3F8',color:'#0A66C2',border:'none',fontSize:'0.78rem'}}>
+                  style={{background:'#EEF3F8',color:'#15487F',border:'none',fontSize:'0.78rem'}}>
                   View All
                 </Link>
               </div>
@@ -267,7 +267,7 @@ export default function SeekerDashboard() {
                         {iv.meetingLink && (
                           <a href={iv.meetingLink} target="_blank" rel="noreferrer"
                             className="btn btn-sm w-100 text-white rounded-pill"
-                            style={{background:'#0A66C2',fontSize:'0.75rem'}}>
+                            style={{background:'#15487F',fontSize:'0.75rem'}}>
                             <i className="bi bi-camera-video me-1"></i>Join Meeting
                           </a>
                         )}
