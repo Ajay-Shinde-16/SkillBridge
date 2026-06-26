@@ -75,25 +75,25 @@ export default function Navbar() {
 
   return (
     <>
-      <nav className="navbar navbar-expand-lg sticky-top shadow-sm" style={{background:'linear-gradient(90deg, #0C2C54 0%, #15487F 100%)'}}>
+      <nav className="navbar navbar-expand-lg sticky-top shadow-sm app-navbar">
         <div className="container-fluid px-3">
-          <Link className="navbar-brand d-flex align-items-center gap-2 text-white fw-bold" to="/" onClick={handleLogoClick}>
+          <Link className="navbar-brand d-flex align-items-center gap-2 fw-bold" to="/" onClick={handleLogoClick}>
             <img src="/logo.svg" alt="SkillBridge" width={28} height={28} style={{borderRadius:6}} onError={e=>e.target.style.display='none'}/>
             SkillBridge
           </Link>
-          <button className="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu" style={{filter:'invert(1)'}}>
+          <button className="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
             <span className="navbar-toggler-icon"></span>
           </button>
           <div className="collapse navbar-collapse" id="navMenu">
             <ul className="navbar-nav me-auto gap-1">
               {(!user || user?.role === 'SEEKER') && (
                 <li className="nav-item">
-                  <Link className="nav-link text-white" to="/jobs"><i className="bi bi-briefcase me-1"></i>Browse Jobs</Link>
+                  <Link className="nav-link app-nav-link" to="/jobs"><i className="bi bi-briefcase me-1"></i>Browse Jobs</Link>
                 </li>
               )}
               {user?.role==='SEEKER' && (
                 <li className="nav-item">
-                  <Link className="nav-link text-white d-flex align-items-center gap-1" to="/career-room">
+                  <Link className="nav-link app-nav-link d-flex align-items-center gap-1" to="/career-room">
                     <i className="bi bi-stars me-1"></i>Career Room
                     <span style={{
                       background:'#22c55e', color:'#fff',
@@ -106,25 +106,25 @@ export default function Navbar() {
                 </li>
               )}
               {user && <li className="nav-item">
-                <Link className="nav-link text-white" to={getDash()}><i className="bi bi-speedometer2 me-1"></i>Dashboard</Link>
+                <Link className="nav-link app-nav-link" to={getDash()}><i className="bi bi-speedometer2 me-1"></i>Dashboard</Link>
               </li>}
               {user?.role==='SEEKER' && <>
-                <li className="nav-item"><Link className="nav-link text-white" to="/seeker/applications"><i className="bi bi-file-text me-1"></i>My Applications</Link></li>
-                <li className="nav-item"><Link className="nav-link text-white" to="/seeker/saved-jobs"><i className="bi bi-bookmark me-1"></i>Saved Jobs</Link></li>
-                <li className="nav-item"><Link className="nav-link text-white" to="/seeker/offers"><i className="bi bi-trophy me-1"></i>My Offers</Link></li>
-                <li className="nav-item"><Link className="nav-link text-white" to="/seeker/interviews"><i className="bi bi-camera-video me-1"></i>Interviews</Link></li>
+                <li className="nav-item"><Link className="nav-link app-nav-link" to="/seeker/applications"><i className="bi bi-file-text me-1"></i>My Applications</Link></li>
+                <li className="nav-item"><Link className="nav-link app-nav-link" to="/seeker/saved-jobs"><i className="bi bi-bookmark me-1"></i>Saved Jobs</Link></li>
+                <li className="nav-item"><Link className="nav-link app-nav-link" to="/seeker/offers"><i className="bi bi-trophy me-1"></i>My Offers</Link></li>
+                <li className="nav-item"><Link className="nav-link app-nav-link" to="/seeker/interviews"><i className="bi bi-camera-video me-1"></i>Interviews</Link></li>
               </>}
               {user?.role==='EMPLOYER' && <>
-                <li className="nav-item"><Link className="nav-link text-white" to="/employer/post-job"><i className="bi bi-plus-circle me-1"></i>Post Job</Link></li>
-                <li className="nav-item"><Link className="nav-link text-white" to="/employer/applicants"><i className="bi bi-people me-1"></i>Applicants</Link></li>
-                <li className="nav-item"><Link className="nav-link text-white" to="/employer/interviews"><i className="bi bi-camera-video me-1"></i>Interviews</Link></li>
-                <li className="nav-item"><Link className="nav-link text-white" to="/employer/company-profile"><i className="bi bi-building me-1"></i>Company</Link></li>
+                <li className="nav-item"><Link className="nav-link app-nav-link" to="/employer/post-job"><i className="bi bi-plus-circle me-1"></i>Post Job</Link></li>
+                <li className="nav-item"><Link className="nav-link app-nav-link" to="/employer/applicants"><i className="bi bi-people me-1"></i>Applicants</Link></li>
+                <li className="nav-item"><Link className="nav-link app-nav-link" to="/employer/interviews"><i className="bi bi-camera-video me-1"></i>Interviews</Link></li>
+                <li className="nav-item"><Link className="nav-link app-nav-link" to="/employer/company-profile"><i className="bi bi-building me-1"></i>Company</Link></li>
               </>}
               {user?.role==='ADMIN' && <>
-                <li className="nav-item"><Link className="nav-link text-white" to="/admin/users"><i className="bi bi-people me-1"></i>Users</Link></li>
-                <li className="nav-item"><Link className="nav-link text-white" to="/admin/skills"><i className="bi bi-patch-check me-1"></i>Skills</Link></li>
-                <li className="nav-item"><Link className="nav-link text-white" to="/admin/jobs"><i className="bi bi-briefcase me-1"></i>Jobs</Link></li>
-                <li className="nav-item"><Link className="nav-link text-white" to="/admin/applications"><i className="bi bi-file-text me-1"></i>Applications</Link></li>
+                <li className="nav-item"><Link className="nav-link app-nav-link" to="/admin/users"><i className="bi bi-people me-1"></i>Users</Link></li>
+                <li className="nav-item"><Link className="nav-link app-nav-link" to="/admin/skills"><i className="bi bi-patch-check me-1"></i>Skills</Link></li>
+                <li className="nav-item"><Link className="nav-link app-nav-link" to="/admin/jobs"><i className="bi bi-briefcase me-1"></i>Jobs</Link></li>
+                <li className="nav-item"><Link className="nav-link app-nav-link" to="/admin/applications"><i className="bi bi-file-text me-1"></i>Applications</Link></li>
               </>}
             </ul>
             <ul className="navbar-nav align-items-center gap-2">
@@ -137,9 +137,9 @@ export default function Navbar() {
                   className="btn btn-sm d-flex align-items-center justify-content-center"
                   style={{
                     width: 36, height: 36, borderRadius: '50%',
-                    background: dark ? '#f8f9fa' : 'rgba(255,255,255,0.15)',
-                    border: '1.5px solid rgba(255,255,255,0.4)',
-                    color: dark ? '#15487F' : '#fff',
+                    background: dark ? '#21262d' : '#f1f5f9',
+                    border: dark ? '1.5px solid #2d333b' : '1.5px solid #cbd5e1',
+                    color: dark ? '#ffd23f' : '#15487F',
                     transition: 'all 0.3s ease',
                     fontSize: '1rem'
                   }}>
@@ -151,13 +151,13 @@ export default function Navbar() {
                 <>
                   <li className="nav-item">
                     <Link to="/login" className="btn btn-sm fw-semibold px-3 rounded-pill"
-                      style={{background:'transparent',color:'#fff',border:'1.5px solid #fff',fontSize:'0.82rem'}}>
+                      style={{background:'transparent',color:'#15487F',border:'1.5px solid #15487F',fontSize:'0.82rem'}}>
                       <i className="bi bi-person me-1"></i>Login
                     </Link>
                   </li>
                   <li className="nav-item">
-                    <Link to="/register" className="btn btn-sm fw-semibold px-3 rounded-pill"
-                      style={{background:'#fff',color:'#15487F',border:'1.5px solid #fff',fontSize:'0.82rem'}}>
+                    <Link to="/register" className="btn btn-sm btn-accent fw-semibold px-3 rounded-pill"
+                      style={{fontSize:'0.82rem'}}>
                       <i className="bi bi-person-plus me-1"></i>Sign Up
                     </Link>
                   </li>
@@ -168,7 +168,7 @@ export default function Navbar() {
                     <NotificationBell />
                   </li>
                   <li className="nav-item dropdown">
-                    <a className="nav-link dropdown-toggle text-white d-flex align-items-center gap-2" href="#" data-bs-toggle="dropdown">
+                    <a className="nav-link dropdown-toggle app-nav-link d-flex align-items-center gap-2" href="#" data-bs-toggle="dropdown">
                       <UserAvatar name={user.name} size={32} />
                       <span className="d-none d-md-inline">{user.name}</span>
                       {user.role==='ADMIN' && <span className="badge rounded-pill ms-1" style={{background:'#b91c1c',fontSize:'0.65rem'}}>ADMIN</span>}

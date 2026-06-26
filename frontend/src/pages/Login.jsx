@@ -181,25 +181,12 @@ export default function Login() {
                   {!otpStep && (
                   <>
                   {/* Sign Up link */}
-                  <p className="text-center mt-4 mb-3 small">
+                  <p className="text-center mt-4 mb-0 small">
                     Don't have an account?{' '}
                     <Link to="/register" className="fw-semibold" style={{ color: '#15487F' }}>
                       Create Account
                     </Link>
                   </p>
-
-                  {/* Divider */}
-                  <hr className="my-3" />
-
-                  {/* Change Password - for logged in users who know current password */}
-                  <div className="text-center">
-                    <p className="text-muted small mb-2">Already logged in and want to change password?</p>
-                    <Link to="/profile"
-                      className="btn btn-sm rounded-pill fw-semibold"
-                      style={{ background: '#EEF3F8', color: '#15487F', border: '1px solid #D0D9E0', fontSize: '0.82rem' }}>
-                      <i className="bi bi-shield-lock me-1"></i>Go to Profile → Change Password
-                    </Link>
-                  </div>
                   </>
                   )}
 

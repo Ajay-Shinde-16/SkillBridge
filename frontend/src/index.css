@@ -1,12 +1,48 @@
 :root {
   /* ─── TMS-inspired palette (C-DAC institutional look) ─── */
   --li-blue: #15487F;     /* primary navy-blue (buttons, links, accents) */
-  --li-dark: #0C2C54;     /* deep navy (gradients, hero, sidebar) */
+  --li-dark: #0A2347;     /* deep navy (gradients, hero, sidebar) — matches TMS */
   --li-bg:   #EEF3F8;     /* soft blue tint for panels */
+  --hero-1:  #0A2347;     /* deep TMS navy (hero start) */
+  --hero-2:  #123160;     /* rich navy (hero end) */
   --accent:        #E2670A;   /* TMS orange (secondary CTAs / highlights) */
   --accent-dark:   #C7560A;   /* orange hover */
   --accent-soft:   #FFF1E6;   /* orange tint background */
 }
+
+/* ════════════════════════════════════════════════
+   TMS-STYLE NAVBAR — white bar, navy serif brand,
+   thin accent strip on top; flips dark in dark mode.
+   ════════════════════════════════════════════════ */
+.app-navbar {
+  background: #ffffff !important;
+  border-bottom: 1px solid #e6eaf0;
+  position: relative;
+}
+.app-navbar::before {           /* thin TMS-style accent strip */
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  background: linear-gradient(90deg, var(--accent) 0%, var(--li-blue) 55%, var(--li-dark) 100%);
+}
+.app-navbar .navbar-brand {
+  color: var(--li-dark) !important;
+  font-family: 'PT Serif','Lora','Georgia',serif;
+}
+.app-navbar .app-nav-link,
+.app-navbar .nav-link {
+  color: #334155 !important;
+  font-weight: 500;
+}
+.app-navbar .app-nav-link:hover,
+.app-navbar .nav-link:hover { color: var(--li-blue) !important; }
+.app-navbar .navbar-toggler { border-color: #cbd5e1 !important; }
+/* dark mode → dark bar, light text */
+body.dark-mode .app-navbar { background: #161b22 !important; border-bottom: 1px solid #2d333b; }
+body.dark-mode .app-navbar .navbar-brand { color: #e6edf3 !important; }
+body.dark-mode .app-navbar .app-nav-link,
+body.dark-mode .app-navbar .nav-link { color: #c9d3df !important; }
+body.dark-mode .app-navbar .app-nav-link:hover,
+body.dark-mode .app-navbar .nav-link:hover { color: #6cb0ff !important; }
 
 * { box-sizing: border-box; }
 
@@ -20,11 +56,14 @@ body {
 
 /* Big formal titles get the institutional serif (matches TMS). Sub-UI headings
    (h4–h6, used for card titles / dense dashboard UI) stay in Inter for clarity. */
+/* Big formal titles get the institutional serif (matches TMS). Sub-UI headings
+   (h4–h6, used for card titles / dense dashboard UI) stay in Inter for clarity.
+   NOTE: headings intentionally INHERIT their color (dark text on white cards,
+   white text on navy panels/hero) so nothing ever goes invisible. */
 h1, h2,
 .heading-serif {
   font-family: 'PT Serif', 'Lora', 'Georgia', serif;
   letter-spacing: 0;
-  color: var(--li-dark);
 }
 h3, h4, h5, h6,
 .navbar-brand,
@@ -33,7 +72,10 @@ h3, h4, h5, h6,
   letter-spacing: -0.01em;
 }
 .navbar-brand { font-family: 'PT Serif', 'Lora', 'Georgia', serif; }
-body.dark-mode h1, body.dark-mode h2, body.dark-mode .heading-serif { color: #e6edf3; }
+/* Safety: any heading inside a white-text block stays white */
+.text-white h1, .text-white h2, .text-white h3, .text-white .heading-serif,
+.welcome-header h1, .welcome-header h2, .welcome-header h3,
+.page-header h1, .page-header h2, .page-header h3 { color: #fff !important; }
 
 /* ─── ORANGE ACCENT BUTTONS (TMS-style secondary CTA) ─── */
 .btn-accent {
@@ -92,7 +134,7 @@ body.dark-mode .text-accent { color: #ff8b3d !important; }
 
 /* ─── PAGE HEADER (LinkedIn blue) ─── */
 .page-header {
-  background: linear-gradient(135deg, #15487F 0%, #0C2C54 100%);
+  background: linear-gradient(135deg, #123160 0%, #0A2347 100%);
   color: white;
   padding: 1.5rem 1.5rem;
   border-radius: 12px;
@@ -103,7 +145,7 @@ body.dark-mode .text-accent { color: #ff8b3d !important; }
 
 /* ─── WELCOME HEADER ─── */
 .welcome-header {
-  background: linear-gradient(135deg, #15487F 0%, #0C2C54 100%);
+  background: linear-gradient(135deg, #123160 0%, #0A2347 100%);
   color: white;
   padding: 1.5rem 1.5rem;
   border-radius: 12px;
