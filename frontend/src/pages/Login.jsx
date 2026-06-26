@@ -67,17 +67,20 @@ export default function Login() {
           <div className="card shadow border-0 rounded-4 overflow-hidden">
             <div className="row g-0">
 
-              {/* ── LEFT PANEL: brand / info ── */}
-              <div className="col-lg-5 d-none d-lg-flex flex-column align-items-center justify-content-center text-center p-5"
-                style={{ background: 'linear-gradient(160deg, #003766 0%, #0A66C2 100%)', color: '#fff' }}>
-                <div className="bg-white rounded-4 p-3 mb-4 d-inline-flex">
-                  <img src="/logo.svg" alt="SkillBridge" width="56" height="56"
+              {/* ── BRAND PANEL: horizontal strip on mobile/tablet, full
+                   centered panel at lg+ — always visible, never hidden ── */}
+              <div className="col-12 col-lg-5 d-flex flex-row flex-lg-column align-items-center justify-content-lg-center text-start text-lg-center p-3 p-lg-5 gap-3 gap-lg-0"
+                style={{ background: 'linear-gradient(160deg, #003766 0%, #15487F 100%)', color: '#fff' }}>
+                <div className="bg-white rounded-4 p-2 p-lg-3 mb-0 mb-lg-4 d-inline-flex flex-shrink-0">
+                  <img src="/logo.svg" alt="SkillBridge" className="auth-logo-img"
                     onError={e => { e.target.style.display = 'none' }} />
                 </div>
-                <h2 className="heading-serif fw-bold mb-2">SkillBridge</h2>
-                <p className="opacity-75 small mb-0" style={{ maxWidth: 240 }}>
-                  Remote jobs, matched to your verified skills.
-                </p>
+                <div>
+                  <h2 className="heading-serif fw-bold mb-1 mb-lg-2 auth-brand-title">SkillBridge</h2>
+                  <p className="opacity-75 small mb-0 auth-tagline">
+                    Remote jobs, matched to your verified skills.
+                  </p>
+                </div>
               </div>
 
               {/* ── RIGHT PANEL: form ── */}
@@ -114,7 +117,7 @@ export default function Login() {
                         </div>
                         <button type="submit"
                           className="btn btn-lg w-100 text-white fw-bold rounded-3 mb-2"
-                          style={{ background: '#0A66C2' }}
+                          style={{ background: '#15487F' }}
                           disabled={loading || otp.length !== 6}>
                           {loading
                             ? <span className="spinner-border spinner-border-sm me-2"></span>
@@ -167,7 +170,7 @@ export default function Login() {
                         {/* Sign In Button */}
                         <button type="submit"
                           className="btn btn-lg w-100 text-white fw-bold rounded-3"
-                          style={{ background: '#0A66C2' }}
+                          style={{ background: '#15487F' }}
                           disabled={loading}>
                           {loading
                             ? <span className="spinner-border spinner-border-sm me-2"></span>
@@ -181,34 +184,14 @@ export default function Login() {
                   {!otpStep && (
                   <>
                   {/* Sign Up link */}
-                  <p className="text-center mt-4 mb-3 small">
+                  <p className="text-center mt-4 mb-0 small">
                     Don't have an account?{' '}
-                    <Link to="/register" className="fw-semibold" style={{ color: '#0A66C2' }}>
+                    <Link to="/register" className="fw-semibold" style={{ color: '#15487F' }}>
                       Create Account
                     </Link>
                   </p>
-
-                  {/* Divider */}
-                  <hr className="my-3" />
-
-                  {/* Change Password - for logged in users who know current password */}
-                  <div className="text-center">
-                    <p className="text-muted small mb-2">Already logged in and want to change password?</p>
-                    <Link to="/profile"
-                      className="btn btn-sm rounded-pill fw-semibold"
-                      style={{ background: '#EEF3F8', color: '#0A66C2', border: '1px solid #D0D9E0', fontSize: '0.82rem' }}>
-                      <i className="bi bi-shield-lock me-1"></i>Go to Profile → Change Password
-                    </Link>
-                  </div>
                   </>
                   )}
-
-                  {/* Admin hint */}
-                  <div className="text-center mt-3">
-                    <span className="text-muted" style={{ fontSize: '0.65rem', userSelect: 'none' }}>
-                      v1.0 · CDAC 2026
-                    </span>
-                  </div>
 
                 </div>
               </div>

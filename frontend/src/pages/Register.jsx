@@ -45,17 +45,20 @@ export default function Register() {
           <div className="card shadow border-0 rounded-4 overflow-hidden">
             <div className="row g-0">
 
-              {/* ── LEFT PANEL: brand / info ── */}
-              <div className="col-lg-4 d-none d-lg-flex flex-column align-items-center justify-content-center text-center p-5"
-                style={{ background: 'linear-gradient(160deg, #003766 0%, #0A66C2 100%)', color: '#fff' }}>
-                <div className="bg-white rounded-4 p-3 mb-4 d-inline-flex">
-                  <img src="/logo.svg" alt="SkillBridge" width="56" height="56"
+              {/* ── BRAND PANEL: horizontal strip on mobile/tablet, full
+                   centered panel at lg+ — always visible, never hidden ── */}
+              <div className="col-12 col-lg-4 d-flex flex-row flex-lg-column align-items-center justify-content-lg-center text-start text-lg-center p-3 p-lg-5 gap-3 gap-lg-0"
+                style={{ background: 'linear-gradient(160deg, #003766 0%, #15487F 100%)', color: '#fff' }}>
+                <div className="bg-white rounded-4 p-2 p-lg-3 mb-0 mb-lg-4 d-inline-flex flex-shrink-0">
+                  <img src="/logo.svg" alt="SkillBridge" className="auth-logo-img"
                     onError={e => { e.target.style.display = 'none' }} />
                 </div>
-                <h2 className="heading-serif fw-bold mb-2">SkillBridge</h2>
-                <p className="opacity-75 small mb-0" style={{ maxWidth: 220 }}>
-                  Join free — for job seekers and employers alike.
-                </p>
+                <div>
+                  <h2 className="heading-serif fw-bold mb-1 mb-lg-2 auth-brand-title">SkillBridge</h2>
+                  <p className="opacity-75 small mb-0 auth-tagline">
+                    Join free — for job seekers and employers alike.
+                  </p>
+                </div>
               </div>
 
               {/* ── RIGHT PANEL: form ── */}
@@ -78,16 +81,10 @@ export default function Register() {
                         { role:'EMPLOYER', icon:'bi-building-fill', label:'Employer', desc:'Hiring remote talent' }
                       ].map(r => (
                         <div key={r.role}
-                          className="flex-fill rounded-3 p-3 text-center"
-                          style={{
-                            cursor:'pointer',
-                            border: form.role===r.role ? '2px solid #0A66C2' : '1.5px solid #e2e8f0',
-                            background: form.role===r.role ? '#EEF3F8' : '#fff',
-                            transition:'all 0.15s'
-                          }}
+                          className={`flex-fill rounded-3 p-3 text-center role-card${form.role===r.role?' role-card-active':''}`}
                           onClick={()=>setForm({...form,role:r.role})}>
-                          <i className={`bi ${r.icon} d-block mb-1`} style={{fontSize:28,color:form.role===r.role?'#0A66C2':'#adb5bd'}}></i>
-                          <div className="fw-bold" style={{color:form.role===r.role?'#0A66C2':'#6c757d',fontSize:'0.9rem'}}>{r.label}</div>
+                          <i className={`bi ${r.icon} d-block mb-1 role-card-icon`}></i>
+                          <div className="fw-bold role-card-label" style={{fontSize:'0.9rem'}}>{r.label}</div>
                           <div className="text-muted" style={{fontSize:'0.72rem'}}>{r.desc}</div>
                         </div>
                       ))}
@@ -112,7 +109,7 @@ export default function Register() {
                           onChange={e=>setForm({...form,password:e.target.value})} placeholder="At least 8 characters"/>
                         {form.password && (
                           <div className="mt-1">
-                            <div className="rounded-pill overflow-hidden" style={{ height:5, background:'#e2e8f0' }}>
+                            <div className="rounded-pill overflow-hidden" style={{ height:5, background:'var(--border-color)' }}>
                               <div className="rounded-pill h-100" style={{ width:pwdStrength.width, background:pwdStrength.color, transition:'all 0.3s' }}></div>
                             </div>
                             <span style={{ color:pwdStrength.color, fontSize:'0.78rem' }}>{pwdStrength.label}</span>
@@ -149,7 +146,7 @@ export default function Register() {
                       )}
                     </div>
                     <button type="submit" className="btn w-100 text-white fw-bold mt-4 rounded-pill py-2"
-                      style={{background:'#0A66C2',fontSize:'1rem'}} disabled={loading}>
+                      style={{background:'#15487F',fontSize:'1rem'}} disabled={loading}>
                       {loading?<span className="spinner-border spinner-border-sm me-2"></span>:null}
                       Create {form.role==='SEEKER'?'Seeker':'Employer'} Account
                     </button>
@@ -157,7 +154,7 @@ export default function Register() {
 
                   <p className="text-center mt-4 mb-0 small">
                     Already have an account?{' '}
-                    <Link to="/login" className="fw-semibold" style={{color:'#0A66C2'}}>Sign In</Link>
+                    <Link to="/login" className="fw-semibold" style={{color:'var(--accent)'}}>Sign In</Link>
                   </p>
                 </div>
               </div>
