@@ -26,8 +26,8 @@ export default function EmployerInterviews() {
     } catch (e) { alert('Failed to update') } finally { setUpdating(null) }
   }
 
-  const statusColor = { SCHEDULED:'warning', COMPLETED:'success', CANCELLED:'danger', RESCHEDULED:'info' }
-  const resultColor = { PASS:'success', FAIL:'danger', PENDING:'secondary' }
+  const statusVariant = { SCHEDULED:'yellow', COMPLETED:'green', CANCELLED:'red', RESCHEDULED:'blue' }
+  const resultVariant = { PASS:'green', FAIL:'red', PENDING:'gray' }
 
   return (
     <div className="container-fluid p-0">
@@ -89,10 +89,10 @@ export default function EmployerInterviews() {
                           <i className="bi bi-person me-1"></i>{iv.seekerName}
                         </div>
                         <div className="mt-2 d-flex gap-2 flex-wrap">
-                          <span className={`badge bg-${statusColor[iv.status]||'secondary'} rounded-pill`} style={{ fontSize:'0.72rem' }}>
+                          <span className={`status-pill status-pill-${statusVariant[iv.status] || 'gray'}`}>
                             {iv.status}
                           </span>
-                          <span className={`badge bg-${resultColor[iv.result]||'secondary'} rounded-pill`} style={{ fontSize:'0.72rem' }}>
+                          <span className={`status-pill status-pill-${resultVariant[iv.result] || 'gray'}`}>
                             Result: {iv.result}
                           </span>
                         </div>

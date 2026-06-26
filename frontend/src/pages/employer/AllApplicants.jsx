@@ -16,8 +16,7 @@ export default function AllApplicants() {
 
   useEffect(() => { fetchJobs() }, [fetchJobs])
 
-  const statusColor = { OPEN:'#057642', PAUSED:'#d97706', CLOSED:'#dc3545' }
-  const statusBg    = { OPEN:'#D1FAE5', PAUSED:'#FEF3C7', CLOSED:'#FEE2E2' }
+  const pillVariant = { OPEN:'green', PAUSED:'yellow', CLOSED:'red' }
 
   return (
     <div className="container-fluid p-0">
@@ -78,13 +77,8 @@ export default function AllApplicants() {
                       </div>
                     </div>
 
-                    {/* Status badge */}
-                    <span className="badge rounded-pill px-3 py-2"
-                      style={{
-                        background: statusBg[job.status] || '#F1F5F9',
-                        color: statusColor[job.status] || '#475569',
-                        fontSize:'0.75rem'
-                      }}>
+                    {/* Status pill — driven by enterprise design tokens */}
+                    <span className={`status-pill status-pill-${pillVariant[job.status] || 'gray'}`}>
                       {job.status}
                     </span>
 

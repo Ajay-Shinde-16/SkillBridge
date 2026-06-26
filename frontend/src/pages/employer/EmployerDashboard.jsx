@@ -68,7 +68,7 @@ export default function EmployerDashboard() {
     } catch { showToast('Failed to update status') }
   }
 
-  const statusColors = { OPEN:'success', CLOSED:'danger', PAUSED:'warning' }
+  const pillVariant = { OPEN:'green', CLOSED:'red', PAUSED:'yellow' }
   const totalApplicants = jobs.reduce((a,j) => a + (j.applicationCount||0), 0)
   const openJobs = jobs.filter(j => j.status === 'OPEN').length
   const pausedJobs = jobs.filter(j => j.status === 'PAUSED').length
@@ -179,13 +179,11 @@ export default function EmployerDashboard() {
                           <div className="d-flex align-items-center gap-2 flex-wrap mb-1">
                             <span className="fw-bold">{job.title}</span>
                             {job.companyName && <span className="company-badge"><i className="bi bi-building"></i>{job.companyName}</span>}
-                            <span className={`badge bg-${statusColors[job.status]||'secondary'} rounded-pill`}
-                              style={{fontSize:'0.72rem'}}>
+                            <span className={`status-pill status-pill-${pillVariant[job.status] || 'gray'}`}>
                               {job.status}
                             </span>
                             {job.remote && (
-                              <span className="badge rounded-pill"
-                                style={{background:'#D1FAE5',color:'#065f46',fontSize:'0.7rem'}}>
+                              <span className="status-pill status-pill-green">
                                 Remote
                               </span>
                             )}

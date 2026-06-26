@@ -12,6 +12,13 @@ export default function Navbar() {
   const location = useLocation()
   const handleLogout = () => { logout(); navigate('/login') }
 
+  // ── Distraction-free mode: registration and dashboard pages hide secondary
+  //    nav links (Browse Jobs, Career Room, role-specific menu) so the user's
+  //    attention stays on the form/dashboard task, not site exploration.
+  //    Login, Profile, NotificationBell and the theme toggle always stay —
+  //    those are wayfinding essentials, not distractions.
+  const isFocusMode = location.pathname === '/register' || location.pathname.includes('/dashboard')
+
   const getDash = () => {
     if (!user) return '/login'
     if (user.role === 'EMPLOYER') return '/employer/dashboard'
@@ -86,12 +93,12 @@ export default function Navbar() {
           </button>
           <div className="collapse navbar-collapse" id="navMenu">
             <ul className="navbar-nav me-auto gap-1">
-              {(!user || user?.role === 'SEEKER') && (
+              {!isFocusMode && (!user || user?.role === 'SEEKER') && (
                 <li className="nav-item">
                   <Link className="nav-link app-nav-link" to="/jobs"><i className="bi bi-briefcase me-1"></i>Browse Jobs</Link>
                 </li>
               )}
-              {user?.role==='SEEKER' && (
+              {!isFocusMode && user?.role==='SEEKER' && (
                 <li className="nav-item">
                   <Link className="nav-link app-nav-link d-flex align-items-center gap-1" to="/career-room">
                     <i className="bi bi-stars me-1"></i>Career Room
@@ -108,19 +115,19 @@ export default function Navbar() {
               {user && <li className="nav-item">
                 <Link className="nav-link app-nav-link" to={getDash()}><i className="bi bi-speedometer2 me-1"></i>Dashboard</Link>
               </li>}
-              {user?.role==='SEEKER' && <>
+              {!isFocusMode && user?.role==='SEEKER' && <>
                 <li className="nav-item"><Link className="nav-link app-nav-link" to="/seeker/applications"><i className="bi bi-file-text me-1"></i>My Applications</Link></li>
                 <li className="nav-item"><Link className="nav-link app-nav-link" to="/seeker/saved-jobs"><i className="bi bi-bookmark me-1"></i>Saved Jobs</Link></li>
                 <li className="nav-item"><Link className="nav-link app-nav-link" to="/seeker/offers"><i className="bi bi-trophy me-1"></i>My Offers</Link></li>
                 <li className="nav-item"><Link className="nav-link app-nav-link" to="/seeker/interviews"><i className="bi bi-camera-video me-1"></i>Interviews</Link></li>
               </>}
-              {user?.role==='EMPLOYER' && <>
+              {!isFocusMode && user?.role==='EMPLOYER' && <>
                 <li className="nav-item"><Link className="nav-link app-nav-link" to="/employer/post-job"><i className="bi bi-plus-circle me-1"></i>Post Job</Link></li>
                 <li className="nav-item"><Link className="nav-link app-nav-link" to="/employer/applicants"><i className="bi bi-people me-1"></i>Applicants</Link></li>
                 <li className="nav-item"><Link className="nav-link app-nav-link" to="/employer/interviews"><i className="bi bi-camera-video me-1"></i>Interviews</Link></li>
                 <li className="nav-item"><Link className="nav-link app-nav-link" to="/employer/company-profile"><i className="bi bi-building me-1"></i>Company</Link></li>
               </>}
-              {user?.role==='ADMIN' && <>
+              {!isFocusMode && user?.role==='ADMIN' && <>
                 <li className="nav-item"><Link className="nav-link app-nav-link" to="/admin/users"><i className="bi bi-people me-1"></i>Users</Link></li>
                 <li className="nav-item"><Link className="nav-link app-nav-link" to="/admin/skills"><i className="bi bi-patch-check me-1"></i>Skills</Link></li>
                 <li className="nav-item"><Link className="nav-link app-nav-link" to="/admin/jobs"><i className="bi bi-briefcase me-1"></i>Jobs</Link></li>

@@ -3,9 +3,9 @@ import CompanyLogo from '../../components/CompanyLogo'
 import { Link } from 'react-router-dom'
 import { getAllApplications } from '../../services/api'
 
-const statusColors = {
-  APPLIED: 'secondary', SHORTLISTED: 'info', INTERVIEW_SCHEDULED: 'info',
-  OFFERED: 'success', REJECTED: 'danger', ACCEPTED: 'primary'
+const pillVariant = {
+  APPLIED: 'gray', SHORTLISTED: 'blue', INTERVIEW_SCHEDULED: 'blue',
+  OFFERED: 'green', REJECTED: 'red', ACCEPTED: 'green'
 }
 const scoreColor = s => s >= 70 ? '#057642' : s >= 40 ? '#d97706' : '#dc3545'
 
@@ -88,7 +88,7 @@ export default function AllApplications() {
                 <select className="form-select rounded-3" style={{ maxWidth: 180 }}
                   value={statusFilter} onChange={e => setStatusFilter(e.target.value)}>
                   <option value="">All Status</option>
-                  {Object.keys(statusColors).map(s => (
+                  {Object.keys(pillVariant).map(s => (
                     <option key={s} value={s}>{s.replace(/_/g, ' ')}</option>
                   ))}
                 </select>
@@ -125,7 +125,7 @@ export default function AllApplications() {
                             </span>
                           </td>
                           <td>
-                            <span className={`badge bg-${statusColors[app.status]} rounded-pill`} style={{ fontSize: '0.7rem' }}>
+                            <span className={`status-pill status-pill-${pillVariant[app.status] || "gray"}`}>
                               {app.status?.replace(/_/g, ' ')}
                             </span>
                           </td>

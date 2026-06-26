@@ -29,7 +29,7 @@ export default function ManageJobs() {
     (statusFilter === '' || j.status === statusFilter)
   )
 
-  const statusColors = { OPEN: 'success', CLOSED: 'danger', PAUSED: 'warning' }
+  const pillVariant = { OPEN: 'green', CLOSED: 'red', PAUSED: 'yellow' }
 
   return (
     <div className="container-fluid p-0">
@@ -106,7 +106,7 @@ export default function ManageJobs() {
                             </span>
                           </td>
                           <td>
-                            <span className={`badge bg-${statusColors[job.status]} rounded-pill`} style={{ fontSize: '0.72rem' }}>
+                            <span className={`status-pill status-pill-${pillVariant[job.status] || 'gray'}`}>
                               {job.status}
                             </span>
                           </td>
