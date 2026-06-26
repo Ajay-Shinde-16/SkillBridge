@@ -100,7 +100,7 @@ export default function ForgotPassword() {
                 <div className="rounded-circle d-inline-flex align-items-center justify-content-center mb-3"
                   style={{ width: 60, height: 60, background: '#EEF3F8' }}>
                   <i className="bi bi-shield-lock-fill fs-3"
-                    style={{ color: '#15487F' }}></i>
+                    style={{ color: '#0A66C2' }}></i>
                 </div>
                 <h4 className="fw-bold mb-1">
                   {step === 1 ? 'Forgot Password' : 'Reset Password'}
@@ -110,14 +110,14 @@ export default function ForgotPassword() {
               {/* Step Indicator */}
               <div className="d-flex align-items-center gap-2 mb-4">
                 <div className="rounded-circle d-flex align-items-center justify-content-center fw-bold"
-                  style={{ width: 28, height: 28, background: '#15487F', color: '#fff', fontSize: 13 }}>
+                  style={{ width: 28, height: 28, background: '#0A66C2', color: '#fff', fontSize: 13 }}>
                   1
                 </div>
                 <div className="flex-fill"
-                  style={{ height: 2, background: step >= 2 ? '#15487F' : '#e2e8f0' }}>
+                  style={{ height: 2, background: step >= 2 ? '#0A66C2' : '#e2e8f0' }}>
                 </div>
                 <div className="rounded-circle d-flex align-items-center justify-content-center fw-bold"
-                  style={{ width: 28, height: 28, background: step >= 2 ? '#15487F' : '#e2e8f0', color: step >= 2 ? '#fff' : '#aaa', fontSize: 13 }}>
+                  style={{ width: 28, height: 28, background: step >= 2 ? '#0A66C2' : '#e2e8f0', color: step >= 2 ? '#fff' : '#aaa', fontSize: 13 }}>
                   2
                 </div>
               </div>
@@ -149,7 +149,7 @@ export default function ForgotPassword() {
                   <button
                     type="submit"
                     className="btn w-100 text-white fw-bold rounded-pill py-2"
-                    style={{ background: '#15487F' }}
+                    style={{ background: '#0A66C2' }}
                     disabled={loading}>
                     {loading
                       ? <span className="spinner-border spinner-border-sm me-2"></span>
@@ -165,13 +165,13 @@ export default function ForgotPassword() {
                   {/* Check-your-email notice */}
                   <div style={{
                     background: '#EEF3F8',
-                    border: '1px solid #15487F',
+                    border: '1px solid #0A66C2',
                     borderRadius: 16,
                     padding: 20,
                     marginBottom: 20,
                     textAlign: 'center'
                   }}>
-                    <div style={{ color: '#15487F', fontWeight: 700, fontSize: 14, marginBottom: 6 }}>
+                    <div style={{ color: '#0A66C2', fontWeight: 700, fontSize: 14, marginBottom: 6 }}>
                       📧 Check your inbox
                     </div>
                     <div style={{ color: '#444', fontSize: 13 }}>
@@ -263,7 +263,7 @@ export default function ForgotPassword() {
               <p className="text-center mt-4 mb-0 small">
                 Remember password?{' '}
                 <Link to="/login" className="fw-semibold"
-                  style={{ color: '#15487F' }}>
+                  style={{ color: '#0A66C2' }}>
                   Sign In
                 </Link>
               </p>

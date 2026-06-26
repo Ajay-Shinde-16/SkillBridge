@@ -12,7 +12,7 @@ export default function UserAvatar({ name, size = 40, className = '' }) {
   const fallbackStyle = {
     width: size, height: size,
     borderRadius: '50%',
-    background: '#15487F',
+    background: '#0A66C2',
     color: '#fff',
     display: 'flex',
     alignItems: 'center',
@@ -28,7 +28,7 @@ export default function UserAvatar({ name, size = 40, className = '' }) {
 
   return (
     <img
-      src={`https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=15487F&color=fff&size=${size * 2}&bold=true`}
+      src={`https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=0A66C2&color=fff&size=${size * 2}&bold=true`}
       alt={name}
       width={size} height={size}
       style={{ borderRadius: '50%', flexShrink: 0, objectFit: 'cover' }}

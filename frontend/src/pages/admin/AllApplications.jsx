@@ -3,9 +3,9 @@ import CompanyLogo from '../../components/CompanyLogo'
 import { Link } from 'react-router-dom'
 import { getAllApplications } from '../../services/api'
 
-const pillVariant = {
-  APPLIED: 'gray', SHORTLISTED: 'blue', INTERVIEW_SCHEDULED: 'blue',
-  OFFERED: 'green', REJECTED: 'red', ACCEPTED: 'green'
+const statusColors = {
+  APPLIED: 'secondary', SHORTLISTED: 'info', INTERVIEW_SCHEDULED: 'info',
+  OFFERED: 'success', REJECTED: 'danger', ACCEPTED: 'primary'
 }
 const scoreColor = s => s >= 70 ? '#057642' : s >= 40 ? '#d97706' : '#dc3545'
 
@@ -62,7 +62,7 @@ export default function AllApplications() {
               { label: 'Shortlisted', value: applications.filter(a => a.status === 'SHORTLISTED').length, color: '#0ea5e9' },
               { label: 'Interviews', value: applications.filter(a => a.status === 'INTERVIEW_SCHEDULED').length, color: '#0F766E' },
               { label: 'Offered', value: applications.filter(a => a.status === 'OFFERED').length, color: '#057642' },
-              { label: 'Accepted', value: applications.filter(a => a.status === 'ACCEPTED').length, color: '#15487F' },
+              { label: 'Accepted', value: applications.filter(a => a.status === 'ACCEPTED').length, color: '#0A66C2' },
               { label: 'Rejected', value: applications.filter(a => a.status === 'REJECTED').length, color: '#dc3545' },
             ].map((s, i) => (
               <div key={i} className="col-4 col-md-2">
@@ -88,7 +88,7 @@ export default function AllApplications() {
                 <select className="form-select rounded-3" style={{ maxWidth: 180 }}
                   value={statusFilter} onChange={e => setStatusFilter(e.target.value)}>
                   <option value="">All Status</option>
-                  {Object.keys(pillVariant).map(s => (
+                  {Object.keys(statusColors).map(s => (
                     <option key={s} value={s}>{s.replace(/_/g, ' ')}</option>
                   ))}
                 </select>
@@ -96,7 +96,7 @@ export default function AllApplications() {
               </div>
 
               {loading ? (
-                <div className="text-center py-4"><div className="spinner-border" style={{ color: '#15487F' }}></div></div>
+                <div className="text-center py-4"><div className="spinner-border" style={{ color: '#0A66C2' }}></div></div>
               ) : (
                 <div className="table-responsive">
                   <table className="table table-hover align-middle mb-0" style={{ fontSize: '0.85rem' }}>
@@ -125,7 +125,7 @@ export default function AllApplications() {
                             </span>
                           </td>
                           <td>
-                            <span className={`status-pill status-pill-${pillVariant[app.status] || "gray"}`}>
+                            <span className={`badge bg-${statusColors[app.status]} rounded-pill`} style={{ fontSize: '0.7rem' }}>
                               {app.status?.replace(/_/g, ' ')}
                             </span>
                           </td>

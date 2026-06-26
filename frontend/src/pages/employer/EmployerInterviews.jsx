@@ -26,8 +26,8 @@ export default function EmployerInterviews() {
     } catch (e) { alert('Failed to update') } finally { setUpdating(null) }
   }
 
-  const statusVariant = { SCHEDULED:'yellow', COMPLETED:'green', CANCELLED:'red', RESCHEDULED:'blue' }
-  const resultVariant = { PASS:'green', FAIL:'red', PENDING:'gray' }
+  const statusColor = { SCHEDULED:'warning', COMPLETED:'success', CANCELLED:'danger', RESCHEDULED:'info' }
+  const resultColor = { PASS:'success', FAIL:'danger', PENDING:'secondary' }
 
   return (
     <div className="container-fluid p-0">
@@ -57,7 +57,7 @@ export default function EmployerInterviews() {
               { label:'Scheduled', value: interviews.filter(i=>i.status==='SCHEDULED').length, color:'#0F766E' },
               { label:'Completed', value: interviews.filter(i=>i.status==='COMPLETED').length, color:'#057642' },
               { label:'Cancelled', value: interviews.filter(i=>i.status==='CANCELLED').length, color:'#dc3545' },
-              { label:'Passed', value: interviews.filter(i=>i.result==='PASS').length, color:'#15487F' },
+              { label:'Passed', value: interviews.filter(i=>i.result==='PASS').length, color:'#0A66C2' },
             ].map((s,i) => (
               <div key={i} className="col-6 col-md-3">
                 <div className="stat-card">
@@ -69,7 +69,7 @@ export default function EmployerInterviews() {
           </div>
 
           {loading ? (
-            <div className="text-center py-5"><div className="spinner-border" style={{ color:'#15487F' }}></div></div>
+            <div className="text-center py-5"><div className="spinner-border" style={{ color:'#0A66C2' }}></div></div>
           ) : interviews.length === 0 ? (
             <div className="text-center py-5">
               <i className="bi bi-camera-video fs-1 text-muted mb-3 d-block"></i>
@@ -89,10 +89,10 @@ export default function EmployerInterviews() {
                           <i className="bi bi-person me-1"></i>{iv.seekerName}
                         </div>
                         <div className="mt-2 d-flex gap-2 flex-wrap">
-                          <span className={`status-pill status-pill-${statusVariant[iv.status] || 'gray'}`}>
+                          <span className={`badge bg-${statusColor[iv.status]||'secondary'} rounded-pill`} style={{ fontSize:'0.72rem' }}>
                             {iv.status}
                           </span>
-                          <span className={`status-pill status-pill-${resultVariant[iv.result] || 'gray'}`}>
+                          <span className={`badge bg-${resultColor[iv.result]||'secondary'} rounded-pill`} style={{ fontSize:'0.72rem' }}>
                             Result: {iv.result}
                           </span>
                         </div>
@@ -109,7 +109,7 @@ export default function EmployerInterviews() {
                         {iv.meetingLink && (
                           <a href={iv.meetingLink} target="_blank" rel="noreferrer"
                             className="btn btn-sm rounded-pill mt-2"
-                            style={{ background:'#EEF3F8', color:'#15487F', fontSize:'0.75rem' }}>
+                            style={{ background:'#EEF3F8', color:'#0A66C2', fontSize:'0.75rem' }}>
                             <i className="bi bi-link me-1"></i>Meeting Link
                           </a>
                         )}
@@ -146,7 +146,7 @@ export default function EmployerInterviews() {
                           </div>
                           <div className="col-12">
                             <button className="btn btn-sm w-100 text-white rounded-pill fw-semibold"
-                              style={{ background:'#15487F', fontSize:'0.8rem' }}
+                              style={{ background:'#0A66C2', fontSize:'0.8rem' }}
                               disabled={updating===iv.id}
                               onClick={() => handleUpdate(iv.id, iv.status, iv.result)}>
                               {updating===iv.id

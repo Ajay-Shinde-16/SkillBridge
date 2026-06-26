@@ -172,7 +172,7 @@ export default function Profile() {
 
   if (loading) return (
     <div className="d-flex justify-content-center align-items-center" style={{ minHeight:'60vh' }}>
-      <div className="spinner-border" style={{ color:'#15487F' }}></div>
+      <div className="spinner-border" style={{ color:'#0A66C2' }}></div>
     </div>
   )
 
@@ -210,8 +210,8 @@ export default function Profile() {
                 onClick={() => setActiveTab(tab.key)}
                 className="btn rounded-0 fw-semibold d-flex align-items-center gap-2"
                 style={{
-                  borderBottom: activeTab===tab.key ? '2px solid #15487F' : '2px solid transparent',
-                  color: activeTab===tab.key ? '#15487F' : '#6c757d',
+                  borderBottom: activeTab===tab.key ? '2px solid #0A66C2' : '2px solid transparent',
+                  color: activeTab===tab.key ? '#0A66C2' : '#6c757d',
                   background: 'transparent',
                   fontSize: '0.88rem',
                   padding: '10px 16px',
@@ -228,7 +228,7 @@ export default function Profile() {
           {activeTab === 'profile' && (
             <div className="card border-0 shadow-sm rounded-4">
               <div className="card-body p-4">
-                <h6 className="fw-bold mb-3 d-flex align-items-center gap-2" style={{ color:'#15487F' }}>
+                <h6 className="fw-bold mb-3 d-flex align-items-center gap-2" style={{ color:'#0A66C2' }}>
                   <i className="bi bi-person-circle fs-5"></i>Basic Information
                 </h6>
                 {success && <div className="alert alert-success rounded-3 py-2 mb-3"><i className="bi bi-check-circle-fill me-2"></i>Profile updated successfully!</div>}
@@ -274,7 +274,7 @@ export default function Profile() {
                     </>
                   )}
                 </div>
-                <button className="btn text-white fw-bold mt-4 px-5 rounded-pill" style={{ background:'#15487F' }} onClick={handleSave} disabled={saving}>
+                <button className="btn text-white fw-bold mt-4 px-5 rounded-pill" style={{ background:'#0A66C2' }} onClick={handleSave} disabled={saving}>
                   {saving?<span className="spinner-border spinner-border-sm me-2"></span>:<i className="bi bi-check-circle me-2"></i>}Save Changes
                 </button>
               </div>
@@ -285,7 +285,7 @@ export default function Profile() {
           {activeTab === 'password' && (
             <div className="card border-0 shadow-sm rounded-4">
               <div className="card-body p-4">
-                <h6 className="fw-bold mb-1 d-flex align-items-center gap-2" style={{ color:'#15487F' }}>
+                <h6 className="fw-bold mb-1 d-flex align-items-center gap-2" style={{ color:'#0A66C2' }}>
                   <i className="bi bi-shield-lock-fill fs-5"></i>Change Password
                 </h6>
                 <p className="text-muted small mb-4">Enter your current password, then choose a new one</p>
@@ -378,7 +378,7 @@ export default function Profile() {
                   </div>
 
                   <button type="submit" className="btn text-white fw-bold mt-4 px-5 rounded-pill"
-                    style={{ background:'#15487F' }} disabled={pwdLoading}>
+                    style={{ background:'#0A66C2' }} disabled={pwdLoading}>
                     {pwdLoading?<span className="spinner-border spinner-border-sm me-2"></span>:<i className="bi bi-shield-check me-2"></i>}
                     Update Password
                   </button>
@@ -386,7 +386,7 @@ export default function Profile() {
 
                 {/* Tips */}
                 <div className="mt-4 p-3 rounded-3" style={{ background:'#EEF3F8' }}>
-                  <div className="small fw-semibold mb-2" style={{ color:'#15487F' }}>
+                  <div className="small fw-semibold mb-2" style={{ color:'#0A66C2' }}>
                     <i className="bi bi-info-circle me-1"></i>Password Tips:
                   </div>
                   <ul className="mb-0 text-muted small" style={{ paddingLeft:16, lineHeight:1.8 }}>
@@ -402,7 +402,7 @@ export default function Profile() {
                   style={{ background:'#F8FAFC', border:'1px solid #E2E8F0' }}>
                   <div>
                     <div className="fw-semibold small">
-                      <i className="bi bi-shield-lock-fill me-1" style={{color:'#15487F'}}></i>
+                      <i className="bi bi-shield-lock-fill me-1" style={{color:'#0A66C2'}}></i>
                       Two-Factor Authentication
                     </div>
                     <div className="text-muted" style={{fontSize:'0.78rem'}}>
@@ -427,9 +427,9 @@ export default function Profile() {
           {activeTab === 'resume' && profile?.role==='SEEKER' && (
             <div className="card border-0 shadow-sm rounded-4">
               <div className="card-body p-4">
-                <h6 className="fw-bold mb-3 d-flex align-items-center gap-2" style={{ color:'#15487F' }}>
+                <h6 className="fw-bold mb-3 d-flex align-items-center gap-2" style={{ color:'#0A66C2' }}>
                   <i className="bi bi-file-earmark-pdf fs-5"></i>Resume / CV
-                  <span className="badge ms-1" style={{ background:'#EEF3F8', color:'#15487F', fontSize:'0.7rem' }}>PDF Only</span>
+                  <span className="badge ms-1" style={{ background:'#EEF3F8', color:'#0A66C2', fontSize:'0.7rem' }}>PDF Only</span>
                 </h6>
 
                 {msgText && (
@@ -460,12 +460,12 @@ export default function Profile() {
                         <div className="d-flex gap-2 flex-wrap">
                           <a href={`${import.meta.env.VITE_API_URL || ''}/api/files/resumes/${r.id}/view`}
                             target="_blank" rel="noreferrer"
-                            className="btn btn-sm fw-semibold rounded-pill" style={{ background:'#15487F', color:'#fff', fontSize:'0.75rem' }}>
+                            className="btn btn-sm fw-semibold rounded-pill" style={{ background:'#0A66C2', color:'#fff', fontSize:'0.75rem' }}>
                             <i className="bi bi-eye me-1"></i>View
                           </a>
                           {!r.isPrimary && (
                             <button className="btn btn-sm fw-semibold rounded-pill" onClick={() => handleSetPrimary(r.id)}
-                              style={{ background:'#EEF3F8', color:'#15487F', border:'1px solid #15487F', fontSize:'0.75rem' }}>
+                              style={{ background:'#EEF3F8', color:'#0A66C2', border:'1px solid #0A66C2', fontSize:'0.75rem' }}>
                               <i className="bi bi-star me-1"></i>Set Primary
                             </button>
                           )}
@@ -496,20 +496,20 @@ export default function Profile() {
                 <div className="rounded-3 p-4 text-center"
                   style={{ border:'2px dashed #D0D9E0', background:'#F8FAFC', cursor:'pointer' }}
                   onClick={()=>fileInputRef.current?.click()}
-                  onDragOver={e=>{e.preventDefault();e.currentTarget.style.borderColor='#15487F'}}
+                  onDragOver={e=>{e.preventDefault();e.currentTarget.style.borderColor='#0A66C2'}}
                   onDragLeave={e=>{e.currentTarget.style.borderColor='#D0D9E0'}}
                   onDrop={e=>{e.preventDefault();e.currentTarget.style.borderColor='#D0D9E0';const f=e.dataTransfer.files[0];if(f)handleResumeUpload({target:{files:[f],value:''}}) }}>
                   {uploading ? (
-                    <><div className="spinner-border mb-2" style={{ color:'#15487F' }}></div><div style={{ color:'#15487F' }}>Uploading...</div></>
+                    <><div className="spinner-border mb-2" style={{ color:'#0A66C2' }}></div><div style={{ color:'#0A66C2' }}>Uploading...</div></>
                   ) : (
                     <>
-                      <i className="bi bi-cloud-upload fs-1 mb-2 d-block" style={{ color:'#15487F' }}></i>
+                      <i className="bi bi-cloud-upload fs-1 mb-2 d-block" style={{ color:'#0A66C2' }}></i>
                       <div className="fw-semibold mb-1">{resumes.length>0 ? 'Add Another Resume' : 'Upload Resume'}</div>
                       <div className="text-muted small">Click or drag & drop your PDF here</div>
                       <div className="mt-2 d-flex gap-2 justify-content-center">
-                        <span className="badge rounded-pill" style={{ background:'#EEF3F8', color:'#15487F', fontSize:'0.72rem' }}>PDF only</span>
-                        <span className="badge rounded-pill" style={{ background:'#EEF3F8', color:'#15487F', fontSize:'0.72rem' }}>Max 5MB</span>
-                        <span className="badge rounded-pill" style={{ background:'#EEF3F8', color:'#15487F', fontSize:'0.72rem' }}>Up to 5 resumes</span>
+                        <span className="badge rounded-pill" style={{ background:'#EEF3F8', color:'#0A66C2', fontSize:'0.72rem' }}>PDF only</span>
+                        <span className="badge rounded-pill" style={{ background:'#EEF3F8', color:'#0A66C2', fontSize:'0.72rem' }}>Max 5MB</span>
+                        <span className="badge rounded-pill" style={{ background:'#EEF3F8', color:'#0A66C2', fontSize:'0.72rem' }}>Up to 5 resumes</span>
                       </div>
                     </>
                   )}
@@ -519,14 +519,14 @@ export default function Profile() {
               </div>
 
               {suggestedSkills.length > 0 && (
-                <div className="mt-3 p-3 rounded-3" style={{ background:'#EEF3F8', border:'1px solid #15487F' }}>
-                  <div className="fw-semibold mb-2" style={{ color:'#15487F', fontSize:'0.85rem' }}>
+                <div className="mt-3 p-3 rounded-3" style={{ background:'#EEF3F8', border:'1px solid #0A66C2' }}>
+                  <div className="fw-semibold mb-2" style={{ color:'#0A66C2', fontSize:'0.85rem' }}>
                     <i className="bi bi-stars me-1"></i> Found these skills in your resume — add them?
                   </div>
                   <div className="d-flex flex-wrap gap-2">
                     {suggestedSkills.map((skill, i) => (
                       <span key={i} className="d-inline-flex align-items-center gap-1 rounded-pill px-2 py-1"
-                        style={{ background:'#fff', border:'1px solid #15487F', fontSize:'0.78rem' }}>
+                        style={{ background:'#fff', border:'1px solid #0A66C2', fontSize:'0.78rem' }}>
                         {skill}
                         <i className="bi bi-check-circle-fill text-success" style={{ cursor:'pointer' }}
                           title="Add to my skills" onClick={() => acceptSuggestedSkill(skill)}></i>
@@ -544,7 +544,7 @@ export default function Profile() {
           {activeTab === 'skills' && profile?.role==='SEEKER' && (
             <div className="card border-0 shadow-sm rounded-4">
               <div className="card-body p-4">
-                <h6 className="fw-bold mb-3 d-flex align-items-center gap-2" style={{ color:'#15487F' }}>
+                <h6 className="fw-bold mb-3 d-flex align-items-center gap-2" style={{ color:'#0A66C2' }}>
                   <i className="bi bi-tools fs-5"></i>My Skills
                 </h6>
                 {(profile?.verifiedSkillsList||[]).length>0 && (
@@ -574,7 +574,7 @@ export default function Profile() {
                 <div className="input-group" style={{ maxWidth:380 }}>
                   <input className="form-control rounded-start-3" placeholder="Add a skill..."
                     value={newSkill} onChange={e=>setNewSkill(e.target.value)} onKeyDown={e=>e.key==='Enter'&&addSkill()}/>
-                  <button className="btn text-white fw-semibold rounded-end-3" style={{ background:'#15487F' }} onClick={addSkill}>
+                  <button className="btn text-white fw-semibold rounded-end-3" style={{ background:'#0A66C2' }} onClick={addSkill}>
                     <i className="bi bi-plus me-1"></i>Add
                   </button>
                 </div>

@@ -29,7 +29,7 @@ export default function ManageJobs() {
     (statusFilter === '' || j.status === statusFilter)
   )
 
-  const pillVariant = { OPEN: 'green', CLOSED: 'red', PAUSED: 'yellow' }
+  const statusColors = { OPEN: 'success', CLOSED: 'danger', PAUSED: 'warning' }
 
   return (
     <div className="container-fluid p-0">
@@ -78,7 +78,7 @@ export default function ManageJobs() {
               </div>
 
               {loading ? (
-                <div className="text-center py-4"><div className="spinner-border" style={{ color: '#15487F' }}></div></div>
+                <div className="text-center py-4"><div className="spinner-border" style={{ color: '#0A66C2' }}></div></div>
               ) : (
                 <div className="table-responsive">
                   <table className="table table-hover align-middle mb-0" style={{ fontSize: '0.85rem' }}>
@@ -101,12 +101,12 @@ export default function ManageJobs() {
                             ₹{job.minSalary?.toLocaleString()}–{job.maxSalary?.toLocaleString()}
                           </td>
                           <td>
-                            <span className="badge rounded-pill" style={{ background: '#EEF3F8', color: '#15487F' }}>
+                            <span className="badge rounded-pill" style={{ background: '#EEF3F8', color: '#0A66C2' }}>
                               {job.applicationCount || 0}
                             </span>
                           </td>
                           <td>
-                            <span className={`status-pill status-pill-${pillVariant[job.status] || 'gray'}`}>
+                            <span className={`badge bg-${statusColors[job.status]} rounded-pill`} style={{ fontSize: '0.72rem' }}>
                               {job.status}
                             </span>
                           </td>

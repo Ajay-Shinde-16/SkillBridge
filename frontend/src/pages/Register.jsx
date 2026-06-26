@@ -47,7 +47,7 @@ export default function Register() {
 
               {/* ── LEFT PANEL: brand / info ── */}
               <div className="col-lg-4 d-none d-lg-flex flex-column align-items-center justify-content-center text-center p-5"
-                style={{ background: 'linear-gradient(160deg, #003766 0%, #15487F 100%)', color: '#fff' }}>
+                style={{ background: 'linear-gradient(160deg, #003766 0%, #0A66C2 100%)', color: '#fff' }}>
                 <div className="bg-white rounded-4 p-3 mb-4 d-inline-flex">
                   <img src="/logo.svg" alt="SkillBridge" width="56" height="56"
                     onError={e => { e.target.style.display = 'none' }} />
@@ -81,13 +81,13 @@ export default function Register() {
                           className="flex-fill rounded-3 p-3 text-center"
                           style={{
                             cursor:'pointer',
-                            border: form.role===r.role ? '2px solid #15487F' : '1.5px solid #e2e8f0',
+                            border: form.role===r.role ? '2px solid #0A66C2' : '1.5px solid #e2e8f0',
                             background: form.role===r.role ? '#EEF3F8' : '#fff',
                             transition:'all 0.15s'
                           }}
                           onClick={()=>setForm({...form,role:r.role})}>
-                          <i className={`bi ${r.icon} d-block mb-1`} style={{fontSize:28,color:form.role===r.role?'#15487F':'#adb5bd'}}></i>
-                          <div className="fw-bold" style={{color:form.role===r.role?'#15487F':'#6c757d',fontSize:'0.9rem'}}>{r.label}</div>
+                          <i className={`bi ${r.icon} d-block mb-1`} style={{fontSize:28,color:form.role===r.role?'#0A66C2':'#adb5bd'}}></i>
+                          <div className="fw-bold" style={{color:form.role===r.role?'#0A66C2':'#6c757d',fontSize:'0.9rem'}}>{r.label}</div>
                           <div className="text-muted" style={{fontSize:'0.72rem'}}>{r.desc}</div>
                         </div>
                       ))}
@@ -149,7 +149,7 @@ export default function Register() {
                       )}
                     </div>
                     <button type="submit" className="btn w-100 text-white fw-bold mt-4 rounded-pill py-2"
-                      style={{background:'#15487F',fontSize:'1rem'}} disabled={loading}>
+                      style={{background:'#0A66C2',fontSize:'1rem'}} disabled={loading}>
                       {loading?<span className="spinner-border spinner-border-sm me-2"></span>:null}
                       Create {form.role==='SEEKER'?'Seeker':'Employer'} Account
                     </button>
@@ -157,7 +157,7 @@ export default function Register() {
 
                   <p className="text-center mt-4 mb-0 small">
                     Already have an account?{' '}
-                    <Link to="/login" className="fw-semibold" style={{color:'#15487F'}}>Sign In</Link>
+                    <Link to="/login" className="fw-semibold" style={{color:'#0A66C2'}}>Sign In</Link>
                   </p>
                 </div>
               </div>

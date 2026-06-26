@@ -29,7 +29,7 @@ export default function SavedJobs() {
 
   if (loading) return (
     <div className="d-flex justify-content-center align-items-center" style={{minHeight:'60vh'}}>
-      <div className="spinner-border" style={{color:'#15487F'}}></div>
+      <div className="spinner-border" style={{color:'#0A66C2'}}></div>
     </div>
   )
 
@@ -45,7 +45,7 @@ export default function SavedJobs() {
           <i className="bi bi-bookmark fs-1 text-muted mb-3 d-block"></i>
           <h5 className="text-muted">No saved jobs yet</h5>
           <p className="text-muted small">Browse jobs and click the bookmark icon to save them for later</p>
-          <Link to="/jobs" className="btn text-white rounded-pill px-4 mt-2" style={{background:'#15487F'}}>
+          <Link to="/jobs" className="btn text-white rounded-pill px-4 mt-2" style={{background:'#0A66C2'}}>
             <i className="bi bi-search me-2"></i>Browse Jobs
           </Link>
         </div>
@@ -86,7 +86,7 @@ export default function SavedJobs() {
 
                 <div className="d-flex gap-2 mt-auto">
                   <Link to={`/jobs/${job.id}`} className="btn btn-sm text-white rounded-pill fw-semibold flex-fill"
-                    style={{background:'#15487F',fontSize:'0.8rem'}}>
+                    style={{background:'#0A66C2',fontSize:'0.8rem'}}>
                     View & Apply
                   </Link>
                 </div>

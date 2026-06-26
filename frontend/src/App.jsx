@@ -42,7 +42,7 @@ function ProtectedRoute({ children, roles }) {
   const { user, loading } = useAuth()
   if (loading) return (
     <div className="d-flex justify-content-center align-items-center" style={{ minHeight:'60vh' }}>
-      <div className="spinner-border" style={{ color:'#15487F' }}></div>
+      <div className="spinner-border" style={{ color:'#0A66C2' }}></div>
     </div>
   )
   if (!user) return <Navigate to="/login" replace />
@@ -79,7 +79,8 @@ function AllApplicants() {
     .then(data => { setJobs(Array.isArray(data) ? data : []); setLoading(false) })
     .catch(() => setLoading(false))
   }, [])
-  const pillVariant = { OPEN:'green', PAUSED:'yellow', CLOSED:'red' }
+  const statusBg    = { OPEN:'#D1FAE5', PAUSED:'#FEF3C7', CLOSED:'#FEE2E2' }
+  const statusColor = { OPEN:'#057642', PAUSED:'#d97706', CLOSED:'#dc3545' }
   return (
     <div className="container-fluid p-0"><div className="d-flex">
       <div className="sidebar d-none d-md-block">
@@ -96,12 +97,12 @@ function AllApplicants() {
           <p className="mb-0 opacity-75 small">Select a job to view its applicants</p>
         </div>
         {loading ? (
-          <div className="text-center py-5"><div className="spinner-border" style={{color:'#15487F'}}></div></div>
+          <div className="text-center py-5"><div className="spinner-border" style={{color:'#0A66C2'}}></div></div>
         ) : jobs.length === 0 ? (
           <div className="text-center py-5">
             <i className="bi bi-briefcase fs-1 text-muted mb-3 d-block"></i>
             <p className="text-muted">No jobs posted yet</p>
-            <a href="/employer/post-job" className="btn text-white rounded-pill px-4" style={{background:'#15487F'}}>Post a Job</a>
+            <a href="/employer/post-job" className="btn text-white rounded-pill px-4" style={{background:'#0A66C2'}}>Post a Job</a>
           </div>
         ) : (
           <div className="card border-0 shadow-sm rounded-4">
@@ -112,19 +113,20 @@ function AllApplicants() {
                   <div style={{flex:1}}>
                     <div className="fw-bold" style={{fontSize:'0.95rem'}}>{job.title}</div>
                     <div className="d-flex align-items-center gap-2 flex-wrap mt-1">
-                      <span style={{background:'#EEF3F8',color:'#15487F',padding:'2px 10px',borderRadius:20,fontSize:'0.75rem',fontWeight:600,display:'inline-flex',alignItems:'center',gap:4}}>
+                      <span style={{background:'#EEF3F8',color:'#0A66C2',padding:'2px 10px',borderRadius:20,fontSize:'0.75rem',fontWeight:600,display:'inline-flex',alignItems:'center',gap:4}}>
                         <i className="bi bi-building" style={{fontSize:'0.7rem'}}></i>
                         {job.companyName || user?.name || 'Company'}
                       </span>
                       <span className="text-muted" style={{fontSize:'0.78rem'}}>{job.jobType?.replace('_',' ')} · {job.location||'Remote'}</span>
                     </div>
                   </div>
-                  <span className={`status-pill status-pill-${pillVariant[job.status] || 'gray'}`}>
+                  <span className="badge rounded-pill px-3 py-2"
+                    style={{background:statusBg[job.status]||'#F1F5F9',color:statusColor[job.status]||'#475569',fontSize:'0.75rem'}}>
                     {job.status}
                   </span>
                   <a href={`/employer/applications/${job.id}`}
                     className="btn rounded-pill fw-semibold"
-                    style={{background:'#15487F',color:'#fff',border:'none',fontSize:'0.85rem',padding:'7px 18px',whiteSpace:'nowrap'}}>
+                    style={{background:'#0A66C2',color:'#fff',border:'none',fontSize:'0.85rem',padding:'7px 18px',whiteSpace:'nowrap'}}>
                     <i className="bi bi-people me-2"></i>{job.applicationCount||0} Applicants
                   </a>
                 </div>

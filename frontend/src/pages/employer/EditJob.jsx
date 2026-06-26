@@ -52,7 +52,7 @@ export default function EditJob() {
 
   if (loading) return (
     <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '60vh' }}>
-      <div className="spinner-border" style={{ color: '#15487F' }}></div>
+      <div className="spinner-border" style={{ color: '#0A66C2' }}></div>
     </div>
   )
 
@@ -172,14 +172,14 @@ export default function EditJob() {
                         checked={form?.remote ?? true}
                         onChange={e => setForm({ ...form, remote: e.target.checked })} />
                       <label className="form-check-label fw-semibold" htmlFor="remoteSwitch">
-                        <i className="bi bi-globe me-1" style={{ color: '#15487F' }}></i>Remote Position
+                        <i className="bi bi-globe me-1" style={{ color: '#0A66C2' }}></i>Remote Position
                       </label>
                     </div>
                   </div>
                 </div>
                 <div className="d-flex gap-3 mt-4 flex-wrap">
                   <button type="submit" className="btn text-white fw-bold px-5 rounded-pill"
-                    style={{ background: '#15487F' }} disabled={saving}>
+                    style={{ background: '#0A66C2' }} disabled={saving}>
                     {saving ? <span className="spinner-border spinner-border-sm me-2"></span> : <i className="bi bi-check-circle me-2"></i>}
                     Save Changes
                   </button>

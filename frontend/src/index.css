@@ -1,104 +1,33 @@
 :root {
-  /* ─── TMS-inspired palette (C-DAC institutional look) ─── */
-  --li-blue: #15487F;     /* primary navy-blue (buttons, links, accents) */
-  --li-dark: #0A2347;     /* deep navy (gradients, hero, sidebar) — matches TMS */
-  --li-bg:   #EEF3F8;     /* soft blue tint for panels */
-  --hero-1:  #0A2347;     /* deep TMS navy (hero start) */
-  --hero-2:  #123160;     /* rich navy (hero end) */
-  --accent:        #E2670A;   /* TMS orange (secondary CTAs / highlights) */
-  --accent-dark:   #C7560A;   /* orange hover */
-  --accent-soft:   #FFF1E6;   /* orange tint background */
+  --li-blue: #0A66C2;
+  --li-dark: #004182;
+  --li-bg: #EEF3F8;
 }
-
-/* ════════════════════════════════════════════════
-   TMS-STYLE NAVBAR — white bar, navy serif brand,
-   thin accent strip on top; flips dark in dark mode.
-   ════════════════════════════════════════════════ */
-.app-navbar {
-  background: #ffffff !important;
-  border-bottom: 1px solid #e6eaf0;
-  position: relative;
-}
-.app-navbar::before {           /* thin TMS-style accent strip */
-  content: '';
-  position: absolute; top: 0; left: 0; right: 0; height: 3px;
-  background: linear-gradient(90deg, var(--accent) 0%, var(--li-blue) 55%, var(--li-dark) 100%);
-}
-.app-navbar .navbar-brand {
-  color: var(--li-dark) !important;
-  font-family: 'PT Serif','Lora','Georgia',serif;
-}
-.app-navbar .app-nav-link,
-.app-navbar .nav-link {
-  color: #334155 !important;
-  font-weight: 500;
-}
-.app-navbar .app-nav-link:hover,
-.app-navbar .nav-link:hover { color: var(--li-blue) !important; }
-.app-navbar .navbar-toggler { border-color: #cbd5e1 !important; }
-/* dark mode → dark bar, light text */
-body.dark-mode .app-navbar { background: var(--bg-card) !important; border-bottom: 1px solid #2d333b; }
-body.dark-mode .app-navbar .navbar-brand { color: var(--text-primary) !important; }
-body.dark-mode .app-navbar .app-nav-link,
-body.dark-mode .app-navbar .nav-link { color: #c9d3df !important; }
-body.dark-mode .app-navbar .app-nav-link:hover,
-body.dark-mode .app-navbar .nav-link:hover { color: #6cb0ff !important; }
 
 * { box-sizing: border-box; }
 
 body {
-  background-color: var(--bg-page);
-  color: var(--text-primary);
+  background-color: #f3f2ef;
   font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
   font-size: 15px;
   font-feature-settings: 'tnum' 1, 'cv11' 1;
   -webkit-font-smoothing: antialiased;
 }
 
-/* Big formal titles get the institutional serif (matches TMS). Sub-UI headings
-   (h4–h6, used for card titles / dense dashboard UI) stay in Inter for clarity. */
-/* Big formal titles get the institutional serif (matches TMS). Sub-UI headings
-   (h4–h6, used for card titles / dense dashboard UI) stay in Inter for clarity.
-   NOTE: headings intentionally INHERIT their color (dark text on white cards,
-   white text on navy panels/hero) so nothing ever goes invisible. */
-h1, h2,
-.heading-serif {
-  font-family: 'PT Serif', 'Lora', 'Georgia', serif;
-  letter-spacing: 0;
-}
-h3, h4, h5, h6,
+h1, h2, h3, h4, h5, h6,
 .navbar-brand,
 .stat-card .number {
   font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
   letter-spacing: -0.01em;
 }
-.navbar-brand { font-family: 'PT Serif', 'Lora', 'Georgia', serif; }
-/* Safety: any heading inside a white-text block stays white */
-.text-white h1, .text-white h2, .text-white h3, .text-white .heading-serif,
-.welcome-header h1, .welcome-header h2, .welcome-header h3,
-.page-header h1, .page-header h2, .page-header h3 { color: #fff !important; }
 
-/* ─── ORANGE ACCENT BUTTONS (TMS-style secondary CTA) ─── */
-.btn-accent {
-  background: var(--accent);
-  color: #fff;
-  border: none;
-  font-weight: 700;
-  letter-spacing: 0.02em;
+/* Serif treatment for the big, formal page titles (auth pages, hero) — gives the
+   site a more institutional/official feel, distinct from dashboard UI headings
+   which stay in Inter for a cleaner data-dense look. */
+.heading-serif {
+  font-family: 'Lora', 'Georgia', serif;
+  letter-spacing: 0;
 }
-.btn-accent:hover  { background: var(--accent-dark); color: #fff; box-shadow: 0 6px 20px rgba(226,103,10,0.32) !important; }
-.btn-accent:active { background: var(--accent-dark); color: #fff; }
-.btn-outline-accent {
-  background: transparent;
-  color: var(--accent);
-  border: 1.5px solid var(--accent);
-  font-weight: 700;
-}
-.btn-outline-accent:hover { background: var(--accent); color: #fff; }
-.text-accent { color: var(--accent) !important; }
-body.dark-mode .btn-outline-accent { color: #ff8b3d; border-color: #ff8b3d; }
-body.dark-mode .btn-outline-accent:hover { background: #ff8b3d; color: var(--bg-card); }
-body.dark-mode .text-accent { color: #ff8b3d !important; }
 
 /* ─── SKILL BADGES ─── */
 .skill-badge {
@@ -130,12 +59,12 @@ body.dark-mode .text-accent { color: #ff8b3d !important; }
 .job-card:hover {
   box-shadow: 0 4px 20px rgba(10,102,194,0.12);
   transform: translateY(-2px);
-  border-color: #15487F;
+  border-color: #0A66C2;
 }
 
 /* ─── PAGE HEADER (LinkedIn blue) ─── */
 .page-header {
-  background: linear-gradient(135deg, #123160 0%, #0A2347 100%);
+  background: linear-gradient(135deg, #0A66C2 0%, #004182 100%);
   color: white;
   padding: 1.5rem 1.5rem;
   border-radius: 12px;
@@ -146,7 +75,7 @@ body.dark-mode .text-accent { color: #ff8b3d !important; }
 
 /* ─── WELCOME HEADER ─── */
 .welcome-header {
-  background: linear-gradient(135deg, #123160 0%, #0A2347 100%);
+  background: linear-gradient(135deg, #0A66C2 0%, #004182 100%);
   color: white;
   padding: 1.5rem 1.5rem;
   border-radius: 12px;
@@ -165,7 +94,7 @@ body.dark-mode .text-accent { color: #ff8b3d !important; }
   transition: transform 0.15s;
 }
 .stat-card:hover { transform: translateY(-2px); }
-.stat-card .number { font-size: 1.8rem; font-weight: 700; color: #15487F; }
+.stat-card .number { font-size: 1.8rem; font-weight: 700; color: #0A66C2; }
 .stat-card .label  { color: #6c757d; font-size: 0.78rem; margin-top: 2px; }
 
 /* ─── SIDEBAR ─── */
@@ -192,7 +121,7 @@ body.dark-mode .text-accent { color: #ff8b3d !important; }
 .sidebar .nav-link:hover,
 .sidebar .nav-link.active {
   background-color: #EEF3F8;
-  color: #15487F;
+  color: #0A66C2;
 }
 .sidebar .nav-link i {
   width: 18px;
@@ -235,7 +164,7 @@ body.dark-mode .text-accent { color: #ff8b3d !important; }
   gap: 2px;
 }
 .mobile-bottom-nav a.active,
-.mobile-bottom-nav a:hover { color: #15487F; }
+.mobile-bottom-nav a:hover { color: #0A66C2; }
 .mobile-bottom-nav a i { font-size: 1.1rem; }
 
 /* ─── RESPONSIVE ─── */
@@ -329,8 +258,8 @@ body.dark-mode .text-accent { color: #ff8b3d !important; }
 }
 
 /* ─── UTILITIES ─── */
-.text-li-blue { color: #15487F !important; }
-.bg-li-blue   { background-color: #15487F !important; }
+.text-li-blue { color: #0A66C2 !important; }
+.bg-li-blue   { background-color: #0A66C2 !important; }
 
 /* ─── PROGRESS BAR ─── */
 .progress { height: 8px; border-radius: 4px; }
@@ -338,126 +267,28 @@ body.dark-mode .text-accent { color: #ff8b3d !important; }
 
 /* ─── FORM CONTROLS ─── */
 .form-control:focus, .form-select:focus {
-  border-color: #15487F;
+  border-color: #0A66C2;
   box-shadow: 0 0 0 2px rgba(10,102,194,0.1);
 }
 
-/* ════════════════════════════════════════════════════════════
-   ENTERPRISE DESIGN TOKENS — single source of truth for theme.
-   Light values live on :root; dark values override under
-   body.dark-mode. Every shared component below consumes these
-   variables instead of hardcoded hex, so toggling the theme
-   class is the only thing required to re-skin the whole app.
-   ════════════════════════════════════════════════════════════ */
+/* ─── ALERTS ─── */
+.alert { font-size: 0.88rem; }
+
+/* ─── DARK MODE ─── */
 :root {
-  /* surfaces */
-  --bg-page:        #F3F4F6;
-  --bg-card:        #FFFFFF;
-  --bg-card-hover:  #FAFBFC;
-  /* text */
-  --text-primary:   #111827;
-  --text-secondary: #6B7280;
-  --text-muted:     #9CA3AF;
-  /* brand / actions */
-  --accent:         #2563EB;
-  --accent-hover:   #1D4ED8;
-  --accent-soft:    #DBEAFE;
-  /* structure */
-  --border-color:   #E5E7EB;
-  --radius-card:    12px;
-  --shadow-card:    0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);
-  --shadow-card-lg: 0 4px 12px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.04);
-  --focus-ring:     rgba(37,99,235,0.35);
-  /* status pills — soft bg + dark text, identical in both modes for readability */
-  --pill-green-bg:  #DCFCE7; --pill-green-text:  #166534;
-  --pill-yellow-bg: #FEF3C7; --pill-yellow-text: #92400E;
-  --pill-red-bg:    #FEE2E2; --pill-red-text:    #991B1B;
-  --pill-blue-bg:   #DBEAFE; --pill-blue-text:   #1E40AF;
-  --pill-gray-bg:   #F3F4F6; --pill-gray-text:   #374151;
+  --notif-bg: #fff;
+  --notif-border: #e2e8f0;
+  --notif-text: #191919;
+  --notif-muted: #666;
+  --notif-unread: #EEF3F8;
+  --notif-hover: #f8f9fa;
 }
 
 body.dark-mode {
-  --bg-page:        #030712;
-  --bg-card:        #1F2937;
-  --bg-card-hover:  #25304066;
-  --text-primary:   #F9FAFB;
-  --text-secondary: #9CA3AF;
-  --text-muted:     #6B7280;
-  --accent:         #3B82F6;
-  --accent-hover:   #60A5FA;
-  --accent-soft:    #1E3A5F;
-  --border-color:   #374151;
-  --shadow-card:    0 1px 3px rgba(0,0,0,0.5), 0 1px 2px rgba(0,0,0,0.4);
-  --shadow-card-lg: 0 4px 16px rgba(0,0,0,0.55), 0 2px 6px rgba(0,0,0,0.4);
-  --focus-ring:     rgba(59,130,246,0.45);
-  /* pill colors intentionally NOT overridden — same soft bg/dark text in dark mode too */
-}
-
-/* Smooth, deliberate theme transition across the whole app */
-html { color-scheme: light; }
-html:has(body.dark-mode) { color-scheme: dark; }
-body, .card, .stat-card, .app-navbar, .sidebar, .form-control, .form-select,
-.btn, .status-pill, .dropdown-menu, .welcome-header, .page-header {
-  transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out,
-              border-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
-}
-
-/* ─── ENTERPRISE CARD SYSTEM — every card shares radius + shadow ─── */
-.card, .stat-card {
-  background: var(--bg-card);
-  color: var(--text-primary);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-card) !important;
-  box-shadow: var(--shadow-card);
-}
-.card:hover { box-shadow: var(--shadow-card-lg); }
-
-/* ─── STATUS PILLS — project/application stage indicators ─── */
-.status-pill {
-  display: inline-flex; align-items: center; gap: 5px;
-  padding: 3px 12px; border-radius: 20px;
-  font-size: 0.75rem; font-weight: 700; letter-spacing: 0.01em;
-  white-space: nowrap;
-}
-.status-pill-green  { background: var(--pill-green-bg);  color: var(--pill-green-text); }
-.status-pill-yellow { background: var(--pill-yellow-bg); color: var(--pill-yellow-text); }
-.status-pill-red    { background: var(--pill-red-bg);    color: var(--pill-red-text); }
-.status-pill-blue   { background: var(--pill-blue-bg);   color: var(--pill-blue-text); }
-.status-pill-gray   { background: var(--pill-gray-bg);   color: var(--pill-gray-text); }
-
-/* ─── ACCESSIBLE FOCUS STATES — visible on every interactive element ─── */
-.btn:focus-visible,
-.form-control:focus-visible,
-.form-select:focus-visible,
-a:focus-visible,
-button:focus-visible,
-input:focus-visible,
-select:focus-visible,
-textarea:focus-visible {
-  outline: none;
-  box-shadow: 0 0 0 3px var(--focus-ring) !important;
-  border-color: var(--accent) !important;
-}
-.form-control:focus, .form-select:focus {
-  border-color: var(--accent) !important;
-  box-shadow: 0 0 0 3px var(--focus-ring) !important;
-}
-
-/* ─── PRIMARY ACTION COLOR — drives every .btn-primary in the app ─── */
-.btn-primary {
-  background-color: var(--accent) !important;
-  border-color: var(--accent) !important;
-}
-.btn-primary:hover, .btn-primary:focus {
-  background-color: var(--accent-hover) !important;
-  border-color: var(--accent-hover) !important;
-}
-
-body.dark-mode {
-  background-color: var(--bg-page) !important;
-  color: var(--text-primary) !important;
+  background-color: #0d1117 !important;
+  color: #e6edf3 !important;
   --notif-bg: #161b22;
-  --notif-border: var(--border-color);
+  --notif-border: #30363d;
   --notif-text: #e6edf3;
   --notif-muted: #8b949e;
   --notif-unread: #1c2128;
@@ -470,53 +301,53 @@ body.dark-mode .stat-card,
 body.dark-mode .card-body,
 body.dark-mode .card-header,
 body.dark-mode .dropdown-menu {
-  background-color: var(--bg-card) !important;
-  border-color: var(--border-color) !important;
-  color: var(--text-primary) !important;
+  background-color: #161b22 !important;
+  border-color: #30363d !important;
+  color: #e6edf3 !important;
 }
 body.dark-mode .navbar {
-  background: var(--bg-card) !important;
-  border-bottom: 1px solid var(--border-color) !important;
+  background: #161b22 !important;
+  border-bottom: 1px solid #30363d !important;
 }
 body.dark-mode h1, body.dark-mode h2, body.dark-mode h3,
 body.dark-mode h4, body.dark-mode h5, body.dark-mode h6 {
-  color: var(--text-primary) !important;
+  color: #e6edf3 !important;
 }
 body.dark-mode p { color: #c9d1d9 !important; }
 body.dark-mode label { color: #c9d1d9 !important; }
 body.dark-mode .text-muted { color: #8b949e !important; }
-body.dark-mode .text-dark { color: var(--text-primary) !important; }
+body.dark-mode .text-dark { color: #e6edf3 !important; }
 body.dark-mode small { color: #8b949e !important; }
 body.dark-mode .form-control,
 body.dark-mode .form-select,
 body.dark-mode .input-group-text {
   background-color: #21262d !important;
-  border-color: var(--border-color) !important;
-  color: var(--text-primary) !important;
+  border-color: #30363d !important;
+  color: #e6edf3 !important;
 }
 body.dark-mode .form-control::placeholder,
 body.dark-mode textarea::placeholder { color: #6e7681 !important; }
 body.dark-mode select option {
   background: #21262d !important;
-  color: var(--text-primary) !important;
+  color: #e6edf3 !important;
 }
 body.dark-mode .form-control:focus,
 body.dark-mode .form-select:focus {
   background-color: #21262d !important;
-  border-color: var(--accent) !important;
-  color: var(--text-primary) !important;
+  border-color: #58a6ff !important;
+  color: #e6edf3 !important;
 }
 body.dark-mode .bg-light,
 body.dark-mode .bg-white { background-color: #21262d !important; }
-body.dark-mode .table { color: var(--text-primary) !important; }
+body.dark-mode .table { color: #e6edf3 !important; }
 body.dark-mode td, body.dark-mode th {
-  color: var(--text-primary) !important;
-  border-color: var(--border-color) !important;
+  color: #e6edf3 !important;
+  border-color: #30363d !important;
 }
 body.dark-mode .table-light,
 body.dark-mode .table-hover tbody tr:hover {
   background-color: #1c2128 !important;
-  color: var(--text-primary) !important;
+  color: #e6edf3 !important;
 }
 body.dark-mode .badge.bg-light {
   background-color: #21262d !important;
@@ -524,21 +355,21 @@ body.dark-mode .badge.bg-light {
 }
 body.dark-mode .border,
 body.dark-mode .border-top,
-body.dark-mode .border-bottom { border-color: var(--border-color) !important; }
-body.dark-mode .dropdown-item { color: var(--text-primary) !important; }
+body.dark-mode .border-bottom { border-color: #30363d !important; }
+body.dark-mode .dropdown-item { color: #e6edf3 !important; }
 body.dark-mode .dropdown-item:hover { background-color: #21262d !important; }
-body.dark-mode .dropdown-divider { border-color: var(--border-color) !important; }
+body.dark-mode .dropdown-divider { border-color: #30363d !important; }
 body.dark-mode .dropdown-item-text { color: #8b949e !important; }
 body.dark-mode .nav-link { color: #8b949e !important; }
 body.dark-mode .nav-link:hover,
 body.dark-mode .nav-link.active {
   background-color: #1c2128 !important;
-  color: var(--accent) !important;
+  color: #58a6ff !important;
 }
 body.dark-mode .welcome-header,
 body.dark-mode .page-header {
-  background: linear-gradient(135deg, #1c2128 0%, var(--bg-page) 100%) !important;
-  border: 1px solid var(--border-color) !important;
+  background: linear-gradient(135deg, #1c2128 0%, #0d1117 100%) !important;
+  border: 1px solid #30363d !important;
 }
 body.dark-mode .skill-badge.verified {
   background-color: #0a2e1a !important;
@@ -568,25 +399,25 @@ body.dark-mode .alert-warning {
 body.dark-mode .alert-info {
   background-color: #0a1e2e !important;
   border-color: #1158a7 !important;
-  color: var(--accent) !important;
+  color: #58a6ff !important;
 }
 body.dark-mode .btn-outline-secondary {
   color: #8b949e !important;
-  border-color: var(--border-color) !important;
+  border-color: #30363d !important;
 }
 body.dark-mode .btn-outline-secondary:hover {
   background-color: #21262d !important;
-  color: var(--text-primary) !important;
+  color: #e6edf3 !important;
 }
-body.dark-mode .spinner-border { color: var(--accent) !important; }
+body.dark-mode .spinner-border { color: #58a6ff !important; }
 body.dark-mode .progress { background-color: #21262d !important; }
 body.dark-mode .mobile-bottom-nav {
-  background: var(--bg-card) !important;
-  border-top-color: var(--border-color) !important;
+  background: #161b22 !important;
+  border-top-color: #30363d !important;
 }
 body.dark-mode .mobile-bottom-nav a { color: #8b949e !important; }
-body.dark-mode .mobile-bottom-nav a.active { color: var(--accent) !important; }
-body.dark-mode hr { border-color: var(--border-color) !important; }
+body.dark-mode .mobile-bottom-nav a.active { color: #58a6ff !important; }
+body.dark-mode hr { border-color: #30363d !important; }
 body { transition: background-color 0.3s ease, color 0.3s ease; }
 body.dark-mode { --meta-bg: #1c2128; }
 
@@ -656,7 +487,7 @@ body.dark-mode .sidebar {
 .card::before {
   content:'';
   position:absolute; top:0; left:0; right:0; height:3px;
-  background: linear-gradient(90deg, #15487F, #14B8A6);
+  background: linear-gradient(90deg, #0A66C2, #14B8A6);
   transform: scaleX(0); transform-origin:left;
   transition: transform 0.3s ease;
   z-index: 2;
@@ -670,7 +501,7 @@ body.dark-mode .sidebar {
 .job-card:hover {
   transform: translateY(-5px) !important;
   box-shadow: 0 16px 40px rgba(10,102,194,0.15) !important;
-  border-color: #15487F !important;
+  border-color: #0A66C2 !important;
 }
 
 /* ─── STAT CARD ─── */
@@ -687,19 +518,19 @@ body.dark-mode .sidebar {
 }
 .sidebar .nav-link:hover {
   padding-left: 18px !important;
-  border-left-color: #15487F !important;
-  color: #15487F !important;
+  border-left-color: #0A66C2 !important;
+  color: #0A66C2 !important;
   background: #EEF3F8 !important;
 }
 .sidebar .nav-link.active {
   padding-left: 18px !important;
-  border-left-color: #15487F !important;
+  border-left-color: #0A66C2 !important;
 }
 body.dark-mode .sidebar .nav-link:hover,
 body.dark-mode .sidebar .nav-link.active {
   background: #1c2128 !important;
-  color: var(--accent) !important;
-  border-left-color: var(--accent) !important;
+  color: #58a6ff !important;
+  border-left-color: #58a6ff !important;
 }
 
 /* ─── SKILL BADGE ─── */
@@ -713,7 +544,7 @@ body.dark-mode .sidebar .nav-link.active {
 
 /* ─── FORM FOCUS ─── */
 .form-control:focus, .form-select:focus {
-  border-color: #15487F !important;
+  border-color: #0A66C2 !important;
   box-shadow: 0 0 0 3px rgba(10,102,194,0.12) !important;
 }
 
@@ -762,8 +593,8 @@ body.dark-mode .sidebar .nav-link.active {
 
 /* ── Base body ── */
 body.dark-mode {
-  background: var(--bg-page) !important;
-  color: var(--text-primary) !important;
+  background: #0d1117 !important;
+  color: #e6edf3 !important;
 
   /* Notification bell CSS vars */
   --notif-bg: #161b22;
@@ -774,9 +605,9 @@ body.dark-mode {
   --notif-hover: #1c2128;
 
   /* Bootstrap overrides */
-  --bs-body-bg: var(--bg-page);
-  --bs-body-color: var(--text-primary);
-  --bs-secondary-bg: var(--bg-card);
+  --bs-body-bg: #0d1117;
+  --bs-body-color: #e6edf3;
+  --bs-secondary-bg: #161b22;
   --bs-tertiary-bg: #1c2128;
   --bs-border-color: #2d333b;
 }
@@ -785,13 +616,13 @@ body.dark-mode {
 body.dark-mode .card,
 body.dark-mode .stat-card,
 body.dark-mode .job-card {
-  background: var(--bg-card) !important;
+  background: #161b22 !important;
   border-color: #2d333b !important;
-  color: var(--text-primary) !important;
+  color: #e6edf3 !important;
   backdrop-filter: none !important;
 }
 body.dark-mode .card::before {
-  background: linear-gradient(90deg, var(--accent), #14B8A6) !important;
+  background: linear-gradient(90deg, #58a6ff, #14B8A6) !important;
 }
 
 /* ── ALL TEXT ── */
@@ -799,14 +630,14 @@ body.dark-mode h1, body.dark-mode h2, body.dark-mode h3,
 body.dark-mode h4, body.dark-mode h5, body.dark-mode h6,
 body.dark-mode .fw-bold, body.dark-mode .fw-semibold,
 body.dark-mode .fw-medium {
-  color: var(--text-primary) !important;
+  color: #e6edf3 !important;
 }
 body.dark-mode .text-muted,
 body.dark-mode .text-secondary {
   color: #768390 !important;
 }
 body.dark-mode .text-dark {
-  color: var(--text-primary) !important;
+  color: #e6edf3 !important;
 }
 body.dark-mode p {
   color: #adbac7 !important;
@@ -820,7 +651,7 @@ body.dark-mode small {
 
 /* ── TABLES ── */
 body.dark-mode .table {
-  color: var(--text-primary) !important;
+  color: #e6edf3 !important;
   border-color: #2d333b !important;
 }
 body.dark-mode .table-light,
@@ -830,7 +661,7 @@ body.dark-mode .table-light th {
   border-color: #2d333b !important;
 }
 body.dark-mode .table tbody tr td {
-  color: var(--text-primary) !important;
+  color: #e6edf3 !important;
   border-color: #2d333b !important;
 }
 body.dark-mode .table-hover tbody tr:hover td {
@@ -846,7 +677,7 @@ body.dark-mode .form-select,
 body.dark-mode .form-control:disabled,
 body.dark-mode .form-control[readonly] {
   background: #1c2128 !important;
-  color: var(--text-primary) !important;
+  color: #e6edf3 !important;
   border-color: #2d333b !important;
 }
 body.dark-mode .form-control::placeholder {
@@ -855,8 +686,8 @@ body.dark-mode .form-control::placeholder {
 body.dark-mode .form-control:focus,
 body.dark-mode .form-select:focus {
   background: #1c2128 !important;
-  color: var(--text-primary) !important;
-  border-color: var(--accent) !important;
+  color: #e6edf3 !important;
+  border-color: #58a6ff !important;
   box-shadow: 0 0 0 3px rgba(88,166,255,0.15) !important;
 }
 body.dark-mode .input-group-text {
@@ -870,7 +701,7 @@ body.dark-mode .form-control.bg-light {
 }
 body.dark-mode textarea {
   background: #1c2128 !important;
-  color: var(--text-primary) !important;
+  color: #e6edf3 !important;
   border-color: #2d333b !important;
 }
 
@@ -878,7 +709,7 @@ body.dark-mode textarea {
 body.dark-mode .badge.bg-light,
 body.dark-mode .badge.text-dark {
   background: #2d333b !important;
-  color: var(--text-primary) !important;
+  color: #e6edf3 !important;
 }
 body.dark-mode .badge.bg-secondary {
   background: #2d333b !important;
@@ -891,11 +722,11 @@ body.dark-mode .btn-outline-secondary {
 }
 body.dark-mode .btn-outline-secondary:hover {
   background: #2d333b !important;
-  color: var(--text-primary) !important;
+  color: #e6edf3 !important;
 }
 body.dark-mode .btn-light {
   background: #2d333b !important;
-  color: var(--text-primary) !important;
+  color: #e6edf3 !important;
   border-color: #2d333b !important;
 }
 body.dark-mode .btn-close {
@@ -904,7 +735,7 @@ body.dark-mode .btn-close {
 
 /* ── SIDEBAR ── */
 body.dark-mode .sidebar {
-  background: var(--bg-page) !important;
+  background: #0d1117 !important;
   border-right: 1px solid #2d333b !important;
 }
 body.dark-mode .sidebar .text-muted {
@@ -917,19 +748,19 @@ body.dark-mode .sidebar .nav-link {
 body.dark-mode .sidebar .nav-link:hover,
 body.dark-mode .sidebar .nav-link.active {
   background: #1c2128 !important;
-  color: var(--accent) !important;
-  border-left-color: var(--accent) !important;
+  color: #58a6ff !important;
+  border-left-color: #58a6ff !important;
 }
 
 /* ── WELCOME HEADER / PAGE HEADER ── */
 body.dark-mode .welcome-header,
 body.dark-mode .page-header {
-  background: linear-gradient(135deg, #0f3460, #15487F) !important;
+  background: linear-gradient(135deg, #0f3460, #0A66C2) !important;
 }
 
 /* ── STAT CARDS ── */
 body.dark-mode .stat-card {
-  background: var(--bg-card) !important;
+  background: #161b22 !important;
 }
 body.dark-mode .stat-card .label {
   color: #768390 !important;
@@ -959,21 +790,21 @@ body.dark-mode .alert-info {
 
 /* ── MODALS ── */
 body.dark-mode .modal-content {
-  background: var(--bg-card) !important;
+  background: #161b22 !important;
   border-color: #2d333b !important;
-  color: var(--text-primary) !important;
+  color: #e6edf3 !important;
 }
 body.dark-mode .modal-header,
 body.dark-mode .modal-footer {
   border-color: #2d333b !important;
 }
 body.dark-mode .modal-title {
-  color: var(--text-primary) !important;
+  color: #e6edf3 !important;
 }
 
 /* ── DROPDOWNS ── */
 body.dark-mode .dropdown-menu {
-  background: var(--bg-card) !important;
+  background: #161b22 !important;
   border-color: #2d333b !important;
 }
 body.dark-mode .dropdown-item {
@@ -981,7 +812,7 @@ body.dark-mode .dropdown-item {
 }
 body.dark-mode .dropdown-item:hover {
   background: #1c2128 !important;
-  color: var(--text-primary) !important;
+  color: #e6edf3 !important;
 }
 body.dark-mode .dropdown-divider {
   border-color: #2d333b !important;
@@ -989,9 +820,9 @@ body.dark-mode .dropdown-divider {
 
 /* ── LIST GROUPS ── */
 body.dark-mode .list-group-item {
-  background: var(--bg-card) !important;
+  background: #161b22 !important;
   border-color: #2d333b !important;
-  color: var(--text-primary) !important;
+  color: #e6edf3 !important;
 }
 body.dark-mode .list-group-item:hover {
   background: #1c2128 !important;
@@ -1053,19 +884,19 @@ body.dark-mode .input-group-text.bg-light {
 /* Home page light sections */
 body.dark-mode section[style*="background.*#f"],
 body.dark-mode section[style*="background.*#F"] {
-  background: var(--bg-card) !important;
+  background: #161b22 !important;
 }
 
 /* Bottom mobile nav */
 body.dark-mode .mobile-bottom-nav {
-  background: var(--bg-page) !important;
+  background: #0d1117 !important;
   border-top: 1px solid #2d333b !important;
 }
 body.dark-mode .mobile-bottom-nav .nav-link {
   color: #768390 !important;
 }
 body.dark-mode .mobile-bottom-nav .nav-link.active {
-  color: var(--accent) !important;
+  color: #58a6ff !important;
 }
 
 /* Rounded info boxes */
@@ -1082,12 +913,12 @@ body.dark-mode [style*="background: '#f8f9fa'"] {
 /* Interview cards */
 body.dark-mode .rounded-3.border {
   border-color: #2d333b !important;
-  background: var(--bg-card) !important;
+  background: #161b22 !important;
 }
 
 /* Notification dropdown */
 body.dark-mode .notif-dropdown {
-  background: var(--bg-card) !important;
+  background: #161b22 !important;
 }
 
 /* ── MAIN CONTENT AREA ── */
@@ -1101,7 +932,7 @@ body.dark-mode ::-webkit-scrollbar {
   height: 8px;
 }
 body.dark-mode ::-webkit-scrollbar-track {
-  background: var(--bg-page);
+  background: #0d1117;
 }
 body.dark-mode ::-webkit-scrollbar-thumb {
   background: #2d333b;
@@ -1147,7 +978,7 @@ body.dark-mode .badge.bg-info {
   align-items: center;
   gap: 4px;
   background: #EEF3F8;
-  color: #15487F;
+  color: #0A66C2;
   padding: 2px 10px;
   border-radius: 20px;
   font-size: 0.78rem;
@@ -1156,76 +987,4 @@ body.dark-mode .badge.bg-info {
 body.dark-mode .company-badge {
   background: #1c2d3e !important;
   color: #60a5fa !important;
-}
-
-/* ════════════════════════════════════════════════════════════
-   DARK-MODE VISIBILITY PATCH (TMS theme)
-   Catches hardcoded INLINE colors that don't otherwise adapt,
-   so no text/panel goes invisible when dark mode is on.
-   ════════════════════════════════════════════════════════════ */
-
-/* Inline brand-navy TEXT (#15487F) → lift to a readable blue on dark bg.
-   (Background uses of the same hex are fine and intentionally left dark.) */
-body.dark-mode [style*="color:#15487F"],
-body.dark-mode [style*="color: #15487F"],
-body.dark-mode [style*="color:'#15487F'"],
-body.dark-mode [style*="color: '#15487F'"] {
-  color: #6cb0ff !important;
-}
-
-/* Inline deep-navy text → readable blue */
-body.dark-mode [style*="color:#0C2C54"],
-body.dark-mode [style*="color: #0C2C54"],
-body.dark-mode [style*="color:'#0C2C54'"],
-body.dark-mode [style*="color: '#0C2C54'"] {
-  color: #8ab4f8 !important;
-}
-
-/* Inline white / near-white panel BACKGROUNDS → dark card surface */
-body.dark-mode [style*="background:#fff"],
-body.dark-mode [style*="background: #fff"],
-body.dark-mode [style*="background:'#fff'"],
-body.dark-mode [style*="background: '#fff'"],
-body.dark-mode [style*="background:#ffffff"],
-body.dark-mode [style*="background: #ffffff"],
-body.dark-mode [style*="background-color:#fff"],
-body.dark-mode [style*="background-color: #fff"] {
-  background: var(--bg-card) !important;
-  color: var(--text-primary) !important;
-}
-
-/* Register role-select cards (selected = navy tint) → dark equivalents */
-body.dark-mode [style*="background:#EEF3F8"],
-body.dark-mode [style*="background: #EEF3F8"],
-body.dark-mode [style*="background:'#EEF3F8'"],
-body.dark-mode [style*="background: '#EEF3F8'"] {
-  background: #15243a !important;
-}
-
-/* Any inline border using the soft grey → dark border */
-body.dark-mode [style*="solid #e2e8f0"],
-body.dark-mode [style*="solid #E2E8F0"] {
-  border-color: #2d333b !important;
-}
-
-/* Bootstrap text-primary (used for navy links/labels) lift in dark mode */
-body.dark-mode .text-primary { color: #6cb0ff !important; }
-
-/* Orange accent stays vivid & readable in dark mode automatically (#ff8b3d set above) */
-
-/* ─── TMS-STYLE FORM POLISH ───
-   Slightly larger, rounder inputs with a clear navy focus ring,
-   matching the clean card-form feel of the TMS sign-in. */
-.form-control, .form-select {
-  border-radius: 10px;
-  padding-top: 0.55rem;
-  padding-bottom: 0.55rem;
-}
-.form-label.fw-semibold { color: var(--li-dark); }
-body.dark-mode .form-label.fw-semibold { color: #adbac7; }
-
-/* Primary buttons: institutional navy with confident weight (TMS SIGN IN feel) */
-.btn-primary,
-.btn[style*="#15487F"] {
-  letter-spacing: 0.02em;
 }

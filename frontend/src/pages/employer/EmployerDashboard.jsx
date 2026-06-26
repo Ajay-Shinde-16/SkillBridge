@@ -68,7 +68,7 @@ export default function EmployerDashboard() {
     } catch { showToast('Failed to update status') }
   }
 
-  const pillVariant = { OPEN:'green', CLOSED:'red', PAUSED:'yellow' }
+  const statusColors = { OPEN:'success', CLOSED:'danger', PAUSED:'warning' }
   const totalApplicants = jobs.reduce((a,j) => a + (j.applicationCount||0), 0)
   const openJobs = jobs.filter(j => j.status === 'OPEN').length
   const pausedJobs = jobs.filter(j => j.status === 'PAUSED').length
@@ -128,7 +128,7 @@ export default function EmployerDashboard() {
           {/* Stats */}
           <div className="row g-3 mb-4">
             {[
-              {label:'Total Jobs',      value:jobs.length,    color:'#15487F', icon:'bi-briefcase-fill'},
+              {label:'Total Jobs',      value:jobs.length,    color:'#0A66C2', icon:'bi-briefcase-fill'},
               {label:'Open Jobs',       value:openJobs,       color:'#057642', icon:'bi-door-open-fill'},
               {label:'Paused Jobs',     value:pausedJobs,     color:'#0F766E', icon:'bi-pause-circle-fill'},
               {label:'Total Applicants',value:totalApplicants,color:'#7C3AED', icon:'bi-people-fill'},
@@ -148,21 +148,21 @@ export default function EmployerDashboard() {
               <div className="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
                 <h6 className="fw-bold mb-0">My Job Postings</h6>
                 <Link to="/employer/post-job" className="btn text-white btn-sm rounded-pill fw-semibold"
-                  style={{background:'#15487F'}}>
+                  style={{background:'#0A66C2'}}>
                   <i className="bi bi-plus me-1"></i>Post New Job
                 </Link>
               </div>
 
               {loading ? (
                 <div className="text-center py-4">
-                  <div className="spinner-border" style={{color:'#15487F'}}></div>
+                  <div className="spinner-border" style={{color:'#0A66C2'}}></div>
                 </div>
               ) : jobs.length===0 ? (
                 <div className="text-center py-5">
                   <i className="bi bi-briefcase fs-1 text-muted mb-3 d-block"></i>
                   <p className="text-muted">No jobs posted yet.</p>
                   <Link to="/employer/post-job" className="btn text-white rounded-pill px-4"
-                    style={{background:'#15487F'}}>
+                    style={{background:'#0A66C2'}}>
                     Post Your First Job
                   </Link>
                 </div>
@@ -179,11 +179,13 @@ export default function EmployerDashboard() {
                           <div className="d-flex align-items-center gap-2 flex-wrap mb-1">
                             <span className="fw-bold">{job.title}</span>
                             {job.companyName && <span className="company-badge"><i className="bi bi-building"></i>{job.companyName}</span>}
-                            <span className={`status-pill status-pill-${pillVariant[job.status] || 'gray'}`}>
+                            <span className={`badge bg-${statusColors[job.status]||'secondary'} rounded-pill`}
+                              style={{fontSize:'0.72rem'}}>
                               {job.status}
                             </span>
                             {job.remote && (
-                              <span className="status-pill status-pill-green">
+                              <span className="badge rounded-pill"
+                                style={{background:'#D1FAE5',color:'#065f46',fontSize:'0.7rem'}}>
                                 Remote
                               </span>
                             )}
@@ -203,12 +205,12 @@ export default function EmployerDashboard() {
                         <div className="d-flex gap-2 align-items-start flex-shrink-0">
                           <Link to={`/employer/applications/${job.id}`}
                             className="btn btn-sm rounded-pill fw-semibold"
-                            style={{background:'#EEF3F8',color:'#15487F',border:'1px solid #D0D9E0',fontSize:'0.78rem'}}>
+                            style={{background:'#EEF3F8',color:'#0A66C2',border:'1px solid #D0D9E0',fontSize:'0.78rem'}}>
                             <i className="bi bi-people me-1"></i>{job.applicationCount||0} Applicants
                           </Link>
                           <button type="button" onClick={() => toggleInquiries(job.id)}
                             className="btn btn-sm rounded-pill fw-semibold"
-                            style={{background: inquiriesJobId===job.id ? '#15487F' : '#EEF3F8', color: inquiriesJobId===job.id ? '#fff' : '#15487F', border:'1px solid #15487F',fontSize:'0.78rem'}}>
+                            style={{background: inquiriesJobId===job.id ? '#0A66C2' : '#EEF3F8', color: inquiriesJobId===job.id ? '#fff' : '#0A66C2', border:'1px solid #0A66C2',fontSize:'0.78rem'}}>
                             <i className="bi bi-chat-dots me-1"></i>Inquiries
                           </button>
                           <Link to={`/employer/edit-job/${job.id}`}
@@ -251,9 +253,9 @@ export default function EmployerDashboard() {
                                     onClick={() => setActiveSeekerId(inq.seekerId)}
                                     className="btn btn-sm rounded-pill"
                                     style={{
-                                      background: activeSeekerId===inq.seekerId ? '#15487F' : '#EEF3F8',
-                                      color: activeSeekerId===inq.seekerId ? '#fff' : '#15487F',
-                                      border:'1px solid #15487F', fontSize:'0.78rem'
+                                      background: activeSeekerId===inq.seekerId ? '#0A66C2' : '#EEF3F8',
+                                      color: activeSeekerId===inq.seekerId ? '#fff' : '#0A66C2',
+                                      border:'1px solid #0A66C2', fontSize:'0.78rem'
                                     }}>
                                     {inq.seekerName}
                                   </button>

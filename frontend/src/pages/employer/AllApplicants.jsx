@@ -16,7 +16,8 @@ export default function AllApplicants() {
 
   useEffect(() => { fetchJobs() }, [fetchJobs])
 
-  const pillVariant = { OPEN:'green', PAUSED:'yellow', CLOSED:'red' }
+  const statusColor = { OPEN:'#057642', PAUSED:'#d97706', CLOSED:'#dc3545' }
+  const statusBg    = { OPEN:'#D1FAE5', PAUSED:'#FEF3C7', CLOSED:'#FEE2E2' }
 
   return (
     <div className="container-fluid p-0">
@@ -52,14 +53,14 @@ export default function AllApplicants() {
 
           {loading ? (
             <div className="text-center py-5">
-              <div className="spinner-border" style={{ color:'#15487F' }}></div>
+              <div className="spinner-border" style={{ color:'#0A66C2' }}></div>
             </div>
           ) : jobs.length === 0 ? (
             <div className="text-center py-5">
               <i className="bi bi-briefcase fs-1 text-muted mb-3 d-block"></i>
               <p className="text-muted">No jobs posted yet</p>
               <Link to="/employer/post-job" className="btn text-white rounded-pill px-4"
-                style={{ background:'#15487F' }}>Post a Job</Link>
+                style={{ background:'#0A66C2' }}>Post a Job</Link>
             </div>
           ) : (
             <div className="card border-0 shadow-sm rounded-4">
@@ -77,8 +78,13 @@ export default function AllApplicants() {
                       </div>
                     </div>
 
-                    {/* Status pill — driven by enterprise design tokens */}
-                    <span className={`status-pill status-pill-${pillVariant[job.status] || 'gray'}`}>
+                    {/* Status badge */}
+                    <span className="badge rounded-pill px-3 py-2"
+                      style={{
+                        background: statusBg[job.status] || '#F1F5F9',
+                        color: statusColor[job.status] || '#475569',
+                        fontSize:'0.75rem'
+                      }}>
                       {job.status}
                     </span>
 
@@ -86,7 +92,7 @@ export default function AllApplicants() {
                     <Link to={`/employer/applications/${job.id}`}
                       className="btn rounded-pill fw-semibold"
                       style={{
-                        background:'#15487F', color:'#fff',
+                        background:'#0A66C2', color:'#fff',
                         border:'none', fontSize:'0.85rem',
                         padding:'7px 18px', whiteSpace:'nowrap'
                       }}>
