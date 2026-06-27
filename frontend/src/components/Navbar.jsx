@@ -108,12 +108,6 @@ export default function Navbar() {
               {user && <li className="nav-item">
                 <Link className="nav-link text-white" to={getDash()}><i className="bi bi-speedometer2 me-1"></i>Dashboard</Link>
               </li>}
-              {user?.role==='SEEKER' && <>
-                <li className="nav-item"><Link className="nav-link text-white" to="/seeker/applications"><i className="bi bi-file-text me-1"></i>My Applications</Link></li>
-                <li className="nav-item"><Link className="nav-link text-white" to="/seeker/saved-jobs"><i className="bi bi-bookmark me-1"></i>Saved Jobs</Link></li>
-                <li className="nav-item"><Link className="nav-link text-white" to="/seeker/offers"><i className="bi bi-trophy me-1"></i>My Offers</Link></li>
-                <li className="nav-item"><Link className="nav-link text-white" to="/seeker/interviews"><i className="bi bi-camera-video me-1"></i>Interviews</Link></li>
-              </>}
               {user?.role==='EMPLOYER' && <>
                 <li className="nav-item"><Link className="nav-link text-white" to="/employer/post-job"><i className="bi bi-plus-circle me-1"></i>Post Job</Link></li>
                 <li className="nav-item"><Link className="nav-link text-white" to="/employer/applicants"><i className="bi bi-people me-1"></i>Applicants</Link></li>
@@ -134,7 +128,7 @@ export default function Navbar() {
                 <button
                   onClick={toggleTheme}
                   title={dark ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
-                  className="btn btn-sm d-flex align-items-center justify-content-center theme-toggle-btn"
+                  className="btn btn-sm d-flex align-items-center justify-content-center theme-toggle-btn icon-btn-circle"
                   style={{
                     width: 36, height: 36, borderRadius: '50%',
                     background: dark

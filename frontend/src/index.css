@@ -20,6 +20,17 @@
   --lh-body:    1.6;
   --lh-small:   1.5;
 
+  /* ════════════════════════════════════════════════════════════
+     SPACING RHYTHM — consistent vertical rhythm between sections,
+     headings, and paragraphs. One scale, used everywhere, so gaps
+     never feel arbitrary.
+     ════════════════════════════════════════════════════════════ */
+  --spacing-xs:  0.5rem;    /* 8px  — tight, inline gaps          */
+  --spacing-sm:  1rem;      /* 16px — paragraph-to-paragraph       */
+  --spacing-md:  1.5rem;    /* 24px — heading-to-body, card padding*/
+  --spacing-lg:  2.5rem;    /* 40px — between distinct sections    */
+  --spacing-xl:  4rem;      /* 64px — major page-section breaks    */
+
   /* ─── TMS-inspired palette (C-DAC institutional look) ─── */
   --li-blue: #123160;     /* primary navy-blue (buttons, links, accents) */
   --li-dark: #0A2347;     /* deep navy (gradients, hero, sidebar) — matches TMS */
@@ -105,6 +116,15 @@ small, .small, .text-muted, .form-text {
   font-size: var(--fs-caption);
   line-height: var(--lh-small);
 }
+/* Spacing rhythm is OPT-IN only (via these utility classes) — it never
+   applies automatically to bare h1–h6/p, so it can't silently shift any
+   existing card, badge, or header layout that wasn't designed for it. */
+.rhythm-h1, .rhythm-h2 { margin-bottom: var(--spacing-md) !important; }
+.rhythm-h3, .rhythm-h4, .rhythm-h5 { margin-bottom: var(--spacing-sm) !important; }
+.rhythm-h6 { margin-bottom: var(--spacing-xs) !important; }
+.rhythm-p  { margin-bottom: var(--spacing-sm) !important; }
+.section-spacing { margin-bottom: var(--spacing-xl); }
+.section-spacing-sm { margin-bottom: var(--spacing-lg); }
 /* tighten headings further on mobile so they never overpower the viewport */
 @media (max-width: 576px) {
   h1 { font-size: calc(var(--fs-h1) * 0.72); }
@@ -380,7 +400,7 @@ body.dark-mode .text-accent { color: #ff8b3d !important; }
   .card-body { padding: 10px !important; }
   h4.fw-bold { font-size: 0.95rem !important; }
   .stat-card .number { font-size: 1rem !important; }
-  .btn { padding: 6px 12px !important; }
+  .btn { padding: 0.6rem 1.1rem !important; } /* still compact, but a real tap target */
 }
 
 /* ─── UTILITIES ─── */
@@ -716,7 +736,13 @@ body.dark-mode .sidebar {
   border: 1px solid #2d333b !important;
 }
 
-/* ─── BUTTON HOVER ─── */
+/* ─── BUTTON HOVER + PROFESSIONAL CTA PADDING ───
+   Generous internal padding (12px/24px minimum) for normal text CTAs.
+   Excludes .rounded-circle icon buttons — those use a fixed inline
+   width/height and would be squeezed/distorted by added padding. */
+.btn:not(.rounded-circle) {
+  padding: 0.75rem 1.5rem; /* 12px vertical / 24px horizontal */
+}
 .btn {
   transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.15s ease !important;
 }
@@ -1784,7 +1810,7 @@ body.dark-mode .job-card {
 }
 
 /* Remote badge — keep its green, just brighten for contrast on navy */
-.job-card .badge[style*="D1FAE5"] {
+.job-card .badge[style*="rgb(209, 250, 229)"] {
   background: rgba(74, 222, 128, 0.22) !important;
   color: #86efac !important;
 }
@@ -1803,4 +1829,105 @@ body.dark-mode .job-card {
 .job-card .btn.text-white:hover {
   background: #FB923C !important;
   color: #fff !important;
+}
+
+/* ════════════════════════════════════════════════════════════
+   NAVY EMPLOYER JOB-POSTING ROW (Employer Dashboard → My Job Postings)
+   Same solid navy as the Browse Jobs cards. Every internal element
+   recolored for contrast — title, badges, salary line, skill pills,
+   and every action button (Applicants / Inquiries / Edit / Pause / Delete).
+   ════════════════════════════════════════════════════════════ */
+.employer-job-row {
+  background: linear-gradient(160deg, #123160 0%, #0A2347 100%) !important;
+  border: 1px solid #0A2347 !important;
+  color: #fff;
+}
+body.dark-mode .employer-job-row {
+  background: linear-gradient(160deg, #123160 0%, #0A2347 100%) !important;
+  border-color: #2d333b !important;
+}
+
+/* Job title */
+.employer-job-row .fw-bold { color: #fff !important; }
+
+/* Company badge chip */
+.employer-job-row .company-badge {
+  background: rgba(255,255,255,0.14) !important;
+  color: #fff !important;
+}
+
+/* Salary / experience / job-type line */
+.employer-job-row .text-muted { color: rgba(255,255,255,0.65) !important; }
+
+/* Skill pills — light chip on the dark row, same treatment as job-card */
+.employer-job-row .skill-badge {
+  background: rgba(255,255,255,0.92) !important;
+  color: #123160 !important;
+}
+
+/* Remote badge — brighten green for contrast on navy */
+.employer-job-row .badge[style*="rgb(209, 250, 229)"] {
+  background: rgba(74, 222, 128, 0.22) !important;
+  color: #86efac !important;
+}
+
+/* Status badge (OPEN/PAUSED/CLOSED) — keep solid, just ensure border reads on navy */
+.employer-job-row .badge.bg-success,
+.employer-job-row .badge.bg-warning,
+.employer-job-row .badge.bg-danger,
+.employer-job-row .badge.bg-secondary {
+  border: 1px solid rgba(255,255,255,0.3);
+}
+
+/* Action buttons — were light-tint/dark-text pills, now frosted on navy */
+.employer-job-row .btn[style*="rgb(238, 243, 248)"] {
+  background: rgba(255,255,255,0.14) !important;
+  color: #fff !important;
+  border-color: rgba(255,255,255,0.35) !important;
+}
+.employer-job-row .btn[style*="rgb(204, 251, 241)"] {
+  background: rgba(45,212,191,0.22) !important;
+  color: #5eead4 !important;
+  border-color: rgba(94,234,212,0.4) !important;
+}
+.employer-job-row .btn[style*="rgb(209, 250, 229)"] {
+  background: rgba(74,222,128,0.22) !important;
+  color: #86efac !important;
+  border-color: rgba(134,239,172,0.4) !important;
+}
+.employer-job-row .btn[style*="rgb(254, 226, 226)"] {
+  background: rgba(248,113,113,0.22) !important;
+  color: #fca5a5 !important;
+  border-color: rgba(252,165,165,0.4) !important;
+}
+/* "Inquiries" toggled-active state was solid navy-on-white; on a navy row
+   that needs to invert to stay visible as "active" */
+.employer-job-row .btn[style*="background: rgb(18, 49, 96)"] {
+  background: #fff !important;
+  color: #123160 !important;
+}
+
+/* Inquiries expansion panel underneath — was a light-grey box */
+.employer-job-row [style*="rgb(248, 250, 252)"] {
+  background: rgba(255,255,255,0.08) !important;
+  border-color: rgba(255,255,255,0.2) !important;
+  color: #fff !important;
+}
+
+/* ════════════════════════════════════════════════════════════
+   BULLETPROOF CIRCLE — theme toggle + notification bell.
+   Forces a true circle regardless of any other rule, using
+   !important on every corner individually (not just the
+   shorthand) plus aspect-ratio as a backstop if width/height
+   ever get squeezed by a flex/grid parent.
+   ════════════════════════════════════════════════════════════ */
+.icon-btn-circle {
+  border-radius: 50% !important;
+  border-top-left-radius: 50% !important;
+  border-top-right-radius: 50% !important;
+  border-bottom-left-radius: 50% !important;
+  border-bottom-right-radius: 50% !important;
+  aspect-ratio: 1 / 1;
+  flex-shrink: 0;
+  padding: 0 !important;
 }

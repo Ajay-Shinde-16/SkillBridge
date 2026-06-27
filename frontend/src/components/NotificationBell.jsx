@@ -135,7 +135,7 @@ export default function NotificationBell() {
       {/* Bell Button */}
       <button
         onClick={handleOpen}
-        className="btn btn-sm d-flex align-items-center justify-content-center position-relative"
+        className="btn btn-sm d-flex align-items-center justify-content-center position-relative icon-btn-circle"
         style={{
           width: 36, height: 36, borderRadius: '50%',
           background: open ? 'rgba(255,255,255,0.28)' : 'rgba(255,255,255,0.15)',

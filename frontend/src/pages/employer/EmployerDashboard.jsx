@@ -169,10 +169,10 @@ export default function EmployerDashboard() {
               ) : (
                 <div className="d-flex flex-column gap-3">
                   {jobs.map(job=>(
-                    <div key={job.id} className="border rounded-3 p-3"
+                    <div key={job.id} className="employer-job-row rounded-3 p-3"
                       style={{
                         opacity: deleting===job.id ? 0.5 : 1,
-                        borderLeft: `4px solid ${job.status==='OPEN'?'#057642':job.status==='PAUSED'?'#0F766E':'#dc3545'}`
+                        borderLeft: `4px solid ${job.status==='OPEN'?'#4ade80':job.status==='PAUSED'?'#2dd4bf':'#f87171'}`
                       }}>
                       <div className="d-flex align-items-start gap-3 flex-wrap">
                         <div className="flex-fill">
