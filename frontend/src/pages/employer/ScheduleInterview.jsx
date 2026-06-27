@@ -96,7 +96,7 @@ export default function ScheduleInterview() {
             <p className="text-muted mb-3">
               Candidate has been notified with all interview details.
             </p>
-            <div className="spinner-border spinner-border-sm" style={{ color: '#0A66C2' }}></div>
+            <div className="spinner-border spinner-border-sm" style={{ color: '#123160' }}></div>
             <div className="text-muted small mt-2">Redirecting to dashboard...</div>
           </div>
         </div>
@@ -131,7 +131,7 @@ export default function ScheduleInterview() {
             </button>
             <div>
               <h4 className="fw-bold mb-0">
-                <i className="bi bi-calendar-plus me-2" style={{ color: '#0A66C2' }}></i>
+                <i className="bi bi-calendar-plus me-2" style={{ color: '#123160' }}></i>
                 Schedule Interview
               </h4>
               <p className="text-muted small mb-0">Candidate will be notified automatically</p>
@@ -155,12 +155,12 @@ export default function ScheduleInterview() {
                     {/* Step 1: Mode */}
                     <div className="mb-4">
                       <label className="form-label fw-bold">
-                        <span className="badge rounded-pill me-2 text-white" style={{ background: '#0A66C2' }}>1</span>
+                        <span className="badge rounded-pill me-2 text-white" style={{ background: '#123160' }}>1</span>
                         Interview Mode
                       </label>
                       <div className="d-flex gap-3">
                         {[
-                          { value: 'VIDEO',     icon: 'bi-camera-video-fill', label: 'Video Call', color: '#0A66C2' },
+                          { value: 'VIDEO',     icon: 'bi-camera-video-fill', label: 'Video Call', color: '#123160' },
                           { value: 'PHONE',     icon: 'bi-telephone-fill',    label: 'Phone Call', color: '#057642' },
                           { value: 'IN_PERSON', icon: 'bi-geo-alt-fill',      label: 'In Person',  color: '#d97706' },
                         ].map(m => (
@@ -187,7 +187,7 @@ export default function ScheduleInterview() {
                     {/* Step 2: Date & Time */}
                     <div className="mb-4">
                       <label className="form-label fw-bold">
-                        <span className="badge rounded-pill me-2 text-white" style={{ background: '#0A66C2' }}>2</span>
+                        <span className="badge rounded-pill me-2 text-white" style={{ background: '#123160' }}>2</span>
                         Date & Time <span className="text-danger">*</span>
                       </label>
                       <input
@@ -211,7 +211,7 @@ export default function ScheduleInterview() {
                     {/* Step 3: Meeting Details */}
                     <div className="mb-4">
                       <label className="form-label fw-bold">
-                        <span className="badge rounded-pill me-2 text-white" style={{ background: '#0A66C2' }}>3</span>
+                        <span className="badge rounded-pill me-2 text-white" style={{ background: '#123160' }}>3</span>
                         {form.mode === 'VIDEO' ? 'Meeting Link' : form.mode === 'PHONE' ? 'Call Instructions' : 'Venue / Address'}
                         {(form.mode === 'VIDEO' || form.mode === 'IN_PERSON') && <span className="text-danger ms-1">*</span>}
                       </label>
@@ -229,8 +229,8 @@ export default function ScheduleInterview() {
                               <button key={p.type} type="button"
                                 className="btn btn-sm rounded-pill fw-semibold"
                                 style={{
-                                  background: linkPlatform === p.type ? '#0A66C2' : '#EEF3F8',
-                                  color: linkPlatform === p.type ? '#fff' : '#0A66C2',
+                                  background: linkPlatform === p.type ? '#123160' : '#EEF3F8',
+                                  color: linkPlatform === p.type ? '#fff' : '#123160',
                                   border: 'none', fontSize: '0.78rem', padding: '5px 14px'
                                 }}
                                 onClick={() => handlePlatformClick(p.type)}>
@@ -249,7 +249,7 @@ export default function ScheduleInterview() {
                               required />
                             <button type="button"
                               className="btn rounded-end-3 text-white"
-                              style={{ background: copied ? '#057642' : '#0A66C2' }}
+                              style={{ background: copied ? '#057642' : '#123160' }}
                               onClick={handleCopy}
                               disabled={!form.meetingLink}>
                               <i className={`bi ${copied ? 'bi-check' : 'bi-copy'} me-1`}></i>
@@ -271,14 +271,14 @@ export default function ScheduleInterview() {
 
                           {/* How to create links */}
                           <div className="rounded-3 p-3" style={{ background: '#EEF3F8' }}>
-                            <div className="fw-bold small mb-2" style={{ color: '#0A66C2' }}>
+                            <div className="fw-bold small mb-2" style={{ color: '#123160' }}>
                               <i className="bi bi-lightbulb-fill me-1"></i>
                               How to get a real link:
                             </div>
                             <ul className="mb-0 small ps-3" style={{ color: '#475569', lineHeight: 2 }}>
-                              <li><strong>Google Meet:</strong> Go to <a href="https://meet.google.com" target="_blank" rel="noreferrer" style={{ color: '#0A66C2' }}>meet.google.com</a> → Click "New Meeting" → Copy link</li>
-                              <li><strong>Zoom:</strong> Go to <a href="https://zoom.us" target="_blank" rel="noreferrer" style={{ color: '#0A66C2' }}>zoom.us</a> → Start/Schedule Meeting → Copy invite link</li>
-                              <li><strong>Jitsi (Free, no account):</strong> Go to <a href="https://meet.jit.si" target="_blank" rel="noreferrer" style={{ color: '#0A66C2' }}>meet.jit.si</a> → Type a room name → Copy link</li>
+                              <li><strong>Google Meet:</strong> Go to <a href="https://meet.google.com" target="_blank" rel="noreferrer" style={{ color: '#123160' }}>meet.google.com</a> → Click "New Meeting" → Copy link</li>
+                              <li><strong>Zoom:</strong> Go to <a href="https://zoom.us" target="_blank" rel="noreferrer" style={{ color: '#123160' }}>zoom.us</a> → Start/Schedule Meeting → Copy invite link</li>
+                              <li><strong>Jitsi (Free, no account):</strong> Go to <a href="https://meet.jit.si" target="_blank" rel="noreferrer" style={{ color: '#123160' }}>meet.jit.si</a> → Type a room name → Copy link</li>
                             </ul>
                           </div>
 
@@ -318,7 +318,7 @@ export default function ScheduleInterview() {
                     <div className="d-flex gap-3 flex-wrap">
                       <button type="submit"
                         className="btn fw-bold px-5 rounded-pill text-white"
-                        style={{ background: '#0A66C2', fontSize: '1rem' }}
+                        style={{ background: '#123160', fontSize: '1rem' }}
                         disabled={loading}>
                         {loading
                           ? <><span className="spinner-border spinner-border-sm me-2"></span>Scheduling...</>
@@ -338,12 +338,12 @@ export default function ScheduleInterview() {
             <div className="col-lg-5">
               <div className="card border-0 rounded-4 mb-3" style={{ background: '#EEF3F8' }}>
                 <div className="card-body p-4">
-                  <h6 className="fw-bold mb-3" style={{ color: '#0A66C2' }}>
+                  <h6 className="fw-bold mb-3" style={{ color: '#123160' }}>
                     <i className="bi bi-send-fill me-2"></i>What happens after scheduling?
                   </h6>
                   <div className="d-flex flex-column gap-3">
                     {[
-                      { icon: 'bi-bell-fill',        color: '#0A66C2', text: 'Candidate gets instant notification in the app' },
+                      { icon: 'bi-bell-fill',        color: '#123160', text: 'Candidate gets instant notification in the app' },
                       { icon: 'bi-envelope-fill',    color: '#057642', text: 'Email with date, time and meeting link is sent automatically' },
                       { icon: 'bi-kanban-fill',      color: '#d97706', text: 'Application status updates to INTERVIEW SCHEDULED' },
                       { icon: 'bi-camera-video-fill',color: '#7C3AED', text: 'Interview appears in your Interviews tab for tracking' },

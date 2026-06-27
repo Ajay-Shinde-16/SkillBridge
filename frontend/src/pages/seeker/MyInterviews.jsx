@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { getMyInterviews, joinInterview } from '../../services/api'
 
 const modeInfo = {
-  VIDEO:     { icon:'bi-camera-video-fill', label:'Video Call',  color:'#0A66C2' },
+  VIDEO:     { icon:'bi-camera-video-fill', label:'Video Call',  color:'#123160' },
   PHONE:     { icon:'bi-telephone-fill',    label:'Phone Call',  color:'#057642' },
   IN_PERSON: { icon:'bi-geo-alt-fill',      label:'In Person',   color:'#0F766E' },
 }
@@ -10,7 +10,7 @@ const statusStyle = {
   SCHEDULED:   { bg:'#CCFBF1', color:'#92400e', label:'Scheduled' },
   COMPLETED:   { bg:'#D1FAE5', color:'#065f46', label:'Completed' },
   CANCELLED:   { bg:'#FEE2E2', color:'#991b1b', label:'Cancelled' },
-  RESCHEDULED: { bg:'#DBEAFE', color:'#1e40af', label:'Rescheduled' },
+  RESCHEDULED: { bg:'#E6EDF5', color:'#123160', label:'Rescheduled' },
 }
 const resultStyle = {
   PASS:    { bg:'#D1FAE5', color:'#065f46', label:'Pass' },
@@ -44,7 +44,7 @@ export default function MyInterviews() {
 
   if (loading) return (
     <div className="d-flex justify-content-center align-items-center" style={{minHeight:'60vh'}}>
-      <div className="spinner-border" style={{color:'#0A66C2'}}></div>
+      <div className="spinner-border" style={{color:'#123160'}}></div>
     </div>
   )
 
@@ -67,7 +67,7 @@ export default function MyInterviews() {
         {[
           {label:'Upcoming',  value:upcoming.length,  color:'#0F766E', bg:'#CCFBF1'},
           {label:'Completed', value:completed.length,  color:'#057642', bg:'#D1FAE5'},
-          {label:'Passed',    value:interviews.filter(i=>i.result==='PASS').length, color:'#0A66C2', bg:'#DBEAFE'},
+          {label:'Passed',    value:interviews.filter(i=>i.result==='PASS').length, color:'#123160', bg:'#E6EDF5'},
           {label:'Total',     value:interviews.length, color:'#475569', bg:'#F1F5F9'},
         ].map((s,i)=>(
           <div key={i} className="col-6 col-md-3">
@@ -83,7 +83,7 @@ export default function MyInterviews() {
       <div className="d-flex flex-wrap gap-2 mb-4">
         {['ALL','SCHEDULED','COMPLETED','CANCELLED'].map(s=>(
           <button key={s} className="btn btn-sm rounded-pill fw-semibold"
-            style={{background:filter===s?'#0A66C2':'#EEF3F8',color:filter===s?'#fff':'#0A66C2',border:'none'}}
+            style={{background:filter===s?'#123160':'#EEF3F8',color:filter===s?'#fff':'#123160',border:'none'}}
             onClick={()=>setFilter(s)}>
             {s==='ALL'?`All (${interviews.length})`:s+` (${interviews.filter(i=>i.status===s).length})`}
           </button>
@@ -125,7 +125,7 @@ export default function MyInterviews() {
 
                     <div className="d-flex flex-column gap-2 mb-3" style={{fontSize:'0.85rem'}}>
                       <div className="d-flex align-items-center gap-2">
-                        <i className="bi bi-calendar flex-shrink-0" style={{color:'#0A66C2',width:18}}></i>
+                        <i className="bi bi-calendar flex-shrink-0" style={{color:'#123160',width:18}}></i>
                         <span>{iv.scheduledDateTime?new Date(iv.scheduledDateTime).toLocaleString('en-IN',{weekday:'short',day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}):'To be confirmed'}</span>
                       </div>
                       <div className="d-flex align-items-center gap-2">
@@ -134,9 +134,9 @@ export default function MyInterviews() {
                       </div>
                       {iv.meetingLink && (
                         <div className="d-flex align-items-center gap-2">
-                          <i className="bi bi-link-45deg flex-shrink-0" style={{color:'#0A66C2',width:18}}></i>
+                          <i className="bi bi-link-45deg flex-shrink-0" style={{color:'#123160',width:18}}></i>
                           <a href={iv.meetingLink} target="_blank" rel="noreferrer"
-                            className="text-truncate" style={{color:'#0A66C2',fontSize:'0.8rem'}}>
+                            className="text-truncate" style={{color:'#123160',fontSize:'0.8rem'}}>
                             {iv.meetingLink}
                           </a>
                         </div>
@@ -153,7 +153,7 @@ export default function MyInterviews() {
                     {iv.meetingLink && iv.status==='SCHEDULED' && (
                       <a href={iv.meetingLink} target="_blank" rel="noreferrer"
                         className="btn w-100 text-white rounded-pill fw-semibold mb-2"
-                        style={{background:'#0A66C2',fontSize:'0.85rem'}}>
+                        style={{background:'#123160',fontSize:'0.85rem'}}>
                         <i className="bi bi-camera-video me-2"></i>Open Meeting Link
                       </a>
                     )}
@@ -194,7 +194,7 @@ export default function MyInterviews() {
                     {/* Feedback from employer */}
                     {iv.feedback && (
                       <div className="mt-3 p-2 rounded-3" style={{background:'#EEF3F8',fontSize:'0.8rem'}}>
-                        <span className="fw-semibold" style={{color:'#0A66C2'}}>
+                        <span className="fw-semibold" style={{color:'#123160'}}>
                           <i className="bi bi-chat-square-text me-1"></i>Feedback:{' '}
                         </span>
                         <span className="text-muted">{iv.feedback}</span>

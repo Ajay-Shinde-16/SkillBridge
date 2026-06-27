@@ -12,7 +12,7 @@ export default function UserAvatar({ name, size = 40, className = '' }) {
   const fallbackStyle = {
     width: size, height: size,
     borderRadius: '50%',
-    background: '#0A66C2',
+    background: '#123160',
     color: '#fff',
     display: 'flex',
     alignItems: 'center',

@@ -47,7 +47,7 @@ export default function ChangePassword() {
             <h4 className="fw-bold mb-2">Password Changed!</h4>
             <p className="text-muted mb-4">Your password has been updated successfully.</p>
             <Link to="/profile" className="btn text-white fw-bold rounded-pill px-4"
-              style={{ background:'#0A66C2' }}>
+              style={{ background:'#123160' }}>
               Back to Profile
             </Link>
           </div>
@@ -72,7 +72,7 @@ export default function ChangePassword() {
               <div className="text-center mb-4">
                 <div className="rounded-circle d-inline-flex align-items-center justify-content-center mb-3"
                   style={{ width:56, height:56, background:'#EEF3F8' }}>
-                  <i className="bi bi-shield-lock-fill fs-3" style={{ color:'#0A66C2' }}></i>
+                  <i className="bi bi-shield-lock-fill fs-3" style={{ color:'#123160' }}></i>
                 </div>
                 <p className="text-muted small mb-0">Enter your current password and choose a new one</p>
               </div>
@@ -83,35 +83,31 @@ export default function ChangePassword() {
 
               <form onSubmit={handleSubmit}>
                 {/* Current Password */}
-                <div className="mb-3">
-                  <label className="form-label fw-semibold small">Current Password</label>
-                  <div className="input-group">
-                    <input type={show.current ? 'text' : 'password'}
-                      className="form-control rounded-start-3" required
-                      value={form.currentPassword}
-                      onChange={e => setForm({ ...form, currentPassword: e.target.value })}
-                      placeholder="Your current password" />
-                    <button type="button" className="btn btn-outline-secondary rounded-end-3"
-                      onClick={() => setShow({ ...show, current: !show.current })}>
-                      <i className={`bi ${show.current ? 'bi-eye-slash' : 'bi-eye'}`}></i>
-                    </button>
-                  </div>
+                <div className="float-field mb-3" style={{ display: 'flex' }}>
+                  <input type={show.current ? 'text' : 'password'}
+                    className="form-control rounded-start-3" required
+                    value={form.currentPassword}
+                    onChange={e => setForm({ ...form, currentPassword: e.target.value })}
+                    placeholder=" " style={{ borderRight: 'none' }} />
+                  <label>Current Password</label>
+                  <button type="button" className="btn btn-outline-secondary rounded-end-3"
+                    onClick={() => setShow({ ...show, current: !show.current })}>
+                    <i className={`bi ${show.current ? 'bi-eye-slash' : 'bi-eye'}`}></i>
+                  </button>
                 </div>
 
                 {/* New Password */}
-                <div className="mb-2">
-                  <label className="form-label fw-semibold small">New Password</label>
-                  <div className="input-group">
-                    <input type={show.new ? 'text' : 'password'}
-                      className="form-control rounded-start-3" required
-                      value={form.newPassword}
-                      onChange={e => setForm({ ...form, newPassword: e.target.value })}
-                      placeholder="At least 8 characters" />
-                    <button type="button" className="btn btn-outline-secondary rounded-end-3"
-                      onClick={() => setShow({ ...show, new: !show.new })}>
-                      <i className={`bi ${show.new ? 'bi-eye-slash' : 'bi-eye'}`}></i>
-                    </button>
-                  </div>
+                <div className="float-field mb-2" style={{ display: 'flex' }}>
+                  <input type={show.new ? 'text' : 'password'}
+                    className="form-control rounded-start-3" required
+                    value={form.newPassword}
+                    onChange={e => setForm({ ...form, newPassword: e.target.value })}
+                    placeholder=" " style={{ borderRight: 'none' }} />
+                  <label>New Password</label>
+                  <button type="button" className="btn btn-outline-secondary rounded-end-3"
+                    onClick={() => setShow({ ...show, new: !show.new })}>
+                    <i className={`bi ${show.new ? 'bi-eye-slash' : 'bi-eye'}`}></i>
+                  </button>
                 </div>
 
                 {/* Password Strength Bar */}
@@ -125,30 +121,28 @@ export default function ChangePassword() {
                 )}
 
                 {/* Confirm Password */}
-                <div className="mb-4">
-                  <label className="form-label fw-semibold small">Confirm New Password</label>
-                  <div className="input-group">
-                    <input type={show.confirm ? 'text' : 'password'}
-                      className={`form-control rounded-start-3 ${form.confirmPassword && (form.newPassword !== form.confirmPassword ? 'is-invalid' : 'is-valid')}`}
-                      required
-                      value={form.confirmPassword}
-                      onChange={e => setForm({ ...form, confirmPassword: e.target.value })}
-                      placeholder="Repeat new password" />
-                    <button type="button" className="btn btn-outline-secondary rounded-end-3"
-                      onClick={() => setShow({ ...show, confirm: !show.confirm })}>
-                      <i className={`bi ${show.confirm ? 'bi-eye-slash' : 'bi-eye'}`}></i>
-                    </button>
-                    {form.confirmPassword && form.newPassword === form.confirmPassword && (
-                      <div className="valid-feedback">Passwords match!</div>
-                    )}
-                    {form.confirmPassword && form.newPassword !== form.confirmPassword && (
-                      <div className="invalid-feedback">Passwords do not match</div>
-                    )}
-                  </div>
+                <div className="float-field mb-4" style={{ display: 'flex' }}>
+                  <input type={show.confirm ? 'text' : 'password'}
+                    className={`form-control rounded-start-3 ${form.confirmPassword && (form.newPassword !== form.confirmPassword ? 'is-invalid' : 'is-valid')}`}
+                    required
+                    value={form.confirmPassword}
+                    onChange={e => setForm({ ...form, confirmPassword: e.target.value })}
+                    placeholder=" " style={{ borderRight: 'none' }} />
+                  <label>Confirm New Password</label>
+                  <button type="button" className="btn btn-outline-secondary rounded-end-3"
+                    onClick={() => setShow({ ...show, confirm: !show.confirm })}>
+                    <i className={`bi ${show.confirm ? 'bi-eye-slash' : 'bi-eye'}`}></i>
+                  </button>
+                  {form.confirmPassword && form.newPassword === form.confirmPassword && (
+                    <div className="valid-feedback">Passwords match!</div>
+                  )}
+                  {form.confirmPassword && form.newPassword !== form.confirmPassword && (
+                    <div className="invalid-feedback">Passwords do not match</div>
+                  )}
                 </div>
 
                 <button type="submit" className="btn w-100 text-white fw-bold rounded-pill py-2"
-                  style={{ background:'#0A66C2' }} disabled={loading}>
+                  style={{ background:'#123160' }} disabled={loading}>
                   {loading ? <span className="spinner-border spinner-border-sm me-2"></span>
                            : <i className="bi bi-shield-check me-2"></i>}
                   Update Password
@@ -157,7 +151,7 @@ export default function ChangePassword() {
 
               <div className="mt-4 p-3 rounded-3" style={{ background:'#EEF3F8' }}>
                 <div className="text-muted small fw-semibold mb-2">
-                  <i className="bi bi-info-circle me-1" style={{ color:'#0A66C2' }}></i>
+                  <i className="bi bi-info-circle me-1" style={{ color:'#123160' }}></i>
                   Password Tips:
                 </div>
                 <ul className="mb-0 text-muted small" style={{ paddingLeft:16 }}>

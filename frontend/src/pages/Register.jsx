@@ -47,9 +47,9 @@ export default function Register() {
 
               {/* ── BRAND PANEL: horizontal strip on mobile/tablet, full
                    centered panel at lg+ — always visible, never hidden ── */}
-              <div className="col-12 col-lg-4 d-flex flex-row flex-lg-column align-items-center justify-content-lg-center text-start text-lg-center p-3 p-lg-5 gap-3 gap-lg-0"
-                style={{ background: 'linear-gradient(160deg, #003766 0%, #15487F 100%)', color: '#fff' }}>
-                <div className="bg-white rounded-4 p-2 p-lg-3 mb-0 mb-lg-4 d-inline-flex flex-shrink-0">
+              <div className="col-12 col-lg-4 d-flex flex-column align-items-center justify-content-center text-center p-4 p-lg-5"
+                style={{ background: 'linear-gradient(160deg, #003766 0%, #123160 100%)', color: '#fff' }}>
+                <div className="bg-white rounded-4 p-2 p-lg-3 mb-3 mb-lg-4 d-inline-flex flex-shrink-0">
                   <img src="/logo.svg" alt="SkillBridge" className="auth-logo-img"
                     onError={e => { e.target.style.display = 'none' }} />
                 </div>
@@ -93,20 +93,20 @@ export default function Register() {
 
                   <form onSubmit={handleSubmit}>
                     <div className="row g-3">
-                      <div className="col-12">
-                        <label className="form-label fw-semibold small">Full Name <span className="text-danger">*</span></label>
+                      <div className="col-12 float-field">
                         <input className="form-control rounded-3" required value={form.name}
-                          onChange={e=>setForm({...form,name:e.target.value})} placeholder="Your full name"/>
+                          onChange={e=>setForm({...form,name:e.target.value})} placeholder=" "/>
+                        <label>Full Name <span className="text-danger">*</span></label>
                       </div>
-                      <div className="col-12">
-                        <label className="form-label fw-semibold small">Email Address <span className="text-danger">*</span></label>
+                      <div className="col-12 float-field">
                         <input type="email" className="form-control rounded-3" required value={form.email}
-                          onChange={e=>setForm({...form,email:e.target.value})} placeholder="your@email.com"/>
+                          onChange={e=>setForm({...form,email:e.target.value})} placeholder=" "/>
+                        <label>Email Address <span className="text-danger">*</span></label>
                       </div>
-                      <div className="col-md-6">
-                        <label className="form-label fw-semibold small">Password <span className="text-danger">*</span></label>
+                      <div className="col-md-6 float-field">
                         <input type="password" className="form-control rounded-3" required value={form.password}
-                          onChange={e=>setForm({...form,password:e.target.value})} placeholder="At least 8 characters"/>
+                          onChange={e=>setForm({...form,password:e.target.value})} placeholder=" "/>
+                        <label>Password <span className="text-danger">*</span></label>
                         {form.password && (
                           <div className="mt-1">
                             <div className="rounded-pill overflow-hidden" style={{ height:5, background:'var(--border-color)' }}>
@@ -116,10 +116,10 @@ export default function Register() {
                           </div>
                         )}
                       </div>
-                      <div className="col-md-6">
-                        <label className="form-label fw-semibold small">Confirm Password <span className="text-danger">*</span></label>
+                      <div className="col-md-6 float-field">
                         <input type="password" className="form-control rounded-3" required value={form.confirmPassword}
-                          onChange={e=>setForm({...form,confirmPassword:e.target.value})} placeholder="Re-enter password"/>
+                          onChange={e=>setForm({...form,confirmPassword:e.target.value})} placeholder=" "/>
+                        <label>Confirm Password <span className="text-danger">*</span></label>
                         {form.confirmPassword && form.password !== form.confirmPassword && (
                           <span className="text-danger d-block mt-1" style={{ fontSize:'0.78rem' }}>Passwords don't match</span>
                         )}
@@ -129,33 +129,33 @@ export default function Register() {
                         <PhoneInput value={form.phone} onChange={phone => setForm({...form, phone})} />
                       </div>
                       {form.role==='EMPLOYER' && (
-                        <div className="col-12">
-                          <label className="form-label fw-semibold small">Company Name <span className="text-danger">*</span></label>
+                        <div className="col-12 float-field">
                           <input className="form-control rounded-3" required={form.role==='EMPLOYER'} value={form.companyName}
-                            onChange={e=>setForm({...form,companyName:e.target.value})} placeholder="Your Company Pvt Ltd"/>
+                            onChange={e=>setForm({...form,companyName:e.target.value})} placeholder=" "/>
+                          <label>Company Name <span className="text-danger">*</span></label>
                         </div>
                       )}
                       {form.role==='SEEKER' && (
-                        <div className="col-12">
-                          <label className="form-label fw-semibold small">Your Skills (comma separated)</label>
+                        <div className="col-12 float-field">
                           <input className="form-control rounded-3" value={form.skills}
                             onChange={e=>setForm({...form,skills:e.target.value})}
-                            placeholder="React, Java, Spring Boot, MongoDB..."/>
+                            placeholder=" "/>
+                          <label>Your Skills (comma separated)</label>
                           <small className="text-muted">Add more skills from your profile after signup</small>
                         </div>
                       )}
                     </div>
                     <button type="submit" className="btn w-100 text-white fw-bold mt-4 rounded-pill py-2"
-                      style={{background:'#15487F',fontSize:'1rem'}} disabled={loading}>
+                      style={{background:'#123160',fontSize:'1rem'}} disabled={loading}>
                       {loading?<span className="spinner-border spinner-border-sm me-2"></span>:null}
                       Create {form.role==='SEEKER'?'Seeker':'Employer'} Account
                     </button>
                   </form>
 
-                  <p className="text-center mt-4 mb-0 small">
-                    Already have an account?{' '}
-                    <Link to="/login" className="fw-semibold" style={{color:'var(--accent)'}}>Sign In</Link>
-                  </p>
+                  <div className="auth-action-banner">
+                    <span className="auth-action-text">Already have an account?</span>
+                    <Link to="/login" className="auth-action-btn">Sign In</Link>
+                  </div>
                 </div>
               </div>
 

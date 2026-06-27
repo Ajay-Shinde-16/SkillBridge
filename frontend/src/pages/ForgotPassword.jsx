@@ -100,7 +100,7 @@ export default function ForgotPassword() {
                 <div className="rounded-circle d-inline-flex align-items-center justify-content-center mb-3"
                   style={{ width: 60, height: 60, background: '#EEF3F8' }}>
                   <i className="bi bi-shield-lock-fill fs-3"
-                    style={{ color: '#0A66C2' }}></i>
+                    style={{ color: '#123160' }}></i>
                 </div>
                 <h4 className="fw-bold mb-1">
                   {step === 1 ? 'Forgot Password' : 'Reset Password'}
@@ -110,14 +110,14 @@ export default function ForgotPassword() {
               {/* Step Indicator */}
               <div className="d-flex align-items-center gap-2 mb-4">
                 <div className="rounded-circle d-flex align-items-center justify-content-center fw-bold"
-                  style={{ width: 28, height: 28, background: '#0A66C2', color: '#fff', fontSize: 13 }}>
+                  style={{ width: 28, height: 28, background: '#123160', color: '#fff', fontSize: 13 }}>
                   1
                 </div>
                 <div className="flex-fill"
-                  style={{ height: 2, background: step >= 2 ? '#0A66C2' : '#e2e8f0' }}>
+                  style={{ height: 2, background: step >= 2 ? '#123160' : '#e2e8f0' }}>
                 </div>
                 <div className="rounded-circle d-flex align-items-center justify-content-center fw-bold"
-                  style={{ width: 28, height: 28, background: step >= 2 ? '#0A66C2' : '#e2e8f0', color: step >= 2 ? '#fff' : '#aaa', fontSize: 13 }}>
+                  style={{ width: 28, height: 28, background: step >= 2 ? '#123160' : '#e2e8f0', color: step >= 2 ? '#fff' : '#aaa', fontSize: 13 }}>
                   2
                 </div>
               </div>
@@ -133,23 +133,21 @@ export default function ForgotPassword() {
               {/* Step 1 - Enter Email */}
               {step === 1 ? (
                 <form onSubmit={handleSendOtp}>
-                  <div className="mb-4">
-                    <label className="form-label fw-semibold small">
-                      Email Address
-                    </label>
+                  <div className="float-field mb-4">
                     <input
                       type="email"
-                      className="form-control form-control-lg rounded-3"
+                      className="form-control rounded-3"
                       required
                       value={email}
                       onChange={e => setEmail(e.target.value)}
-                      placeholder="your@email.com"
+                      placeholder=" "
                     />
+                    <label>Email Address</label>
                   </div>
                   <button
                     type="submit"
                     className="btn w-100 text-white fw-bold rounded-pill py-2"
-                    style={{ background: '#0A66C2' }}
+                    style={{ background: '#123160' }}
                     disabled={loading}>
                     {loading
                       ? <span className="spinner-border spinner-border-sm me-2"></span>
@@ -165,13 +163,13 @@ export default function ForgotPassword() {
                   {/* Check-your-email notice */}
                   <div style={{
                     background: '#EEF3F8',
-                    border: '1px solid #0A66C2',
+                    border: '1px solid #123160',
                     borderRadius: 16,
                     padding: 20,
                     marginBottom: 20,
                     textAlign: 'center'
                   }}>
-                    <div style={{ color: '#0A66C2', fontWeight: 700, fontSize: 14, marginBottom: 6 }}>
+                    <div style={{ color: '#123160', fontWeight: 700, fontSize: 14, marginBottom: 6 }}>
                       📧 Check your inbox
                     </div>
                     <div style={{ color: '#444', fontSize: 13 }}>
@@ -180,57 +178,50 @@ export default function ForgotPassword() {
                   </div>
 
                   {/* OTP Input */}
-                  <div className="mb-3">
-                    <label className="form-label fw-semibold small">
-                      Enter OTP
-                    </label>
+                  <div className="float-field">
                     <input
-                      className="form-control form-control-lg rounded-3 text-center fw-bold"
+                      className="form-control rounded-3 text-center fw-bold"
                       style={{ fontSize: '1.5rem', letterSpacing: 10, fontFamily: 'monospace' }}
                       maxLength={6}
-                      placeholder="000000"
+                      placeholder=" "
                       required
                       value={otp}
                       onChange={e => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
                     />
+                    <label>Enter OTP</label>
                   </div>
 
                   {/* New Password */}
-                  <div className="mb-3">
-                    <label className="form-label fw-semibold small">
-                      New Password
-                    </label>
-                    <div className="input-group">
-                      <input
-                        type={showPwd ? 'text' : 'password'}
-                        className="form-control rounded-start-3"
-                        required
-                        value={newPassword}
-                        onChange={e => setNewPassword(e.target.value)}
-                        placeholder="At least 8 characters"
-                      />
-                      <button
-                        type="button"
-                        className="btn btn-outline-secondary rounded-end-3"
-                        onClick={() => setShowPwd(!showPwd)}>
-                        <i className={`bi ${showPwd ? 'bi-eye-slash' : 'bi-eye'}`}></i>
-                      </button>
-                    </div>
+                  <div className="float-field mb-3" style={{ display: 'flex' }}>
+                    <input
+                      type={showPwd ? 'text' : 'password'}
+                      className="form-control rounded-start-3"
+                      required
+                      value={newPassword}
+                      onChange={e => setNewPassword(e.target.value)}
+                      placeholder=" "
+                      style={{ borderRight: 'none' }}
+                    />
+                    <label>New Password</label>
+                    <button
+                      type="button"
+                      className="btn btn-outline-secondary rounded-end-3"
+                      onClick={() => setShowPwd(!showPwd)}>
+                      <i className={`bi ${showPwd ? 'bi-eye-slash' : 'bi-eye'}`}></i>
+                    </button>
                   </div>
 
                   {/* Confirm Password */}
-                  <div className="mb-4">
-                    <label className="form-label fw-semibold small">
-                      Confirm Password
-                    </label>
+                  <div className="float-field mb-4">
                     <input
                       type="password"
                       className={`form-control rounded-3 ${confirmPassword && (newPassword !== confirmPassword ? 'is-invalid' : 'is-valid')}`}
                       required
                       value={confirmPassword}
                       onChange={e => setConfirmPassword(e.target.value)}
-                      placeholder="Repeat new password"
+                      placeholder=" "
                     />
+                    <label>Confirm Password</label>
                   </div>
 
                   {/* Reset Button */}
@@ -260,13 +251,10 @@ export default function ForgotPassword() {
                 </form>
               )}
 
-              <p className="text-center mt-4 mb-0 small">
-                Remember password?{' '}
-                <Link to="/login" className="fw-semibold"
-                  style={{ color: '#0A66C2' }}>
-                  Sign In
-                </Link>
-              </p>
+              <div className="auth-action-banner">
+                <span className="auth-action-text">Remember your password?</span>
+                <Link to="/login" className="auth-action-btn">Sign In</Link>
+              </div>
 
             </div>
           </div>

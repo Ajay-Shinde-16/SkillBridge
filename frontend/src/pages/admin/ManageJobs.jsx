@@ -78,7 +78,7 @@ export default function ManageJobs() {
               </div>
 
               {loading ? (
-                <div className="text-center py-4"><div className="spinner-border" style={{ color: '#0A66C2' }}></div></div>
+                <div className="text-center py-4"><div className="spinner-border" style={{ color: '#123160' }}></div></div>
               ) : (
                 <div className="table-responsive">
                   <table className="table table-hover align-middle mb-0" style={{ fontSize: '0.85rem' }}>
@@ -101,7 +101,7 @@ export default function ManageJobs() {
                             ₹{job.minSalary?.toLocaleString()}–{job.maxSalary?.toLocaleString()}
                           </td>
                           <td>
-                            <span className="badge rounded-pill" style={{ background: '#EEF3F8', color: '#0A66C2' }}>
+                            <span className="badge rounded-pill" style={{ background: '#EEF3F8', color: '#123160' }}>
                               {job.applicationCount || 0}
                             </span>
                           </td>

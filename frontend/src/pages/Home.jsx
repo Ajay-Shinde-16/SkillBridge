@@ -41,14 +41,9 @@ export default function Home() {
     <div>
       {/* Hero */}
       <div style={{
-        background:'linear-gradient(135deg, #0A66C2 0%, #004182 100%)',
+        background:'linear-gradient(135deg, #123160 0%, #0A2347 100%)',
         position:'relative', overflow:'hidden'
       }}>
-        {/* Background pattern */}
-        <div style={{
-          position:'absolute', top:0, left:0, right:0, bottom:0,
-          backgroundImage:`url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.06'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-        }}></div>
         <div className="container py-5 text-center text-white" style={{position:'relative'}}>
           {/* Trust pill badge */}
           <div className="d-inline-flex align-items-center gap-2 px-3 py-1 rounded-pill mb-3"
@@ -58,7 +53,7 @@ export default function Home() {
           </div>
           <div className="d-flex align-items-center justify-content-center gap-3 mb-3">
             <img src="/logo.svg" alt="SkillBridge" width={52} height={52} style={{borderRadius:12}} onError={e=>e.target.style.display='none'}/>
-            <h1 className="heading-serif fw-bold mb-0" style={{fontSize:'2.6rem'}}>SkillBridge</h1>
+            <h1 className="heading-serif fw-bold mb-0">SkillBridge</h1>
           </div>
           <p className="mb-2 fs-4 opacity-90" style={{minHeight:'2.2rem', fontWeight:600}}>
             {displayed}<span style={{
@@ -69,10 +64,10 @@ export default function Home() {
           </p>
           <p className="mb-4 opacity-75 small">Find jobs that match your skills. Employers find real talent.</p>
           <div className="d-flex justify-content-center gap-3 flex-wrap">
-            <Link to="/jobs" className="btn btn-light fw-bold px-4 rounded-pill" style={{color:'#0A66C2'}}>
+            <Link to="/jobs" className="btn btn-hero-primary fw-bold px-4 rounded-pill">
               <i className="bi bi-search me-2"></i>Browse Jobs
             </Link>
-            <Link to="/register" className="btn btn-outline-light fw-bold px-4 rounded-pill">
+            <Link to="/register" className="btn btn-hero-ghost fw-bold px-4 rounded-pill">
               <i className="bi bi-person-plus me-2"></i>Get Started Free
             </Link>
           </div>
@@ -95,9 +90,9 @@ export default function Home() {
         <div className="row g-3 mb-5">
           {[
             {icon:'bi-patch-check-fill', color:'#057642', title:'Verified Skill Tagging', desc:'Admin-verified skill badges. Not just self-declared. Employers see real talent.'},
-            {icon:'bi-bar-chart-fill', color:'#0A66C2', title:'Skill Match Score', desc:'Auto-calculates your % match with every job. Know before you apply.'},
+            {icon:'bi-bar-chart-fill', color:'#123160', title:'Skill Match Score', desc:'Auto-calculates your % match with every job. Know before you apply.'},
             {icon:'bi-kanban-fill', color:'#d97706', title:'Application Pipeline', desc:'Applied → Shortlisted → Interview → Offer. Track every stage.'},
-            {icon:'bi-calendar-check-fill', color:'#0ea5e9', title:'Interview Scheduler', desc:'Employers schedule Video/Phone/In-Person. You get notified instantly.'},
+            {icon:'bi-calendar-check-fill', color:'#123160', title:'Interview Scheduler', desc:'Employers schedule Video/Phone/In-Person. You get notified instantly.'},
             {icon:'bi-envelope-fill', color:'#7C3AED', title:'Auto Email Notifications', desc:'Get emails for shortlist, interview, offer. No manual messages needed.'},
             {icon:'bi-currency-rupee', color:'#dc3545', title:'Salary Range Filter', desc:'Filter by exact salary. No wasted time on wrong budgets.'},
           ].map((f,i)=>(
@@ -125,7 +120,7 @@ export default function Home() {
         </div>
         <div className="row g-3 mb-5">
           {[
-            {step:'01', icon:'bi-person-plus', color:'#0A66C2', title:'Create Account', desc:'Register as Job Seeker or Employer. Free forever.'},
+            {step:'01', icon:'bi-person-plus', color:'#123160', title:'Create Account', desc:'Register as Job Seeker or Employer. Free forever.'},
             {step:'02', icon:'bi-tools', color:'#057642', title:'Add Your Skills', desc:'Add skills to your profile. Admin verifies them for credibility.'},
             {step:'03', icon:'bi-search', color:'#d97706', title:'Browse & Apply', desc:'Find jobs matched to your skills. See % match before applying.'},
             {step:'04', icon:'bi-trophy', color:'#7C3AED', title:'Get Hired', desc:'Track applications. Get interview. Accept offer. Done!'},
@@ -145,14 +140,14 @@ export default function Home() {
         </div>
 
         {/* CTA */}
-        <div className="text-center p-5 rounded-4" style={{background:'linear-gradient(135deg,#0A66C2,#004182)'}}>
+        <div className="text-center p-5 rounded-4" style={{background:'linear-gradient(135deg,#123160,#0A2347)'}}>
           <h4 className="fw-bold text-white mb-2">Ready to find your remote job?</h4>
           <p className="text-white opacity-75 mb-4 small">Join thousands of professionals on SkillBridge</p>
           <div className="d-flex justify-content-center gap-3 flex-wrap">
-            <Link to="/register" className="btn btn-light fw-bold px-4 rounded-pill" style={{color:'#0A66C2'}}>
+            <Link to="/register" className="btn btn-hero-primary fw-bold px-4 rounded-pill">
               <i className="bi bi-person-plus me-2"></i>Join as Job Seeker
             </Link>
-            <Link to="/register" className="btn btn-outline-light fw-bold px-4 rounded-pill">
+            <Link to="/register" className="btn btn-hero-ghost fw-bold px-4 rounded-pill">
               <i className="bi bi-building me-2"></i>Hire Talent
             </Link>
           </div>

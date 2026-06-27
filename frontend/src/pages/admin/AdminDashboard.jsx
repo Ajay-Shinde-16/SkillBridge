@@ -88,18 +88,18 @@ export default function AdminDashboard() {
           </div>
 
           {loading ? (
-            <div className="text-center py-5"><div className="spinner-border" style={{color:'#0A66C2'}}></div></div>
+            <div className="text-center py-5"><div className="spinner-border" style={{color:'#123160'}}></div></div>
           ) : (
             <>
               {/* Main Stats */}
               <div className="row g-3 mb-4">
                 {[
-                  {label:'Total Users',    value:stats.users,        color:'#0A66C2', icon:'bi-people-fill'},
-                  {label:'Job Seekers',    value:stats.seekers,      color:'#0ea5e9', icon:'bi-person-fill'},
+                  {label:'Total Users',    value:stats.users,        color:'#123160', icon:'bi-people-fill'},
+                  {label:'Job Seekers',    value:stats.seekers,      color:'#123160', icon:'bi-person-fill'},
                   {label:'Employers',      value:stats.employers,    color:'#d97706', icon:'bi-building-fill'},
                   {label:'Active Jobs',    value:stats.jobs,         color:'#057642', icon:'bi-briefcase-fill'},
                   {label:'Applications',   value:stats.applications, color:'#7C3AED', icon:'bi-file-text-fill'},
-                  {label:'Interviews',     value:stats.interviews,   color:'#0A66C2', icon:'bi-camera-video-fill'},
+                  {label:'Interviews',     value:stats.interviews,   color:'#123160', icon:'bi-camera-video-fill'},
                   {label:'Pending Offers', value:stats.offers,       color:'#d97706', icon:'bi-trophy-fill'},
                   {label:'Hired',          value:stats.accepted,     color:'#057642', icon:'bi-check-circle-fill'},
                 ].map((s,i)=>(
@@ -119,11 +119,11 @@ export default function AdminDashboard() {
                 <div className="col-12 col-lg-7">
                   <div className="card border-0 shadow-sm rounded-4 h-100">
                     <div className="card-body p-4">
-                      <h6 className="fw-bold mb-3"><i className="bi bi-funnel-fill me-2" style={{color:'#0A66C2'}}></i>Application Pipeline</h6>
+                      <h6 className="fw-bold mb-3"><i className="bi bi-funnel-fill me-2" style={{color:'#123160'}}></i>Application Pipeline</h6>
                       {(() => {
                         const stages = [
-                          { key:'APPLIED', label:'Applied', color:'#0A66C2' },
-                          { key:'SHORTLISTED', label:'Shortlisted', color:'#0ea5e9' },
+                          { key:'APPLIED', label:'Applied', color:'#123160' },
+                          { key:'SHORTLISTED', label:'Shortlisted', color:'#123160' },
                           { key:'INTERVIEW_SCHEDULED', label:'Interview', color:'#d97706' },
                           { key:'OFFERED', label:'Offered', color:'#7C3AED' },
                           { key:'ACCEPTED', label:'Accepted', color:'#057642' },
@@ -167,7 +167,7 @@ export default function AdminDashboard() {
                               <div style={{
                                 width:'70%', minHeight: d.count > 0 ? 4 : 1,
                                 height:`${(d.count / max) * 80}px`,
-                                background: d.count > 0 ? '#0A66C2' : '#EEF3F8',
+                                background: d.count > 0 ? '#123160' : '#EEF3F8',
                                 borderRadius:'4px 4px 0 0', transition:'height 0.4s ease'
                               }}></div>
                               <span className="small text-muted mt-1" style={{fontSize:'0.7rem'}}>{d.label}</span>
@@ -183,7 +183,7 @@ export default function AdminDashboard() {
               {/* Quick Access Cards */}
               <div className="row g-3">
                 {[
-                  {title:'Manage Users',      desc:'View, search and delete all user accounts', icon:'bi-people-fill',      color:'#0A66C2', link:'/admin/users'},
+                  {title:'Manage Users',      desc:'View, search and delete all user accounts', icon:'bi-people-fill',      color:'#123160', link:'/admin/users'},
                   {title:'Verify Skills',     desc:'Approve skill badges for job seekers',       icon:'bi-patch-check-fill', color:'#057642', link:'/admin/skills'},
                   {title:'Manage Jobs',       desc:'View and delete all job postings',           icon:'bi-briefcase-fill',   color:'#d97706', link:'/admin/jobs'},
                   {title:'All Applications',  desc:'Monitor all applications and pipeline',       icon:'bi-file-text-fill',   color:'#7C3AED', link:'/admin/applications'},

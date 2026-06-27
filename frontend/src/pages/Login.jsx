@@ -69,9 +69,9 @@ export default function Login() {
 
               {/* ── BRAND PANEL: horizontal strip on mobile/tablet, full
                    centered panel at lg+ — always visible, never hidden ── */}
-              <div className="col-12 col-lg-5 d-flex flex-row flex-lg-column align-items-center justify-content-lg-center text-start text-lg-center p-3 p-lg-5 gap-3 gap-lg-0"
-                style={{ background: 'linear-gradient(160deg, #003766 0%, #15487F 100%)', color: '#fff' }}>
-                <div className="bg-white rounded-4 p-2 p-lg-3 mb-0 mb-lg-4 d-inline-flex flex-shrink-0">
+              <div className="col-12 col-lg-5 d-flex flex-column align-items-center justify-content-center text-center p-4 p-lg-5"
+                style={{ background: 'linear-gradient(160deg, #003766 0%, #123160 100%)', color: '#fff' }}>
+                <div className="bg-white rounded-4 p-2 p-lg-3 mb-3 mb-lg-4 d-inline-flex flex-shrink-0">
                   <img src="/logo.svg" alt="SkillBridge" className="auth-logo-img"
                     onError={e => { e.target.style.display = 'none' }} />
                 </div>
@@ -106,18 +106,18 @@ export default function Login() {
                           <i className="bi bi-shield-lock-fill me-2"></i>
                           We sent a 6-digit code to <strong>{form.email}</strong>. Enter it below to finish signing in.
                         </div>
-                        <div className="mb-4">
-                          <label className="form-label fw-semibold small">Verification Code</label>
+                        <div className="float-field">
                           <input type="text" inputMode="numeric" maxLength={6}
-                            className="form-control form-control-lg rounded-3 text-center"
+                            className="form-control rounded-3 text-center"
                             style={{ letterSpacing: 6, fontSize: '1.3rem' }}
                             required value={otp}
                             onChange={e => setOtp(e.target.value.replace(/\D/g, ''))}
-                            placeholder="000000" autoFocus />
+                            placeholder=" " autoFocus />
+                          <label>Verification Code</label>
                         </div>
                         <button type="submit"
                           className="btn btn-lg w-100 text-white fw-bold rounded-3 mb-2"
-                          style={{ background: '#15487F' }}
+                          style={{ background: '#123160' }}
                           disabled={loading || otp.length !== 6}>
                           {loading
                             ? <span className="spinner-border spinner-border-sm me-2"></span>
@@ -132,45 +132,42 @@ export default function Login() {
                     ) : (
                       <>
                         {/* Email */}
-                        <div className="mb-3">
-                          <label className="form-label fw-semibold small">Email Address</label>
-                          <input type="email" className="form-control form-control-lg rounded-3" required
+                        <div className="float-field">
+                          <input type="email" className="form-control rounded-3" required
                             value={form.email}
                             onChange={e => setForm({ ...form, email: e.target.value })}
-                            placeholder="your@email.com" />
+                            placeholder=" " />
+                          <label>Email Address</label>
                         </div>
 
                         {/* Password + Forgot Password link */}
-                        <div className="mb-1">
-                          <div className="d-flex justify-content-between align-items-center mb-1">
-                            <label className="form-label fw-semibold small mb-0">Password</label>
-                            {/* ── FORGOT PASSWORD LINK ── */}
-                            <Link to="/forgot-password"
-                              className="small fw-semibold"
-                              style={{ color: '#dc3545', textDecoration: 'none', fontSize: '0.82rem' }}>
-                              <i className="bi bi-key me-1"></i>Forgot Password?
-                            </Link>
-                          </div>
-                          <div className="input-group mb-4">
-                            <input
-                              type={showPassword ? 'text' : 'password'}
-                              className="form-control form-control-lg rounded-start-3"
-                              required
-                              value={form.password}
-                              onChange={e => setForm({ ...form, password: e.target.value })}
-                              placeholder="••••••••" />
-                            <button type="button"
-                              className="btn btn-outline-secondary rounded-end-3"
-                              onClick={() => setShowPassword(!showPassword)}>
-                              <i className={`bi ${showPassword ? 'bi-eye-slash' : 'bi-eye'}`}></i>
-                            </button>
-                          </div>
+                        <div className="d-flex justify-content-end mb-1">
+                          <Link to="/forgot-password"
+                            className="small fw-semibold"
+                            style={{ color: '#dc3545', textDecoration: 'none', fontSize: '0.82rem' }}>
+                            <i className="bi bi-key me-1"></i>Forgot Password?
+                          </Link>
+                        </div>
+                        <div className="float-field mb-4" style={{ display: 'flex' }}>
+                          <input
+                            type={showPassword ? 'text' : 'password'}
+                            className="form-control rounded-start-3"
+                            required
+                            value={form.password}
+                            onChange={e => setForm({ ...form, password: e.target.value })}
+                            placeholder=" " style={{ borderRight: 'none' }} />
+                          <label>Password</label>
+                          <button type="button"
+                            className="btn btn-outline-secondary rounded-end-3"
+                            onClick={() => setShowPassword(!showPassword)}>
+                            <i className={`bi ${showPassword ? 'bi-eye-slash' : 'bi-eye'}`}></i>
+                          </button>
                         </div>
 
                         {/* Sign In Button */}
                         <button type="submit"
                           className="btn btn-lg w-100 text-white fw-bold rounded-3"
-                          style={{ background: '#15487F' }}
+                          style={{ background: '#123160' }}
                           disabled={loading}>
                           {loading
                             ? <span className="spinner-border spinner-border-sm me-2"></span>
@@ -183,13 +180,11 @@ export default function Login() {
 
                   {!otpStep && (
                   <>
-                  {/* Sign Up link */}
-                  <p className="text-center mt-4 mb-0 small">
-                    Don't have an account?{' '}
-                    <Link to="/register" className="fw-semibold" style={{ color: '#15487F' }}>
-                      Create Account
-                    </Link>
-                  </p>
+                  {/* Sign Up banner */}
+                  <div className="auth-action-banner">
+                    <span className="auth-action-text">Don't have an account? Create one free.</span>
+                    <Link to="/register" className="auth-action-btn">Create Account</Link>
+                  </div>
                   </>
                   )}
 

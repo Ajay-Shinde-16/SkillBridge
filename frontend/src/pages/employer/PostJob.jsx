@@ -237,7 +237,7 @@ export default function PostJob() {
                         checked={form.remote}
                         onChange={e => setForm({ ...form, remote: e.target.checked })} />
                       <label className="form-check-label fw-semibold ms-2" htmlFor="remoteSwitch">
-                        <i className="bi bi-globe me-1" style={{ color: '#0A66C2' }}></i>
+                        <i className="bi bi-globe me-1" style={{ color: '#123160' }}></i>
                         Remote Position
                       </label>
                     </div>
@@ -248,7 +248,7 @@ export default function PostJob() {
                 <div className="d-flex gap-3 mt-4 flex-wrap">
                   <button type="submit"
                     className="btn text-white fw-bold px-5 rounded-pill"
-                    style={{ background: '#0A66C2', fontSize: '1rem' }}
+                    style={{ background: '#123160', fontSize: '1rem' }}
                     disabled={loading || success}>
                     {loading
                       ? <><span className="spinner-border spinner-border-sm me-2"></span>Posting...</>

@@ -21,8 +21,8 @@ const typeIcon = {
   SYSTEM:      'bi-info-circle-fill'
 }
 const typeColor = {
-  APPLICATION: '#0A66C2',
-  SHORTLIST:   '#0ea5e9',
+  APPLICATION: '#123160',
+  SHORTLIST:   '#123160',
   INTERVIEW:   '#d97706',
   OFFER:       '#057642',
   SYSTEM:      '#6c757d'
@@ -152,7 +152,7 @@ export default function NotificationBell() {
             borderRadius: '50%', width: 18, height: 18,
             fontSize: '0.62rem', fontWeight: 700,
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            border: '1.5px solid #0A66C2',
+            border: '1.5px solid #123160',
             animation: 'badgePop 0.3s ease'
           }}>
             {unread > 9 ? '9+' : unread}
@@ -186,7 +186,7 @@ export default function NotificationBell() {
             background: 'var(--notif-bg, #fff)'
           }}>
             <div style={{ fontWeight: 700, fontSize: '0.95rem', color: 'var(--notif-text, #191919)' }}>
-              <i className="bi bi-bell-fill me-2" style={{ color: '#0A66C2' }}></i>
+              <i className="bi bi-bell-fill me-2" style={{ color: '#123160' }}></i>
               Notifications
               {unread > 0 && (
                 <span className="badge rounded-pill ms-2"
@@ -198,7 +198,7 @@ export default function NotificationBell() {
             <div className="d-flex gap-2">
               {unread > 0 && (
                 <button onClick={handleMarkRead}
-                  style={{ border: 'none', background: 'none', color: '#0A66C2', fontSize: '0.72rem', cursor: 'pointer', fontWeight: 500 }}>
+                  style={{ border: 'none', background: 'none', color: '#123160', fontSize: '0.72rem', cursor: 'pointer', fontWeight: 500 }}>
                   Mark all read
                 </button>
               )}
@@ -215,7 +215,7 @@ export default function NotificationBell() {
           <div style={{ overflowY: 'auto', flex: 1, background: 'var(--notif-bg, #fff)' }}>
             {loading ? (
               <div style={{ padding: 32, textAlign: 'center' }}>
-                <div className="spinner-border spinner-border-sm" style={{ color: '#0A66C2' }}></div>
+                <div className="spinner-border spinner-border-sm" style={{ color: '#123160' }}></div>
               </div>
             ) : notifications.length === 0 ? (
               <div style={{ padding: 32, textAlign: 'center', color: 'var(--notif-muted, #adb5bd)' }}>
@@ -235,16 +235,16 @@ export default function NotificationBell() {
                   display: 'flex', gap: 10, alignItems: 'flex-start',
                   transition: 'background 0.1s'
                 }}
-                onMouseOver={e => e.currentTarget.style.background = n.read ? 'var(--notif-hover, #f8f9fa)' : '#dce8f5'}
+                onMouseOver={e => e.currentTarget.style.background = n.read ? 'var(--notif-hover, #f8f9fa)' : '#E6EDF5'}
                 onMouseOut={e => e.currentTarget.style.background = n.read ? 'var(--notif-bg, #fff)' : 'var(--notif-unread, #EEF3F8)'}>
                 {/* Icon */}
                 <div style={{
                   width: 36, height: 36, borderRadius: '50%', flexShrink: 0,
-                  background: (typeColor[n.type] || '#0A66C2') + '18',
+                  background: (typeColor[n.type] || '#123160') + '18',
                   display: 'flex', alignItems: 'center', justifyContent: 'center'
                 }}>
                   <i className={`bi ${typeIcon[n.type] || 'bi-info-circle-fill'}`}
-                    style={{ color: typeColor[n.type] || '#0A66C2', fontSize: '0.9rem' }}></i>
+                    style={{ color: typeColor[n.type] || '#123160', fontSize: '0.9rem' }}></i>
                 </div>
                 {/* Content */}
                 <div style={{ flex: 1, minWidth: 0 }}>
@@ -271,7 +271,7 @@ export default function NotificationBell() {
                 {!n.read && (
                   <div style={{
                     width: 8, height: 8, borderRadius: '50%',
-                    background: '#0A66C2', flexShrink: 0, marginTop: 4
+                    background: '#123160', flexShrink: 0, marginTop: 4
                   }}></div>
                 )}
               </div>

@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { getProfile, getMyApplications, searchJobs } from '../services/api'
 
-const SKILL_COLORS = ['#0A66C2','#057642','#d97706','#7C3AED','#0ea5e9','#dc3545','#22c55e','#ec4899']
+const SKILL_COLORS = ['#123160','#057642','#d97706','#7C3AED','#123160','#dc3545','#22c55e','#ec4899']
 const ROADMAP_SKILLS = ['Docker','Kubernetes','GraphQL','Redis','Kafka','System Design']
 
 function AnimatedNumber({ target, duration = 1200 }) {
@@ -172,7 +172,7 @@ export default function CareerRoom() {
 
   if (loading) return (
     <div className="d-flex justify-content-center align-items-center" style={{ minHeight:'60vh' }}>
-      <div className="spinner-border" style={{ color:'#0A66C2' }}></div>
+      <div className="spinner-border" style={{ color:'#123160' }}></div>
     </div>
   )
 
@@ -180,7 +180,7 @@ export default function CareerRoom() {
     <div className="container py-4" style={{ maxWidth:960 }}>
 
       {/* ── HERO ── */}
-      <div className="rounded-4 p-4 mb-4" style={{ background:'#0A66C2' }}>
+      <div className="rounded-4 p-4 mb-4" style={{ background:'#123160' }}>
         <div className="d-flex align-items-center gap-4 flex-wrap">
           <ScoreRing score={matchScore} />
           <div style={{ flex:1, minWidth:200 }}>
@@ -208,7 +208,7 @@ export default function CareerRoom() {
           {/* Mini score cards */}
           <div className="d-grid gap-2" style={{ gridTemplateColumns:'1fr 1fr', display:'grid' }}>
             {[
-              ['Resume', resumeStrength, '#0ea5e9'],
+              ['Resume', resumeStrength, '#123160'],
               ['Profile', profileComplete, '#22c55e'],
               ['Skills', Math.min(100, totalSkills * 12), '#f59e0b'],
               ['Readiness', appReadiness, '#a855f7'],
@@ -228,7 +228,7 @@ export default function CareerRoom() {
       {/* ── STATS ROW ── */}
       <div className="row g-3 mb-4">
         {[
-          { icon:'bi-send', val:counts.applied, label:'Applied', color:'#0A66C2', bg:'#EEF3F8' },
+          { icon:'bi-send', val:counts.applied, label:'Applied', color:'#123160', bg:'#EEF3F8' },
           { icon:'bi-star-fill', val:counts.shortlisted, label:'Shortlisted', color:'#057642', bg:'#D1FAE5' },
           { icon:'bi-camera-video', val:counts.interviews, label:'Interviews', color:'#d97706', bg:'#FEF3C7' },
           { icon:'bi-trophy-fill', val:counts.offered + counts.accepted, label:'Offers', color:'#7C3AED', bg:'#EDE9FF' },
@@ -252,9 +252,9 @@ export default function CareerRoom() {
         <div className="col-lg-6">
           <div className="card border-0 shadow-sm rounded-4 p-4 h-100">
             <div className="fw-bold mb-3" style={{ fontSize:13 }}>
-              <i className="bi bi-bar-chart-fill me-2" style={{ color:'#0A66C2' }}></i>
+              <i className="bi bi-bar-chart-fill me-2" style={{ color:'#123160' }}></i>
               Your Skills
-              <span className="badge ms-2 rounded-pill" style={{ background:'#EEF3F8', color:'#0A66C2', fontSize:10 }}>
+              <span className="badge ms-2 rounded-pill" style={{ background:'#EEF3F8', color:'#123160', fontSize:10 }}>
                 {verifiedCount} verified
               </span>
             </div>
@@ -262,9 +262,9 @@ export default function CareerRoom() {
               skillBars.map(s => <BarRow key={s.name} {...s} />)
             ) : (
               <div className="text-center py-4">
-                <i className="bi bi-plus-circle" style={{ fontSize:32, color:'#0A66C2' }}></i>
+                <i className="bi bi-plus-circle" style={{ fontSize:32, color:'#123160' }}></i>
                 <p className="text-muted mt-2 small">No skills added yet</p>
-                <Link to="/profile" className="btn btn-sm rounded-pill" style={{ background:'#0A66C2', color:'#fff' }}>
+                <Link to="/profile" className="btn btn-sm rounded-pill" style={{ background:'#123160', color:'#fff' }}>
                   Add Skills
                 </Link>
               </div>
@@ -309,10 +309,10 @@ export default function CareerRoom() {
       {/* ── RECOMMENDED JOBS (real data) ── */}
       <div className="card border-0 shadow-sm rounded-4 p-4 mb-4">
         <div className="fw-bold mb-3" style={{ fontSize:13 }}>
-          <i className="bi bi-briefcase-fill me-2" style={{ color:'#0A66C2' }}></i>
+          <i className="bi bi-briefcase-fill me-2" style={{ color:'#123160' }}></i>
           Recommended Jobs For You
           {matchedJobs.length > 0 && (
-            <span className="badge ms-2 rounded-pill" style={{ background:'#EEF3F8', color:'#0A66C2', fontSize:10 }}>
+            <span className="badge ms-2 rounded-pill" style={{ background:'#EEF3F8', color:'#123160', fontSize:10 }}>
               {matchedJobs.length} matched
             </span>
           )}
@@ -345,13 +345,13 @@ export default function CareerRoom() {
           <div className="text-center py-4">
             <i className="bi bi-search" style={{ fontSize:32, color:'#adb5bd' }}></i>
             <p className="text-muted mt-2 small">Add skills to your profile to see matched jobs</p>
-            <Link to="/jobs" className="btn btn-sm rounded-pill" style={{ background:'#0A66C2', color:'#fff' }}>
+            <Link to="/jobs" className="btn btn-sm rounded-pill" style={{ background:'#123160', color:'#fff' }}>
               Browse All Jobs
             </Link>
           </div>
         )}
         <div className="text-center mt-3">
-          <Link to="/jobs" className="btn btn-sm rounded-pill fw-semibold px-4" style={{ background:'#0A66C2', color:'#fff' }}>
+          <Link to="/jobs" className="btn btn-sm rounded-pill fw-semibold px-4" style={{ background:'#123160', color:'#fff' }}>
             <i className="bi bi-search me-2"></i>Browse All Jobs
           </Link>
         </div>
@@ -405,7 +405,7 @@ export default function CareerRoom() {
           </div>
         </div>
         <div className="col-lg-6">
-          <div className="card border-0 shadow-sm rounded-4 p-4 h-100 text-center d-flex flex-column justify-content-center" style={{ background:'#0A66C2' }}>
+          <div className="card border-0 shadow-sm rounded-4 p-4 h-100 text-center d-flex flex-column justify-content-center" style={{ background:'#123160' }}>
             <i className="bi bi-rocket-takeoff-fill mb-3" style={{ fontSize:48, color:'rgba(255,255,255,0.9)' }}></i>
             <div style={{ color:'#fff', fontSize:18, fontWeight:700, marginBottom:8 }}>
               You are {matchScore}% ready!
@@ -416,7 +416,7 @@ export default function CareerRoom() {
                 : 'Complete your profile to boost your career match score.'}
             </div>
             <div className="d-flex gap-2 justify-content-center flex-wrap">
-              <Link to="/jobs" className="btn rounded-pill fw-semibold px-4" style={{ background:'#fff', color:'#0A66C2' }}>
+              <Link to="/jobs" className="btn rounded-pill fw-semibold px-4" style={{ background:'#fff', color:'#123160' }}>
                 <i className="bi bi-search me-2"></i>Find Jobs
               </Link>
               <Link to="/profile" className="btn rounded-pill fw-semibold px-4" style={{ background:'rgba(255,255,255,0.15)', color:'#fff', border:'1px solid rgba(255,255,255,0.4)' }}>

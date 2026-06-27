@@ -18,7 +18,7 @@ export default function CompanyLogo({ companyName, size = 40, className = '' }) 
   const initial = companyName?.charAt(0).toUpperCase() || '?'
 
   // Color based on company name (consistent color per company)
-  const colors = ['#0A66C2','#057642','#d97706','#7C3AED','#dc3545','#0ea5e9','#b91c1c','#065f46']
+  const colors = ['#123160','#057642','#d97706','#7C3AED','#dc3545','#0F766E','#b91c1c','#065f46']
   const colorIndex = (companyName || '').charCodeAt(0) % colors.length
   const bgColor = colors[colorIndex]
 

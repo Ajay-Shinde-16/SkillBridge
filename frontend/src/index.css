@@ -1,6 +1,27 @@
 :root {
+  /* ════════════════════════════════════════════════════════════
+     TYPE SCALE — Major Third (1.250), base 16px / 1rem
+     One consistent system for every heading + body + caption size
+     in the app, so nothing is ever randomly oversized again.
+     ════════════════════════════════════════════════════════════ */
+  --fs-caption: 0.8rem;     /* 12.8px — fine print, timestamps, badges */
+  --fs-small:   0.9rem;     /* 14.4px — secondary text, helper copy   */
+  --fs-body:    1rem;       /* 16px   — base paragraph text          */
+  --fs-h6:      1.125rem;   /* 18px   — smallest heading / card title*/
+  --fs-h5:      1.25rem;    /* 20px                                  */
+  --fs-h4:      1.5rem;     /* 24px                                  */
+  --fs-h3:      1.875rem;   /* 30px                                  */
+  --fs-h2:      2.25rem;    /* 36px                                  */
+  --fs-h1:      2.75rem;    /* 44px   — hero-level only, used sparingly */
+
+  /* Line-height: tight for headings, relaxed for reading copy */
+  --lh-heading: 1.15;
+  --lh-subhead: 1.25;
+  --lh-body:    1.6;
+  --lh-small:   1.5;
+
   /* ─── TMS-inspired palette (C-DAC institutional look) ─── */
-  --li-blue: #15487F;     /* primary navy-blue (buttons, links, accents) */
+  --li-blue: #123160;     /* primary navy-blue (buttons, links, accents) */
   --li-dark: #0A2347;     /* deep navy (gradients, hero, sidebar) — matches TMS */
   --li-bg:   #EEF3F8;     /* soft blue tint for panels */
   --hero-1:  #0A2347;     /* deep TMS navy (hero start) */
@@ -46,7 +67,7 @@ body.dark-mode .app-navbar .navbar-brand { color: var(--text-primary) !important
 body.dark-mode .app-navbar .app-nav-link,
 body.dark-mode .app-navbar .nav-link { color: #c9d3df !important; }
 body.dark-mode .app-navbar .app-nav-link:hover,
-body.dark-mode .app-navbar .nav-link:hover { color: #6cb0ff !important; }
+body.dark-mode .app-navbar .nav-link:hover { color: #7FB0E6 !important; }
 
 * { box-sizing: border-box; }
 
@@ -54,9 +75,42 @@ body {
   background-color: var(--bg-page);
   color: var(--text-primary);
   font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
-  font-size: 15px;
+  font-size: var(--fs-body);      /* 1rem / 16px — accessible base */
+  line-height: var(--lh-body);
   font-feature-settings: 'tnum' 1, 'cv11' 1;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+/* keep the ambient canvas subtle so foreground text stays crisp & premium */
+canvas { opacity: 0.55; }
+
+/* ════════════════════════════════════════════════════════════
+   TYPE SCALE applied — every heading level gets one fixed,
+   predictable size from the modular scale. No more random
+   2.6rem / 3rem one-off inline overrides scattered across pages.
+   ════════════════════════════════════════════════════════════ */
+h1 { font-size: var(--fs-h1); line-height: var(--lh-heading); font-weight: 700; }
+h2 { font-size: var(--fs-h2); line-height: var(--lh-heading); font-weight: 700; }
+h3 { font-size: var(--fs-h3); line-height: var(--lh-subhead); font-weight: 700; }
+h4 { font-size: var(--fs-h4); line-height: var(--lh-subhead); font-weight: 700; }
+h5 { font-size: var(--fs-h5); line-height: var(--lh-subhead); font-weight: 600; }
+h6 { font-size: var(--fs-h6); line-height: var(--lh-subhead); font-weight: 600; }
+p  { font-size: var(--fs-body); line-height: var(--lh-body); }
+small, .small, .text-muted, .form-text {
+  font-size: var(--fs-small);
+  line-height: var(--lh-small);
+}
+.caption, figcaption, .text-caption {
+  font-size: var(--fs-caption);
+  line-height: var(--lh-small);
+}
+/* tighten headings further on mobile so they never overpower the viewport */
+@media (max-width: 576px) {
+  h1 { font-size: calc(var(--fs-h1) * 0.72); }
+  h2 { font-size: calc(var(--fs-h2) * 0.78); }
+  h3 { font-size: calc(var(--fs-h3) * 0.85); }
+  h4 { font-size: calc(var(--fs-h4) * 0.9); }
 }
 
 /* Big formal titles get the institutional serif (matches TMS). Sub-UI headings
@@ -119,9 +173,9 @@ body.dark-mode .text-accent { color: #ff8b3d !important; }
   border: 1px solid #6ee7b7;
 }
 .skill-badge.unverified {
-  background-color: #e0e7ff;
-  color: #3730a3;
-  border: 1px solid #a5b4fc;
+  background-color: #E6EDF5;
+  color: #123160;
+  border: 1px solid #B6C6DA;
 }
 
 /* ─── JOB CARD ─── */
@@ -132,9 +186,9 @@ body.dark-mode .text-accent { color: #ff8b3d !important; }
   background: #fff;
 }
 .job-card:hover {
-  box-shadow: 0 4px 20px rgba(10,102,194,0.12);
+  box-shadow: 0 4px 20px rgba(18,49,96,0.12);
   transform: translateY(-2px);
-  border-color: #15487F;
+  border-color: #123160;
 }
 
 /* ─── PAGE HEADER (LinkedIn blue) ─── */
@@ -169,7 +223,7 @@ body.dark-mode .text-accent { color: #ff8b3d !important; }
   transition: transform 0.15s;
 }
 .stat-card:hover { transform: translateY(-2px); }
-.stat-card .number { font-size: 1.8rem; font-weight: 700; color: #15487F; }
+.stat-card .number { font-size: 1.8rem; font-weight: 700; color: #123160; }
 .stat-card .label  { color: #6c757d; font-size: 0.78rem; margin-top: 2px; }
 
 /* ─── SIDEBAR ─── */
@@ -196,7 +250,7 @@ body.dark-mode .text-accent { color: #ff8b3d !important; }
 .sidebar .nav-link:hover,
 .sidebar .nav-link.active {
   background-color: #EEF3F8;
-  color: #15487F;
+  color: #123160;
 }
 .sidebar .nav-link i {
   width: 18px;
@@ -239,7 +293,7 @@ body.dark-mode .text-accent { color: #ff8b3d !important; }
   gap: 2px;
 }
 .mobile-bottom-nav a.active,
-.mobile-bottom-nav a:hover { color: #15487F; }
+.mobile-bottom-nav a:hover { color: #123160; }
 .mobile-bottom-nav a i { font-size: 1.1rem; }
 
 /* ─── RESPONSIVE ─── */
@@ -301,10 +355,7 @@ body.dark-mode .text-accent { color: #ff8b3d !important; }
   /* Tables on mobile */
   .table-responsive { font-size: 12px; }
 
-  /* Hero sections */
-  h1, .display-5 { font-size: 1.5rem !important; }
-  h2 { font-size: 1.2rem !important; }
-  h4 { font-size: 1rem !important; }
+  /* Hero sections — sizing now handled by the type-scale mobile rule above */
 
   /* Row gutters */
   .row.g-4 { --bs-gutter-x: 0.75rem; --bs-gutter-y: 0.75rem; }
@@ -333,8 +384,8 @@ body.dark-mode .text-accent { color: #ff8b3d !important; }
 }
 
 /* ─── UTILITIES ─── */
-.text-li-blue { color: #15487F !important; }
-.bg-li-blue   { background-color: #15487F !important; }
+.text-li-blue { color: #123160 !important; }
+.bg-li-blue   { background-color: #123160 !important; }
 
 /* ─── PROGRESS BAR ─── */
 .progress { height: 8px; border-radius: 4px; }
@@ -342,8 +393,8 @@ body.dark-mode .text-accent { color: #ff8b3d !important; }
 
 /* ─── FORM CONTROLS ─── */
 .form-control:focus, .form-select:focus {
-  border-color: #15487F;
-  box-shadow: 0 0 0 2px rgba(10,102,194,0.1);
+  border-color: #123160;
+  box-shadow: 0 0 0 2px rgba(18,49,96,0.1);
 }
 
 /* ════════════════════════════════════════════════════════════
@@ -360,23 +411,23 @@ body.dark-mode .text-accent { color: #ff8b3d !important; }
   --bg-card-hover:  #FAFBFC;
   /* text */
   --text-primary:   #111827;
-  --text-secondary: #6B7280;
-  --text-muted:     #9CA3AF;
+  --text-secondary: #5B6471;
+  --text-muted:     #828B98;
   /* brand / actions */
-  --accent:         #2563EB;
-  --accent-hover:   #1D4ED8;
-  --accent-soft:    #DBEAFE;
+  --accent:         #123160;
+  --accent-hover:   #0F3460;
+  --accent-soft:    #E6EDF5;
   /* structure */
   --border-color:   #E5E7EB;
   --radius-card:    12px;
   --shadow-card:    0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);
   --shadow-card-lg: 0 4px 12px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.04);
-  --focus-ring:     rgba(37,99,235,0.35);
+  --focus-ring:     rgba(18,49,96,0.40);
   /* status pills — soft bg + dark text, identical in both modes for readability */
   --pill-green-bg:  #DCFCE7; --pill-green-text:  #166534;
   --pill-yellow-bg: #FEF3C7; --pill-yellow-text: #92400E;
   --pill-red-bg:    #FEE2E2; --pill-red-text:    #991B1B;
-  --pill-blue-bg:   #DBEAFE; --pill-blue-text:   #1E40AF;
+  --pill-blue-bg:   #E6EDF5; --pill-blue-text:   #123160;
   --pill-gray-bg:   #F3F4F6; --pill-gray-text:   #374151;
 }
 
@@ -387,13 +438,13 @@ body.dark-mode {
   --text-primary:   #F9FAFB;
   --text-secondary: #9CA3AF;
   --text-muted:     #6B7280;
-  --accent:         #3B82F6;
-  --accent-hover:   #60A5FA;
-  --accent-soft:    #1E3A5F;
+  --accent:         #5b9bd5;
+  --accent-hover:   #7aafdf;
+  --accent-soft:    #15243a;
   --border-color:   #374151;
   --shadow-card:    0 1px 3px rgba(0,0,0,0.5), 0 1px 2px rgba(0,0,0,0.4);
   --shadow-card-lg: 0 4px 16px rgba(0,0,0,0.55), 0 2px 6px rgba(0,0,0,0.4);
-  --focus-ring:     rgba(59,130,246,0.45);
+  --focus-ring:     rgba(91,155,213,0.45);
   /* pill colors intentionally NOT overridden — same soft bg/dark text in dark mode too */
 }
 
@@ -568,9 +619,9 @@ body.dark-mode .skill-badge.verified {
   border-color: #196c38 !important;
 }
 body.dark-mode .skill-badge.unverified {
-  background-color: #1a1f4e !important;
-  color: #79c0ff !important;
-  border-color: #1158a7 !important;
+  background-color: #15243A !important;
+  color: #7FB0E6 !important;
+  border-color: #123160 !important;
 }
 body.dark-mode .alert-success {
   background-color: #0a2e1a !important;
@@ -589,7 +640,7 @@ body.dark-mode .alert-warning {
 }
 body.dark-mode .alert-info {
   background-color: #0a1e2e !important;
-  border-color: #1158a7 !important;
+  border-color: #123160 !important;
   color: var(--accent) !important;
 }
 body.dark-mode .btn-outline-secondary {
@@ -632,7 +683,7 @@ body.dark-mode { --meta-bg: #1c2128; }
   top: 0 !important;
   z-index: 1030 !important;
   backdrop-filter: blur(12px) !important;
-  background: linear-gradient(135deg, rgba(10,102,194,0.95), rgba(0,65,130,0.92)) !important;
+  background: linear-gradient(135deg, rgba(18,49,96,0.97), rgba(10,35,71,0.97)) !important;
 }
 
 /* ─── ENSURE CONTENT SITS ABOVE CANVAS ─── */
@@ -646,20 +697,23 @@ body.dark-mode { --meta-bg: #1c2128; }
   z-index: 1;
 }
 
-/* ─── GLASS EFFECT: cards sit over canvas nicely ─── */
+/* ─── SOLID, CRISP SURFACES (premium: no haze from the canvas behind) ─── */
 body:not(.dark-mode) .card,
-body:not(.dark-mode) .job-card,
 body:not(.dark-mode) .stat-card,
 body:not(.dark-mode) .sidebar {
-  background: rgba(255,255,255,0.88) !important;
-  backdrop-filter: blur(8px);
+  background: #ffffff !important;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  border: 1px solid #e7ecf2 !important;
 }
 body.dark-mode .card,
 body.dark-mode .job-card,
 body.dark-mode .stat-card,
 body.dark-mode .sidebar {
-  background: rgba(22,27,34,0.88) !important;
-  backdrop-filter: blur(8px);
+  background: #1F2937 !important;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  border: 1px solid #2d333b !important;
 }
 
 /* ─── BUTTON HOVER ─── */
@@ -668,7 +722,7 @@ body.dark-mode .sidebar {
 }
 .btn:hover  { transform: translateY(-2px) !important; }
 .btn:active { transform: translateY(0) !important;    }
-.btn-primary:hover  { box-shadow: 0 6px 20px rgba(10,102,194,0.35) !important; filter: brightness(1.06) !important; }
+.btn-primary:hover  { box-shadow: 0 6px 20px rgba(18,49,96,0.35) !important; filter: brightness(1.06) !important; }
 .btn-success:hover  { box-shadow: 0 6px 20px rgba(5,118,66,0.35) !important;   filter: brightness(1.06) !important; }
 .btn-danger:hover   { box-shadow: 0 6px 20px rgba(220,53,69,0.3) !important; }
 .btn-warning:hover  { box-shadow: 0 6px 20px rgba(217,119,6,0.3) !important; }
@@ -678,28 +732,28 @@ body.dark-mode .sidebar {
 .card::before {
   content:'';
   position:absolute; top:0; left:0; right:0; height:3px;
-  background: linear-gradient(90deg, #15487F, #14B8A6);
+  background: linear-gradient(90deg, #123160, #14B8A6);
   transform: scaleX(0); transform-origin:left;
   transition: transform 0.3s ease;
   z-index: 2;
 }
 .card:hover::before { transform: scaleX(1); }
-.card:hover { transform: translateY(-4px) !important; box-shadow: 0 14px 36px rgba(10,102,194,0.13) !important; }
+.card:hover { transform: translateY(-4px) !important; box-shadow: 0 14px 36px rgba(18,49,96,0.13) !important; }
 .card { transition: transform 0.25s ease, box-shadow 0.25s ease !important; }
 
 /* ─── JOB CARD ─── */
 .job-card { transition: all 0.25s cubic-bezier(0.4,0,0.2,1) !important; }
 .job-card:hover {
   transform: translateY(-5px) !important;
-  box-shadow: 0 16px 40px rgba(10,102,194,0.15) !important;
-  border-color: #15487F !important;
+  box-shadow: 0 16px 40px rgba(18,49,96,0.15) !important;
+  border-color: #123160 !important;
 }
 
 /* ─── STAT CARD ─── */
 .stat-card { transition: all 0.2s ease !important; cursor:pointer; }
 .stat-card:hover {
   transform: translateY(-4px) !important;
-  box-shadow: 0 10px 28px rgba(10,102,194,0.13) !important;
+  box-shadow: 0 10px 28px rgba(18,49,96,0.13) !important;
 }
 
 /* ─── SIDEBAR SLIDE ─── */
@@ -709,13 +763,13 @@ body.dark-mode .sidebar {
 }
 .sidebar .nav-link:hover {
   padding-left: 18px !important;
-  border-left-color: #15487F !important;
-  color: #15487F !important;
+  border-left-color: #123160 !important;
+  color: #123160 !important;
   background: #EEF3F8 !important;
 }
 .sidebar .nav-link.active {
   padding-left: 18px !important;
-  border-left-color: #15487F !important;
+  border-left-color: #123160 !important;
 }
 body.dark-mode .sidebar .nav-link:hover,
 body.dark-mode .sidebar .nav-link.active {
@@ -730,13 +784,13 @@ body.dark-mode .sidebar .nav-link.active {
 }
 .skill-badge:hover {
   transform: translateY(-2px) !important;
-  box-shadow: 0 4px 10px rgba(10,102,194,0.2) !important;
+  box-shadow: 0 4px 10px rgba(18,49,96,0.2) !important;
 }
 
 /* ─── FORM FOCUS ─── */
 .form-control:focus, .form-select:focus {
-  border-color: #15487F !important;
-  box-shadow: 0 0 0 3px rgba(10,102,194,0.12) !important;
+  border-color: #123160 !important;
+  box-shadow: 0 0 0 3px rgba(18,49,96,0.12) !important;
 }
 
 /* ─── MOBILE: reduce canvas intensity ─── */
@@ -946,7 +1000,7 @@ body.dark-mode .sidebar .nav-link.active {
 /* ── WELCOME HEADER / PAGE HEADER ── */
 body.dark-mode .welcome-header,
 body.dark-mode .page-header {
-  background: linear-gradient(135deg, #0f3460, #15487F) !important;
+  background: linear-gradient(135deg, #0f3460, #123160) !important;
 }
 
 /* ── STAT CARDS ── */
@@ -976,7 +1030,7 @@ body.dark-mode .alert-warning {
 body.dark-mode .alert-info {
   background: #1a2535 !important;
   border-color: #2d4a5a !important;
-  color: #60a5fa !important;
+  color: #7FB0E6 !important;
 }
 
 /* ── MODALS ── */
@@ -1169,7 +1223,7 @@ body.dark-mode .badge.bg-info {
   align-items: center;
   gap: 4px;
   background: #EEF3F8;
-  color: #15487F;
+  color: #123160;
   padding: 2px 10px;
   border-radius: 20px;
   font-size: 0.78rem;
@@ -1177,7 +1231,7 @@ body.dark-mode .badge.bg-info {
 }
 body.dark-mode .company-badge {
   background: #1c2d3e !important;
-  color: #60a5fa !important;
+  color: #7FB0E6 !important;
 }
 
 /* ════════════════════════════════════════════════════════════
@@ -1186,13 +1240,13 @@ body.dark-mode .company-badge {
    so no text/panel goes invisible when dark mode is on.
    ════════════════════════════════════════════════════════════ */
 
-/* Inline brand-navy TEXT (#15487F) → lift to a readable blue on dark bg.
+/* Inline brand-navy TEXT (#123160) → lift to a readable blue on dark bg.
    (Background uses of the same hex are fine and intentionally left dark.) */
-body.dark-mode [style*="color:#15487F"],
-body.dark-mode [style*="color: #15487F"],
-body.dark-mode [style*="color:'#15487F'"],
-body.dark-mode [style*="color: '#15487F'"] {
-  color: #6cb0ff !important;
+body.dark-mode [style*="color:#123160"],
+body.dark-mode [style*="color: #123160"],
+body.dark-mode [style*="color:'#123160'"],
+body.dark-mode [style*="color: '#123160'"] {
+  color: #7FB0E6 !important;
 }
 
 /* Inline deep-navy text → readable blue */
@@ -1200,7 +1254,7 @@ body.dark-mode [style*="color:#0C2C54"],
 body.dark-mode [style*="color: #0C2C54"],
 body.dark-mode [style*="color:'#0C2C54'"],
 body.dark-mode [style*="color: '#0C2C54'"] {
-  color: #8ab4f8 !important;
+  color: #7FB0E6 !important;
 }
 
 /* Inline white / near-white panel BACKGROUNDS → dark card surface */
@@ -1231,7 +1285,7 @@ body.dark-mode [style*="solid #E2E8F0"] {
 }
 
 /* Bootstrap text-primary (used for navy links/labels) lift in dark mode */
-body.dark-mode .text-primary { color: #6cb0ff !important; }
+body.dark-mode .text-primary { color: #7FB0E6 !important; }
 
 /* Orange accent stays vivid & readable in dark mode automatically (#ff8b3d set above) */
 
@@ -1248,7 +1302,7 @@ body.dark-mode .form-label.fw-semibold { color: #adbac7; }
 
 /* Primary buttons: institutional navy with confident weight (TMS SIGN IN feel) */
 .btn-primary,
-.btn[style*="#15487F"] {
+.btn[style*="#123160"] {
   letter-spacing: 0.02em;
 }
 
@@ -1266,3 +1320,487 @@ body.dark-mode .form-label.fw-semibold { color: #adbac7; }
 
 .auth-tagline { max-width: none; }
 @media (min-width: 992px) { .auth-tagline { max-width: 220px; margin: 0 auto; } }
+
+/* ════════════════════════════════════════════════════════════
+   DARK-MODE INLINE-STYLE FIX  (rgb-serialized form)
+   React applies inline styles via the CSSOM, so the browser
+   re-serializes hex colors to rgb() in the style attribute.
+   The earlier hex-based [style*=...] rules therefore never
+   matched. These rgb()-based rules DO match and recolour every
+   hardcoded inline value so nothing is invisible in dark mode.
+   ════════════════════════════════════════════════════════════ */
+
+/* — inline TEXT colours → readable on dark — */
+body.dark-mode [style*="color: rgb(10, 102, 194)"] { color: #7FB0E6 !important; }
+body.dark-mode [style*="color: rgb(21, 72, 127)"],
+body.dark-mode [style*="color: rgb(18, 49, 96)"] { color: #7FB0E6 !important; }
+body.dark-mode [style*="color: rgb(5, 118, 66)"] { color: #3fb950 !important; }
+body.dark-mode [style*="color: rgb(6, 95, 70)"] { color: #3fb950 !important; }
+body.dark-mode [style*="color: rgb(15, 118, 110)"] { color: #2dd4bf !important; }
+body.dark-mode [style*="color: rgb(153, 27, 27)"] { color: #f87171 !important; }
+body.dark-mode [style*="color: rgb(185, 28, 28)"] { color: #f87171 !important; }
+body.dark-mode [style*="color: rgb(220, 53, 69)"] { color: #f87171 !important; }
+body.dark-mode [style*="color: rgb(217, 119, 6)"] { color: #fbbf24 !important; }
+body.dark-mode [style*="color: rgb(146, 64, 14)"] { color: #fbbf24 !important; }
+body.dark-mode [style*="color: rgb(120, 53, 15)"] { color: #fbbf24 !important; }
+body.dark-mode [style*="color: rgb(245, 158, 11)"] { color: #fbbf24 !important; }
+body.dark-mode [style*="color: rgb(124, 58, 237)"] { color: #a78bfa !important; }
+body.dark-mode [style*="color: rgb(30, 64, 175)"] { color: #7FB0E6 !important; }
+body.dark-mode [style*="color: rgb(14, 165, 233)"] { color: #7FB0E6 !important; }
+body.dark-mode [style*="color: rgb(71, 85, 105)"] { color: #adbac7 !important; }
+body.dark-mode [style*="color: rgb(108, 117, 125)"] { color: #9aa6b2 !important; }
+body.dark-mode [style*="color: rgb(68, 68, 68)"] { color: #c9d1d9 !important; }
+
+/* — inline light-tint BACKGROUNDS → dark tints (text stays readable) — */
+body.dark-mode [style*="background: rgb(238, 243, 248)"],
+body.dark-mode [style*="background-color: rgb(238, 243, 248)"] { background: #15243a !important; }
+body.dark-mode [style*="background: rgb(248, 250, 252)"],
+body.dark-mode [style*="background-color: rgb(248, 250, 252)"] { background: #1c2128 !important; }
+body.dark-mode [style*="background: rgb(241, 245, 249)"],
+body.dark-mode [style*="background-color: rgb(241, 245, 249)"] { background: #1c2128 !important; }
+body.dark-mode [style*="background: rgb(248, 249, 250)"],
+body.dark-mode [style*="background-color: rgb(248, 249, 250)"] { background: #1c2128 !important; }
+body.dark-mode [style*="background: rgb(209, 250, 229)"],
+body.dark-mode [style*="background-color: rgb(209, 250, 229)"] { background: #0a2e1a !important; }
+body.dark-mode [style*="background: rgb(254, 226, 226)"],
+body.dark-mode [style*="background-color: rgb(254, 226, 226)"] { background: #2e1a1a !important; }
+body.dark-mode [style*="background: rgb(204, 251, 241)"],
+body.dark-mode [style*="background-color: rgb(204, 251, 241)"] { background: #0d2e2b !important; }
+body.dark-mode [style*="background: rgb(254, 243, 199)"],
+body.dark-mode [style*="background-color: rgb(254, 243, 199)"] { background: #2e2a1a !important; }
+body.dark-mode [style*="background: rgb(219, 234, 254)"],
+body.dark-mode [style*="background-color: rgb(219, 234, 254)"] { background: #15243a !important; }
+body.dark-mode [style*="background: rgb(220, 252, 231)"],
+body.dark-mode [style*="background-color: rgb(220, 252, 231)"] { background: #0a2e1a !important; }
+
+/* — inline white panel backgrounds → dark card surface — */
+body.dark-mode [style*="background: rgb(255, 255, 255)"],
+body.dark-mode [style*="background-color: rgb(255, 255, 255)"] { background: var(--bg-card) !important; }
+
+/* — inline soft-grey borders → dark border — */
+body.dark-mode [style*="rgb(226, 232, 240)"] { border-color: #2d333b !important; }
+body.dark-mode [style*="rgb(241, 245, 249)"] { border-color: #2d333b !important; }
+
+/* — #E2E8F0 used as progress-track / divider bg → dark track — */
+body.dark-mode [style*="background: rgb(226, 232, 240)"],
+body.dark-mode [style*="background-color: rgb(226, 232, 240)"] { background: #2d333b !important; }
+
+/* — keep solid brand-blue progress fills visible (they already read fine) — */
+body.dark-mode [style*="background: rgb(10, 102, 194)"] { /* primary buttons/fills: leave as-is */ }
+
+
+/* ════════════════════════════════════════════════════════════
+   PREMIUM HERO CTA BUTTONS  +  GLOBAL "never invisible" SAFETY NET
+   The hero sits inside a Bootstrap .text-white block (which sets an
+   !important white colour + inherited --bs-text-opacity). When an
+   outline-light button fills white on hover, its label could resolve
+   to white-on-white. These explicit buttons pin their own colours in
+   every state and theme, so the text is ALWAYS readable.
+   ════════════════════════════════════════════════════════════ */
+
+/* — Solid white CTA: brand-blue label, soft elevation — */
+.btn-hero-primary {
+  background: #ffffff;
+  color: #123160 !important;
+  border: 1.5px solid #ffffff;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease, color 0.2s ease;
+}
+.btn-hero-primary i { color: inherit !important; }
+.btn-hero-primary:hover,
+.btn-hero-primary:focus,
+.btn-hero-primary:active {
+  background: #E6EDF5;
+  color: #0A2347 !important;
+  border-color: #E6EDF5;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.26);
+  transform: translateY(-2px);
+}
+
+/* — Glass ghost CTA: white label, frosted fill; fills white + blue label on hover — */
+.btn-hero-ghost {
+  background: rgba(255, 255, 255, 0.10);
+  color: #ffffff !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.65);
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+.btn-hero-ghost i { color: inherit !important; }
+.btn-hero-ghost:hover,
+.btn-hero-ghost:focus,
+.btn-hero-ghost:active {
+  background: #ffffff;
+  color: #123160 !important;          /* guaranteed dark label on white */
+  border-color: #ffffff;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.22);
+  transform: translateY(-2px);
+}
+
+/* Keep them identical in dark mode (don't let generic dark btn rules touch them) */
+body.dark-mode .btn-hero-primary,
+body.dark-mode .btn-hero-primary i { background: #ffffff; color: #123160 !important; border-color: #ffffff; }
+body.dark-mode .btn-hero-primary:hover,
+body.dark-mode .btn-hero-primary:focus { background: #E6EDF5; color: #0A2347 !important; border-color: #E6EDF5; }
+body.dark-mode .btn-hero-ghost,
+body.dark-mode .btn-hero-ghost i { color: #ffffff !important; }
+body.dark-mode .btn-hero-ghost:hover,
+body.dark-mode .btn-hero-ghost:focus { background: #ffffff; color: #123160 !important; border-color: #ffffff; }
+
+/* — GLOBAL SAFETY NET — any leftover Bootstrap light/outline-light button
+     (e.g. the dashboard "Refresh" buttons on navy headers) gets a guaranteed
+     readable label on hover, in BOTH themes. — */
+.btn-outline-light,
+.btn-outline-light i { color: #ffffff; }
+.btn-outline-light:hover,
+.btn-outline-light:focus,
+.btn-outline-light:active,
+.btn-outline-light:hover i,
+.btn-outline-light:focus i {
+  background-color: #ffffff !important;
+  border-color: #ffffff !important;
+  color: #123160 !important;
+}
+body.dark-mode .btn-outline-light,
+body.dark-mode .btn-outline-light i { color: #e6edf3 !important; border-color: rgba(255,255,255,0.55) !important; }
+body.dark-mode .btn-outline-light:hover,
+body.dark-mode .btn-outline-light:focus,
+body.dark-mode .btn-outline-light:active,
+body.dark-mode .btn-outline-light:hover i,
+body.dark-mode .btn-outline-light:focus i {
+  background-color: #ffffff !important;
+  border-color: #ffffff !important;
+  color: #123160 !important;
+}
+/* btn-light label safety (it carries an inline blue in the app; keep it readable in dark) */
+body.dark-mode .btn-light,
+body.dark-mode .btn-light i { color: #123160 !important; }
+body.dark-mode .btn-light { background: #ffffff !important; border-color: #ffffff !important; }
+body.dark-mode .btn-light:hover { background: #E6EDF5 !important; color: #0A2347 !important; }
+
+/* ── PREMIUM POLISH: feature/value cards lift a touch more crisply ── */
+.job-card, .card { will-change: transform; }
+
+/* — deep-navy inline TEXT (new brand hues) → readable on dark — */
+body.dark-mode [style*="color: rgb(10, 35, 71)"],
+body.dark-mode [style*="color: rgb(15, 52, 96)"] { color: #7FB0E6 !important; }
+
+/* Bootstrap .text-primary → brand navy in light mode (dark mode already lifted) */
+body:not(.dark-mode) .text-primary { color: #123160 !important; }
+
+/* ════════════════════════════════════════════════════════════
+   BOOTSTRAP BLUE → NAVY (catch any default-styled element)
+   Maps Bootstrap's --bs-primary / link colours to the brand navy so
+   default links, .link-primary, .bg-primary, .border-primary,
+   spinners, pagination, form-range, etc. are navy, not blue.
+   ════════════════════════════════════════════════════════════ */
+:root {
+  --bs-primary: #123160;
+  --bs-primary-rgb: 21, 72, 127;
+  --bs-link-color: #123160;
+  --bs-link-color-rgb: 21, 72, 127;
+  --bs-link-hover-color: #0A2347;
+  --bs-link-hover-color-rgb: 10, 35, 71;
+}
+body.dark-mode {
+  --bs-link-color: #7FB0E6;
+  --bs-link-color-rgb: 127, 176, 230;
+  --bs-link-hover-color: #9cc4ec;
+  --bs-link-hover-color-rgb: 156, 196, 236;
+}
+.bg-primary { background-color: #123160 !important; }
+.text-bg-primary { background-color: #123160 !important; color: #fff !important; }
+.border-primary { border-color: #123160 !important; }
+.link-primary { color: #123160 !important; }
+.link-primary:hover { color: #0A2347 !important; }
+.btn-outline-primary {
+  --bs-btn-color: #123160; --bs-btn-border-color: #123160;
+  --bs-btn-hover-bg: #123160; --bs-btn-hover-border-color: #123160;
+  --bs-btn-active-bg: #0A2347; --bs-btn-active-border-color: #0A2347;
+}
+body.dark-mode .btn-outline-primary {
+  --bs-btn-color: #7FB0E6; --bs-btn-border-color: #5b9bd5;
+  --bs-btn-hover-bg: #123160; --bs-btn-hover-border-color: #123160; --bs-btn-hover-color: #fff;
+}
+
+/* Premium: faded white text on navy reads a little stronger (less "washed out") */
+.text-white-50 { --bs-text-opacity: 0.72 !important; }
+
+/* ── Colorful theme toggle: warm sun (light) / cool moon (dark) ── */
+.theme-toggle-btn:hover {
+  transform: scale(1.08) rotate(-8deg);
+  filter: brightness(1.1);
+}
+.theme-toggle-btn:active { transform: scale(0.95); }
+
+/* ════════════════════════════════════════════════════════════
+   TMS-STYLE FORM INTERACTION  (reference: CDAC Training Mgmt System)
+   - Label "lights up" navy the instant its input is focused
+   - Input border thickens + glows navy on focus (the "line moving
+     while typing" feel from the reference)
+   - Works with the EXISTING label-above-input markup everywhere
+     in the app — no JSX changes needed on any of the 20+ forms.
+   - Primary submit buttons: solid navy, bold, letter-spaced caps
+     like "SIGN IN" / "REGISTER" in the reference.
+   - Secondary actions (Register / Forgot password style links that
+     sit inside a bordered pill) get the outlined-accent treatment.
+   ════════════════════════════════════════════════════════════ */
+
+/* ════════════════════════════════════════════════════════════
+   TMS-STYLE FORM INTERACTION v2 — bold & unmistakable
+   ════════════════════════════════════════════════════════════ */
+.form-label {
+  transition: color 0.18s ease;
+}
+.mb-3:has(.form-control:focus) .form-label,
+.mb-2:has(.form-control:focus) .form-label,
+.mb-1:has(.form-control:focus) .form-label,
+.mb-4:has(.form-control:focus) .form-label,
+[class*="col-"]:has(.form-control:focus) .form-label,
+.mb-3:has(.form-select:focus) .form-label,
+[class*="col-"]:has(.form-select:focus) .form-label {
+  color: var(--accent) !important;
+  font-weight: 700 !important;
+}
+
+.form-control, .form-select {
+  border: 1px solid #cdd5e0 !important;
+  transition: border-color 0.18s ease, box-shadow 0.18s ease, transform 0.15s ease !important;
+}
+.form-control:focus, .form-select:focus {
+  border: 2px solid var(--accent) !important;
+  box-shadow: 0 0 0 4px rgba(18, 49, 96, 0.18) !important;
+  transform: translateY(-1px) !important;
+  outline: none !important;
+}
+body.dark-mode .form-control:focus, body.dark-mode .form-select:focus {
+  box-shadow: 0 0 0 4px rgba(91, 155, 213, 0.25) !important;
+}
+
+form button[type="submit"] {
+  text-transform: uppercase !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.08em !important;
+  border-radius: 10px !important;
+  padding-top: 0.7rem !important;
+  padding-bottom: 0.7rem !important;
+}
+
+/* Secondary "Register" style pill-bordered action (the orange-outlined
+   button-in-a-banner from the reference), reused for any secondary CTA
+   placed inside a tinted info strip. */
+.btn-outline-accent2 {
+  background: transparent;
+  color: #FB923C;
+  border: 1.5px solid #FB923C;
+  font-weight: 700;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+.btn-outline-accent2:hover {
+  background: #FB923C;
+  color: #fff;
+}
+
+/* VERIFICATION MARKER — if you can see a bright pink dot in the
+   bottom-right corner of the screen, this CSS file IS loaded.
+   If you don't see it, your browser is using an old/cached file
+   or a different index.css than the one you replaced. */
+body::after {
+  content: '';
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #ff00aa;
+  z-index: 99999;
+  box-shadow: 0 0 8px #ff00aa;
+}
+
+/* ════════════════════════════════════════════════════════════
+   TMS-STYLE FLOATING LABEL (true version — label sits ON the
+   input border, like "⌐ Select Role ⌐" in the reference image)
+   DOM required: <div class="float-field"><input placeholder=" " .../><label>Text</label></div>
+   (input MUST come before label — that's how the CSS selects it)
+
+   TWO STATES:
+   - RESTING (empty + not focused): label sits INSIDE the box,
+     vertically centered, like placeholder text.
+   - ACTIVE (focused OR has a value): label jumps up to sit ON
+     the border line, shrinks slightly, turns navy.
+   ════════════════════════════════════════════════════════════ */
+.float-field {
+  position: relative;
+  margin-bottom: 1.1rem;
+}
+.float-field.mb-4 { margin-bottom: 1.5rem; }
+.float-field > .form-control,
+.float-field > .form-select {
+  height: 52px;
+  width: 100%;
+}
+.float-field > textarea.form-control {
+  height: auto;
+  min-height: 90px;
+}
+
+/* RESTING: label centered inside the box, looks like a placeholder */
+.float-field > label {
+  position: absolute;
+  left: 13px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  padding: 0 4px;
+  font-size: 0.92rem;
+  font-weight: 400;
+  color: var(--text-muted);
+  letter-spacing: 0;
+  pointer-events: none;
+  transition: all 0.15s ease;
+  z-index: 2;
+  border-radius: 4px;
+  max-width: calc(100% - 26px);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ACTIVE: input is focused OR already has a value typed in it
+   (:placeholder-shown is false once there's real text, because
+   every converted input uses placeholder=" ") */
+.float-field > .form-control:focus ~ label,
+.float-field > .form-control:not(:placeholder-shown) ~ label,
+.float-field > .form-select:focus ~ label,
+.float-field > .form-select:not([value=""]) ~ label {
+  top: 0;
+  transform: translateY(-50%);
+  background: var(--bg-card, #fff);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--text-secondary);
+}
+.float-field > .form-control:focus ~ label,
+.float-field > .form-select:focus ~ label {
+  color: var(--accent) !important;
+}
+body.dark-mode .float-field > .form-control:focus ~ label,
+body.dark-mode .float-field > .form-control:not(:placeholder-shown) ~ label,
+body.dark-mode .float-field > .form-select:focus ~ label {
+  background: var(--bg-card, #1c2128);
+}
+
+
+/* ════════════════════════════════════════════════════════════
+   TMS-STYLE SECONDARY-ACTION BANNER
+   (reference: navy strip + orange outlined pill button, e.g.
+   "New applicant? PG Certificate Programme — [Register]")
+   ════════════════════════════════════════════════════════════ */
+.auth-action-banner {
+  background: linear-gradient(135deg, #123160 0%, #0A2347 100%);
+  border-radius: 12px;
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  margin-top: 1.25rem;
+}
+.auth-action-banner .auth-action-text {
+  color: #fff;
+  font-size: 0.85rem;
+  line-height: 1.35;
+  min-width: 0;
+  flex: 1 1 auto;
+}
+.auth-action-btn {
+  background: transparent;
+  color: #FB923C;
+  border: 1.5px solid #FB923C;
+  font-weight: 700;
+  font-size: 0.8rem;
+  letter-spacing: 0.03em;
+  border-radius: 8px;
+  padding: 8px 16px;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+  text-decoration: none !important;
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+.auth-action-btn:hover {
+  background: #FB923C;
+  color: #fff !important;
+}
+@media (max-width: 420px) {
+  .auth-action-banner { flex-wrap: wrap; }
+}
+
+/* Display-scale token for one-off large numerals (404, empty-state icons),
+   intentionally outside the heading scale since it isn't a heading. */
+:root { --fs-display: 3.25rem; }
+
+/* ════════════════════════════════════════════════════════════
+   NAVY JOB CARDS  (Browse Jobs, Saved Jobs, dashboards, etc.)
+   Solid deep navy, same tone as the header banner. Every piece
+   of text/badge inside is re-colored so nothing goes invisible —
+   same care as the dark-mode pass, just applied to a navy card
+   in LIGHT mode too.
+   ════════════════════════════════════════════════════════════ */
+.job-card {
+  background: linear-gradient(160deg, #123160 0%, #0A2347 100%) !important;
+  border: 1px solid #0A2347 !important;
+  color: #fff;
+}
+body.dark-mode .job-card {
+  background: linear-gradient(160deg, #123160 0%, #0A2347 100%) !important;
+  border: 1px solid #2d333b !important;
+}
+
+/* Job title + company name */
+.job-card .fw-bold { color: #fff !important; }
+.job-card .text-muted { color: rgba(255,255,255,0.65) !important; }
+.job-card small.text-muted { color: rgba(255,255,255,0.6) !important; }
+
+/* Salary / experience / job-type pills — were bg-light text-dark
+   (invisible on navy) → frosted glass pill, white text */
+.job-card .badge.bg-light {
+  background: rgba(255,255,255,0.14) !important;
+  color: #fff !important;
+}
+
+/* Skill pills — keep them legible: light chip on the dark card */
+.job-card .skill-badge {
+  background: rgba(255,255,255,0.92) !important;
+  color: #123160 !important;
+}
+
+/* Remote badge — keep its green, just brighten for contrast on navy */
+.job-card .badge[style*="D1FAE5"] {
+  background: rgba(74, 222, 128, 0.22) !important;
+  color: #86efac !important;
+}
+
+/* Bookmark button circle — was a light tint, now a frosted circle */
+.job-card button.rounded-circle {
+  background: rgba(255,255,255,0.14) !important;
+}
+.job-card button.rounded-circle i { color: #fff !important; }
+
+/* "View Job" button — keep it solid white so it still pops off navy */
+.job-card .btn.text-white {
+  background: #fff !important;
+  color: #123160 !important;
+}
+.job-card .btn.text-white:hover {
+  background: #FB923C !important;
+  color: #fff !important;
+}

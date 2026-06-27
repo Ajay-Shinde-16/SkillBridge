@@ -142,7 +142,7 @@ export default function JobList() {
                 onChange={e => setFilters({...filters, keyword:e.target.value})}
                 onKeyDown={e => e.key==='Enter' && fetchJobs()} />
             </div>
-            <button className="btn text-white fw-semibold rounded-pill px-4" style={{background:'#0A66C2'}} onClick={() => fetchJobs()}>
+            <button className="btn text-white fw-semibold rounded-pill px-4" style={{background:'#123160'}} onClick={() => fetchJobs()}>
               <i className="bi bi-search me-1"></i>Search
             </button>
             {/* Sort */}
@@ -154,7 +154,7 @@ export default function JobList() {
               <option value="applicants">Most Applied</option>
             </select>
             <button className="btn rounded-pill px-3 fw-semibold position-relative"
-              style={{background:showFilters?'#0A66C2':'#EEF3F8',color:showFilters?'#fff':'#0A66C2',border:'none'}}
+              style={{background:showFilters?'#123160':'#EEF3F8',color:showFilters?'#fff':'#123160',border:'none'}}
               onClick={() => setShowFilters(!showFilters)}>
               <i className="bi bi-sliders me-1"></i>Filters
               {activeCount>0 && <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style={{fontSize:'0.6rem'}}>{activeCount}</span>}
@@ -163,12 +163,12 @@ export default function JobList() {
             {user?.role === 'SEEKER' && (
               <>
                 <button className="btn rounded-pill px-3 fw-semibold" disabled={savingAlert}
-                  style={{background:'#EEF3F8',color:'#0A66C2',border:'1px solid #0A66C2'}}
+                  style={{background:'#EEF3F8',color:'#123160',border:'1px solid #123160'}}
                   onClick={handleSaveAlert}>
                   {savingAlert ? <span className="spinner-border spinner-border-sm"></span> : <><i className="bi bi-bell me-1"></i>Save as Alert</>}
                 </button>
                 <button className="btn rounded-pill px-3 fw-semibold position-relative"
-                  style={{background:showAlerts?'#0A66C2':'#EEF3F8',color:showAlerts?'#fff':'#0A66C2',border:'none'}}
+                  style={{background:showAlerts?'#123160':'#EEF3F8',color:showAlerts?'#fff':'#123160',border:'none'}}
                   onClick={() => setShowAlerts(!showAlerts)}>
                   <i className="bi bi-bell-fill me-1"></i>My Alerts
                   {alerts.length>0 && <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style={{fontSize:'0.6rem'}}>{alerts.length}</span>}
@@ -229,7 +229,7 @@ export default function JobList() {
                     onChange={e => setFilters({...filters, maxSalary:e.target.value})} />
                 </div>
               </div>
-              <button className="btn btn-sm text-white rounded-pill px-4 mt-2 fw-semibold" style={{background:'#0A66C2'}} onClick={() => fetchJobs()}>
+              <button className="btn btn-sm text-white rounded-pill px-4 mt-2 fw-semibold" style={{background:'#123160'}} onClick={() => fetchJobs()}>
                 Apply Filters
               </button>
             </div>
@@ -269,14 +269,14 @@ export default function JobList() {
 
       {loading ? (
         <div className="text-center py-5">
-          <div className="spinner-border" style={{color:'#0A66C2'}}></div>
+          <div className="spinner-border" style={{color:'#123160'}}></div>
           <p className="text-muted mt-2 small">Finding jobs...</p>
         </div>
       ) : sortedJobs.length===0 ? (
         <div className="text-center py-5">
           <i className="bi bi-search fs-1 text-muted mb-3 d-block"></i>
           <h5 className="text-muted">No jobs found</h5>
-          <button className="btn text-white rounded-pill px-4 mt-2" style={{background:'#0A66C2'}} onClick={clearFilters}>Clear Filters</button>
+          <button className="btn text-white rounded-pill px-4 mt-2" style={{background:'#123160'}} onClick={clearFilters}>Clear Filters</button>
         </div>
       ) : (
         <div className="row g-3">
@@ -338,7 +338,7 @@ export default function JobList() {
                   <div className="d-flex justify-content-between align-items-center mt-auto">
                     <small className="text-muted"><i className="bi bi-people me-1"></i>{job.applicationCount||0} applied</small>
                     <Link to={`/jobs/${job.id}`} className="btn btn-sm text-white rounded-pill fw-semibold"
-                      style={{background:'#0A66C2',fontSize:'0.8rem'}}>
+                      style={{background:'#123160',fontSize:'0.8rem'}}>
                       View Job <i className="bi bi-arrow-right ms-1"></i>
                     </Link>
                   </div>
@@ -352,7 +352,7 @@ export default function JobList() {
       {!loading && jobs.length > 0 && page + 1 < totalPages && (
         <div className="text-center mt-4">
           <button className="btn rounded-pill px-5 fw-semibold" disabled={loadingMore}
-            style={{background:'#EEF3F8',color:'#0A66C2',border:'1px solid #0A66C2'}}
+            style={{background:'#EEF3F8',color:'#123160',border:'1px solid #123160'}}
             onClick={loadMore}>
             {loadingMore
               ? <><span className="spinner-border spinner-border-sm me-2"></span>Loading...</>

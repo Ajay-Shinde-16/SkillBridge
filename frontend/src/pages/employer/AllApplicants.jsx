@@ -53,14 +53,14 @@ export default function AllApplicants() {
 
           {loading ? (
             <div className="text-center py-5">
-              <div className="spinner-border" style={{ color:'#0A66C2' }}></div>
+              <div className="spinner-border" style={{ color:'#123160' }}></div>
             </div>
           ) : jobs.length === 0 ? (
             <div className="text-center py-5">
               <i className="bi bi-briefcase fs-1 text-muted mb-3 d-block"></i>
               <p className="text-muted">No jobs posted yet</p>
               <Link to="/employer/post-job" className="btn text-white rounded-pill px-4"
-                style={{ background:'#0A66C2' }}>Post a Job</Link>
+                style={{ background:'#123160' }}>Post a Job</Link>
             </div>
           ) : (
             <div className="card border-0 shadow-sm rounded-4">
@@ -92,7 +92,7 @@ export default function AllApplicants() {
                     <Link to={`/employer/applications/${job.id}`}
                       className="btn rounded-pill fw-semibold"
                       style={{
-                        background:'#0A66C2', color:'#fff',
+                        background:'#123160', color:'#fff',
                         border:'none', fontSize:'0.85rem',
                         padding:'7px 18px', whiteSpace:'nowrap'
                       }}>

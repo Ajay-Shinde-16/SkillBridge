@@ -5,10 +5,10 @@ import MessageThread from '../../components/MessageThread'
 
 const STATUS_STYLE = {
   APPLIED:             { bg:'#F1F5F9', color:'#475569', label:'Applied',             icon:'bi-send' },
-  SHORTLISTED:         { bg:'#DBEAFE', color:'#1e40af', label:'Shortlisted',          icon:'bi-star-fill' },
+  SHORTLISTED:         { bg:'#E6EDF5', color:'#123160', label:'Shortlisted',          icon:'bi-star-fill' },
   INTERVIEW_SCHEDULED: { bg:'#FEF3C7', color:'#92400e', label:'Interview Scheduled',  icon:'bi-camera-video' },
   OFFERED:             { bg:'#D1FAE5', color:'#065f46', label:'Offer Received',        icon:'bi-trophy-fill' },
-  ACCEPTED:            { bg:'#DBEAFE', color:'#1e40af', label:'Accepted',              icon:'bi-check-circle-fill' },
+  ACCEPTED:            { bg:'#E6EDF5', color:'#123160', label:'Accepted',              icon:'bi-check-circle-fill' },
   REJECTED:            { bg:'#FEE2E2', color:'#991b1b', label:'Rejected',              icon:'bi-x-circle' },
 }
 const scoreColor = s => s >= 70 ? '#057642' : s >= 40 ? '#d97706' : '#dc3545'
@@ -60,7 +60,7 @@ export default function MyApplications() {
 
   if (loading) return (
     <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '60vh' }}>
-      <div className="spinner-border" style={{ color: '#0A66C2' }}></div>
+      <div className="spinner-border" style={{ color: '#123160' }}></div>
     </div>
   )
 
@@ -91,7 +91,7 @@ export default function MyApplications() {
       {/* Status Filter Pills */}
       <div className="d-flex flex-wrap gap-2 mb-3">
         <button className="btn btn-sm rounded-pill fw-semibold"
-          style={{ background: filter === 'ALL' ? '#0A66C2' : '#EEF3F8', color: filter === 'ALL' ? '#fff' : '#0A66C2', border: 'none' }}
+          style={{ background: filter === 'ALL' ? '#123160' : '#EEF3F8', color: filter === 'ALL' ? '#fff' : '#123160', border: 'none' }}
           onClick={() => setFilter('ALL')}>
           All ({applications.length})
         </button>
@@ -149,7 +149,7 @@ export default function MyApplications() {
             {filter === 'ALL' ? 'No applications yet' : `No applications with status "${filter}"`}
           </h5>
           {filter === 'ALL' && (
-            <Link to="/jobs" className="btn text-white rounded-pill px-4 mt-2" style={{ background: '#0A66C2' }}>
+            <Link to="/jobs" className="btn text-white rounded-pill px-4 mt-2" style={{ background: '#123160' }}>
               Browse Jobs
             </Link>
           )}
@@ -213,7 +213,7 @@ export default function MyApplications() {
                         </button>
                       )}
                       <button type="button" className="btn btn-sm rounded-pill fw-semibold"
-                        style={{ background: '#EEF3F8', color: '#0A66C2', border: '1px solid #D0D9E0', fontSize: '0.8rem' }}
+                        style={{ background: '#EEF3F8', color: '#123160', border: '1px solid #D0D9E0', fontSize: '0.8rem' }}
                         onClick={() => setChatOpenId(chatOpenId === app.id ? null : app.id)}>
                         <i className="bi bi-chat-dots me-1"></i>{chatOpenId === app.id ? 'Hide Chat' : 'Message'}
                       </button>
@@ -229,7 +229,7 @@ export default function MyApplications() {
                   {/* Employer Note */}
                   {app.employerNote && (
                     <div className="mt-3 p-3 rounded-3" style={{ background: '#EEF3F8' }}>
-                      <small className="fw-semibold" style={{ color: '#0A66C2' }}>
+                      <small className="fw-semibold" style={{ color: '#123160' }}>
                         <i className="bi bi-chat-square-text me-1"></i>Employer Note:{' '}
                       </small>
                       <small className="text-muted">{app.employerNote}</small>

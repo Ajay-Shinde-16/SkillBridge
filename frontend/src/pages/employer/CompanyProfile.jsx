@@ -35,7 +35,7 @@ export default function CompanyProfile() {
 
   if (loading) return (
     <div className="d-flex justify-content-center align-items-center" style={{ minHeight:'60vh' }}>
-      <div className="spinner-border" style={{ color:'#0A66C2' }}></div>
+      <div className="spinner-border" style={{ color:'#123160' }}></div>
     </div>
   )
 
@@ -71,11 +71,11 @@ export default function CompanyProfile() {
 
           {/* Company Header */}
           <div className="card border-0 shadow-sm rounded-4 mb-4 overflow-hidden">
-            <div style={{ background:'#0A66C2', height:100 }}></div>
+            <div style={{ background:'#123160', height:100 }}></div>
             <div className="card-body p-4 pt-0">
               <div className="d-flex align-items-end gap-3 mb-3" style={{ marginTop:-40 }}>
                 <div style={{ width:80, height:80, background:'#fff', borderRadius:16, border:'3px solid #fff', display:'flex', alignItems:'center', justifyContent:'center', boxShadow:'0 2px 10px rgba(0,0,0,0.1)', flexShrink:0 }}>
-                  <span style={{ fontSize:28, fontWeight:700, color:'#0A66C2' }}>
+                  <span style={{ fontSize:28, fontWeight:700, color:'#123160' }}>
                     {profile?.companyName?.charAt(0) || profile?.name?.charAt(0) || 'C'}
                   </span>
                 </div>
@@ -84,7 +84,7 @@ export default function CompanyProfile() {
                   <div className="text-muted small">{profile?.email}</div>
                 </div>
                 <button className="btn btn-sm rounded-pill fw-semibold"
-                  style={{ background: editing ? '#dc3545' : '#0A66C2', color:'#fff' }}
+                  style={{ background: editing ? '#dc3545' : '#123160', color:'#fff' }}
                   onClick={() => editing ? setEditing(false) : setEditing(true)}>
                   <i className={`bi ${editing ? 'bi-x' : 'bi-pencil'} me-1`}></i>
                   {editing ? 'Cancel' : 'Edit Profile'}
@@ -114,7 +114,7 @@ export default function CompanyProfile() {
                       onChange={e => setForm({ ...form, bio: e.target.value })} />
                   </div>
                   <div className="col-12">
-                    <button className="btn rounded-pill fw-semibold px-4" style={{ background:'#0A66C2', color:'#fff' }}
+                    <button className="btn rounded-pill fw-semibold px-4" style={{ background:'#123160', color:'#fff' }}
                       onClick={handleSave} disabled={saving}>
                       {saving ? <span className="spinner-border spinner-border-sm me-2"></span> : <i className="bi bi-check-lg me-2"></i>}
                       Save Changes
@@ -124,7 +124,7 @@ export default function CompanyProfile() {
               ) : (
                 <div className="row g-3">
                   {[
-                    { icon:'bi-globe', label:'Website', value: profile?.companyWebsite ? <a href={profile.companyWebsite} target="_blank" rel="noreferrer" style={{ color:'#0A66C2' }}>{profile.companyWebsite}</a> : 'Not added' },
+                    { icon:'bi-globe', label:'Website', value: profile?.companyWebsite ? <a href={profile.companyWebsite} target="_blank" rel="noreferrer" style={{ color:'#123160' }}>{profile.companyWebsite}</a> : 'Not added' },
                     { icon:'bi-geo-alt', label:'Location', value: profile?.location || 'Not added' },
                     { icon:'bi-telephone', label:'Phone', value: profile?.phone || 'Not added' },
                     { icon:'bi-briefcase', label:'Active Jobs', value: activeJobs.length },
@@ -142,7 +142,7 @@ export default function CompanyProfile() {
                   {profile?.bio && (
                     <div className="col-12">
                       <div className="p-3 rounded-3" style={{ background:'#EEF3F8' }}>
-                        <div className="small fw-semibold mb-1" style={{ color:'#0A66C2' }}>About</div>
+                        <div className="small fw-semibold mb-1" style={{ color:'#123160' }}>About</div>
                         <div className="text-muted small">{profile.bio}</div>
                       </div>
                     </div>
@@ -156,14 +156,14 @@ export default function CompanyProfile() {
           <div className="card border-0 shadow-sm rounded-4 p-4">
             <div className="d-flex justify-content-between align-items-center mb-3">
               <div className="fw-bold" style={{ fontSize:13 }}>
-                <i className="bi bi-briefcase-fill me-2" style={{ color:'#0A66C2' }}></i>
+                <i className="bi bi-briefcase-fill me-2" style={{ color:'#123160' }}></i>
                 Our Job Postings
-                <span className="badge ms-2 rounded-pill" style={{ background:'#EEF3F8', color:'#0A66C2', fontSize:10 }}>
+                <span className="badge ms-2 rounded-pill" style={{ background:'#EEF3F8', color:'#123160', fontSize:10 }}>
                   {jobs.length} total
                 </span>
               </div>
               <Link to="/employer/post-job" className="btn btn-sm rounded-pill fw-semibold"
-                style={{ background:'#0A66C2', color:'#fff' }}>
+                style={{ background:'#123160', color:'#fff' }}>
                 <i className="bi bi-plus me-1"></i>Post Job
               </Link>
             </div>
@@ -171,7 +171,7 @@ export default function CompanyProfile() {
               <div className="text-center py-5">
                 <i className="bi bi-briefcase fs-1 text-muted mb-3 d-block"></i>
                 <p className="text-muted">No jobs posted yet</p>
-                <Link to="/employer/post-job" className="btn rounded-pill" style={{ background:'#0A66C2', color:'#fff' }}>
+                <Link to="/employer/post-job" className="btn rounded-pill" style={{ background:'#123160', color:'#fff' }}>
                   Post Your First Job
                 </Link>
               </div>
@@ -189,7 +189,7 @@ export default function CompanyProfile() {
                   {job.status}
                 </span>
                 <Link to={`/employer/applications/${job.id}`} className="btn btn-sm rounded-pill"
-                  style={{ background:'#EEF3F8', color:'#0A66C2', border:'1px solid #D0D9E0', fontSize:11 }}>
+                  style={{ background:'#EEF3F8', color:'#123160', border:'1px solid #D0D9E0', fontSize:11 }}>
                   View Applications
                 </Link>
               </div>

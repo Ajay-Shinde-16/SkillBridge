@@ -75,7 +75,7 @@ export default function Navbar() {
 
   return (
     <>
-      <nav className="navbar navbar-expand-lg sticky-top shadow-sm" style={{background:'#0A66C2'}}>
+      <nav className="navbar navbar-expand-lg sticky-top shadow-sm" style={{background:'#123160'}}>
         <div className="container-fluid px-3">
           <Link className="navbar-brand d-flex align-items-center gap-2 text-white fw-bold" to="/" onClick={handleLogoClick}>
             <img src="/logo.svg" alt="SkillBridge" width={28} height={28} style={{borderRadius:6}} onError={e=>e.target.style.display='none'}/>
@@ -134,16 +134,21 @@ export default function Navbar() {
                 <button
                   onClick={toggleTheme}
                   title={dark ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
-                  className="btn btn-sm d-flex align-items-center justify-content-center"
+                  className="btn btn-sm d-flex align-items-center justify-content-center theme-toggle-btn"
                   style={{
                     width: 36, height: 36, borderRadius: '50%',
-                    background: dark ? '#f8f9fa' : 'rgba(255,255,255,0.15)',
-                    border: '1.5px solid rgba(255,255,255,0.4)',
-                    color: dark ? '#0A66C2' : '#fff',
-                    transition: 'all 0.3s ease',
+                    background: dark
+                      ? 'linear-gradient(145deg, #FFD166 0%, #FB923C 100%)'
+                      : 'linear-gradient(145deg, #6D28D9 0%, #4C1D95 100%)',
+                    border: dark ? '1.5px solid #FFE8A3' : '1.5px solid #A78BFA',
+                    boxShadow: dark
+                      ? '0 0 10px rgba(251,191,36,0.6)'
+                      : '0 0 10px rgba(167,139,250,0.55)',
+                    color: '#fff',
+                    transition: 'all 0.35s ease',
                     fontSize: '1rem'
                   }}>
-                  <i className={`bi ${dark ? 'bi-sun-fill' : 'bi-moon-fill'}`}></i>
+                  <i className={`bi ${dark ? 'bi-sun-fill' : 'bi-moon-stars-fill'}`}></i>
                 </button>
               </li>
 
@@ -157,7 +162,7 @@ export default function Navbar() {
                   </li>
                   <li className="nav-item">
                     <Link to="/register" className="btn btn-sm fw-semibold px-3 rounded-pill"
-                      style={{background:'#fff',color:'#0A66C2',border:'1.5px solid #fff',fontSize:'0.82rem'}}>
+                      style={{background:'#fff',color:'#123160',border:'1.5px solid #fff',fontSize:'0.82rem'}}>
                       <i className="bi bi-person-plus me-1"></i>Sign Up
                     </Link>
                   </li>
@@ -185,7 +190,16 @@ export default function Navbar() {
                       {/* Dark mode toggle in dropdown too */}
                       <li>
                         <button className="dropdown-item d-flex align-items-center gap-2" onClick={toggleTheme}>
-                          <i className={`bi ${dark ? 'bi-sun-fill' : 'bi-moon-fill'}`}></i>
+                          <span className="d-inline-flex align-items-center justify-content-center"
+                            style={{
+                              width: 22, height: 22, borderRadius: '50%',
+                              background: dark
+                                ? 'linear-gradient(145deg, #FFD166 0%, #FB923C 100%)'
+                                : 'linear-gradient(145deg, #6D28D9 0%, #4C1D95 100%)',
+                              color: '#fff', fontSize: '0.7rem', flexShrink: 0
+                            }}>
+                            <i className={`bi ${dark ? 'bi-sun-fill' : 'bi-moon-stars-fill'}`}></i>
+                          </span>
                           {dark ? 'Light Mode' : 'Dark Mode'}
                         </button>
                       </li>

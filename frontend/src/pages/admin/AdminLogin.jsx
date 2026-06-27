@@ -36,88 +36,91 @@ export default function AdminLogin() {
   }
 
   return (
-    <div className="min-vh-100 d-flex align-items-center justify-content-center"
-      style={{ background: '#0f172a' }}>
-      <div style={{ width: '100%', maxWidth: 420, padding: '0 16px' }}>
-        <div className="card border-0 shadow-lg rounded-4">
-          <div className="card-body p-5">
-            <div className="text-center mb-4">
-              <div className="rounded-circle d-inline-flex align-items-center justify-content-center mb-3"
-                style={{ width: 68, height: 68, background: '#0A66C2' }}>
-                <i className="bi bi-shield-lock-fill text-white" style={{ fontSize: 28 }}></i>
-              </div>
-              <h4 className="heading-serif fw-bold mb-1">Admin Portal</h4>
-              <p className="text-muted small mb-0">SkillBridge — Restricted Access Only</p>
-            </div>
+    <div className="container py-5">
+      <div className="row justify-content-center">
+        <div className="col-lg-9">
+          <div className="card shadow border-0 rounded-4 overflow-hidden">
+            <div className="row g-0">
 
-            {error && (
-              <div className="alert alert-danger py-2 small rounded-3">
-                <i className="bi bi-exclamation-triangle-fill me-2"></i>{error}
+              {/* ── BRAND PANEL: stacks above the form on mobile, beside it on desktop ── */}
+              <div className="col-12 col-lg-5 d-flex flex-column align-items-center justify-content-center text-center p-4 p-lg-5"
+                style={{ background: 'linear-gradient(160deg, #0A2347 0%, #123160 100%)', color: '#fff' }}>
+                <div className="bg-white rounded-4 p-2 p-lg-3 mb-3 mb-lg-4 d-inline-flex flex-shrink-0">
+                  <img src="/logo.svg" alt="SkillBridge" className="auth-logo-img"
+                    onError={e => { e.target.style.display = 'none' }} />
+                </div>
+                <h2 className="heading-serif fw-bold mb-1 mb-lg-2 auth-brand-title">SkillBridge</h2>
+                <p className="opacity-75 small mb-3 auth-tagline">
+                  Administrator console — restricted access.
+                </p>
+                <span className="d-inline-flex align-items-center gap-2 px-3 py-1 rounded-pill"
+                  style={{ background: 'rgba(255,255,255,0.12)', border: '1px solid rgba(255,255,255,0.3)', fontSize: '0.75rem' }}>
+                  <i className="bi bi-shield-lock-fill"></i> Admin Portal
+                </span>
               </div>
-            )}
 
-            <form onSubmit={handleSubmit}>
-              <div className="mb-3">
-                <label className="form-label fw-semibold small text-uppercase"
-                  style={{ letterSpacing: '0.5px', fontSize: '0.72rem' }}>
-                  Admin Email
-                </label>
-                <input type="email" className="form-control form-control-lg rounded-3" required
-                  value={form.email}
-                  onChange={e => setForm({ ...form, email: e.target.value })}
-                  placeholder="admin@skillbridge.com" />
+              {/* ── FORM PANEL ── */}
+              <div className="col-lg-7">
+                <div className="p-4 p-lg-5">
+
+                  <div className="mb-4">
+                    <h3 className="heading-serif fw-bold mb-1">Admin Sign In</h3>
+                    <p className="text-muted small mb-0">Authorized personnel only</p>
+                  </div>
+
+                  {error && (
+                    <div className="alert alert-danger py-2 small rounded-3">
+                      <i className="bi bi-exclamation-triangle-fill me-2"></i>{error}
+                    </div>
+                  )}
+
+                  <form onSubmit={handleSubmit}>
+                    <div className="float-field">
+                      <input type="email" className="form-control rounded-3" required
+                        value={form.email}
+                        onChange={e => setForm({ ...form, email: e.target.value })}
+                        placeholder=" " />
+                      <label>Admin Email</label>
+                    </div>
+                    <div className="float-field mb-4">
+                      <input type="password" className="form-control rounded-3" required
+                        value={form.password}
+                        onChange={e => setForm({ ...form, password: e.target.value })}
+                        placeholder=" " />
+                      <label>Password</label>
+                    </div>
+                    <button type="submit"
+                      className="btn btn-lg w-100 text-white fw-bold rounded-3"
+                      style={{ background: '#123160' }}
+                      disabled={loading}>
+                      {loading
+                        ? <span className="spinner-border spinner-border-sm me-2"></span>
+                        : <i className="bi bi-shield-check me-2"></i>}
+                      Login as Admin
+                    </button>
+                  </form>
+
+                  <hr className="my-4" />
+
+                  <div className="auth-action-banner mb-3">
+                    <span className="auth-action-text">New admin? Register here.</span>
+                    <Link to="/admin/register" className="auth-action-btn">
+                      <i className="bi bi-shield-plus me-1"></i>Register as Admin
+                    </Link>
+                  </div>
+                  <div className="auth-action-banner">
+                    <span className="auth-action-text">Not an admin?</span>
+                    <Link to="/login" className="auth-action-btn">Go to Normal Login</Link>
+                  </div>
+                  <p className="text-center text-muted mt-3 mb-0" style={{ fontSize: '0.72rem', opacity: 0.6 }}>
+                    <i className="bi bi-lock-fill me-1"></i>SkillBridge Admin Portal — CDAC PGCP-AC-002
+                  </p>
+
+                </div>
               </div>
-              <div className="mb-4">
-                <label className="form-label fw-semibold small text-uppercase"
-                  style={{ letterSpacing: '0.5px', fontSize: '0.72rem' }}>
-                  Password
-                </label>
-                <input type="password" className="form-control form-control-lg rounded-3" required
-                  value={form.password}
-                  onChange={e => setForm({ ...form, password: e.target.value })}
-                  placeholder="••••••••" />
-              </div>
-              <button type="submit"
-                className="btn w-100 text-white fw-bold py-2 rounded-3"
-                style={{ background: '#0A66C2', fontSize: '1rem' }}
-                disabled={loading}>
-                {loading
-                  ? <span className="spinner-border spinner-border-sm me-2"></span>
-                  : <i className="bi bi-shield-check me-2"></i>}
-                Login as Admin
-              </button>
-            </form>
 
-            <hr className="my-4" />
-
-            <div className="text-center mb-2">
-              <small className="text-muted">
-                Don't have an admin account?{' '}
-                <Link to="/admin/register" className="fw-semibold" style={{ color: '#7C3AED' }}>
-                  <i className="bi bi-shield-plus me-1"></i>Register as Admin
-                </Link>
-              </small>
-            </div>
-            <div className="text-center">
-              <small className="text-muted">
-                Not an admin?{' '}
-                <Link to="/login" className="fw-semibold" style={{ color: '#0A66C2' }}>
-                  Go to normal login
-                </Link>
-              </small>
-            </div>
-            <div className="text-center mt-3">
-              <small className="text-muted opacity-50">
-                <i className="bi bi-lock-fill me-1"></i>
-                Authorized personnel only
-              </small>
             </div>
           </div>
-        </div>
-        <div className="text-center mt-3">
-          <span style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.75rem' }}>
-            SkillBridge Admin Portal — CDAC PGCP-AC-002
-          </span>
         </div>
       </div>
     </div>
