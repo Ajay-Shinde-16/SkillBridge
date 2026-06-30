@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext'
 import { getProfile, getMyApplications, searchJobs } from '../services/api'
 
 const SKILL_COLORS = ['#123160','#057642','#d97706','#7C3AED','#123160','#dc3545','#22c55e','#ec4899']
-const ROADMAP_SKILLS = ['Docker','Kubernetes','GraphQL','Redis','Kafka','System Design']
+const ROADMAP_SKILLS = ['Docker','Kubernetes','GraphQL','Redis','Kafka','System Design','Render']
 
 function AnimatedNumber({ target, duration = 1200 }) {
   const [val, setVal] = useState(0)
