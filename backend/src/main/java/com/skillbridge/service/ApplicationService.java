@@ -123,9 +123,36 @@ public class ApplicationService {
         return applicationRepository.findByJobId(jobId);
     }
 
+    // Internal/system-initiated status change (e.g. interview scheduled/completed) —
+    // not triggered by a user request, so it bypasses the per-user ownership check.
     public Application updateStatus(String appId, String status, String employerNote) {
+        return updateStatus(appId, status, employerNote, null, "ADMIN");
+    }
+
+    public Application updateStatus(String appId, String status, String employerNote,
+                                     String requestingUserId, String requestingRole) {
         Application app = applicationRepository.findById(appId)
             .orElseThrow(() -> new RuntimeException("Application not found"));
+
+        // ─── Authorization: verify the caller is allowed to touch THIS application ───
+        boolean isAdmin = "ADMIN".equals(requestingRole);
+        if (!isAdmin) {
+            if ("SEEKER".equals(requestingRole)) {
+                // A seeker may only act on their own application (accept/decline their own offer).
+                if (!requestingUserId.equals(app.getSeekerId())) {
+                    throw new RuntimeException("You are not authorized to modify this application.");
+                }
+            } else if ("EMPLOYER".equals(requestingRole)) {
+                // An employer may only act on applications to jobs they own.
+                Job job = jobRepository.findById(app.getJobId()).orElse(null);
+                if (job == null || job.getEmployerId() == null
+                        || !job.getEmployerId().equals(requestingUserId)) {
+                    throw new RuntimeException("You are not authorized to modify this application.");
+                }
+            } else {
+                throw new RuntimeException("You are not authorized to modify this application.");
+            }
+        }
 
         String previousStatus = app.getStatus();
         app.setStatus(status);

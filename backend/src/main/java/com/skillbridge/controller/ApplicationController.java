@@ -133,7 +133,7 @@ public class ApplicationController {
                 if (!"ACCEPTED".equals(status) && !"REJECTED".equals(status))
                     return ResponseEntity.badRequest().body("Seekers can only Accept or Decline offers");
             }
-            return ResponseEntity.ok(applicationService.updateStatus(id, status, note));
+            return ResponseEntity.ok(applicationService.updateStatus(id, status, note, user.getId(), user.getRole()));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }

@@ -67,10 +67,15 @@ public class InterviewController {
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('EMPLOYER') or hasRole('ADMIN')")
     public ResponseEntity<?> updateInterview(@PathVariable String id,
-                                             @RequestBody Map<String, String> body) {
+                                             @RequestBody Map<String, String> body,
+                                             Authentication auth) {
         try {
+            User user = userRepository.findByEmail(auth.getName())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+            boolean isAdmin = "ADMIN".equals(user.getRole());
             return ResponseEntity.ok(interviewService.updateInterview(
-                id, body.get("status"), body.get("feedback"), body.get("result")));
+                id, body.get("status"), body.get("feedback"), body.get("result"),
+                user.getId(), isAdmin));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }

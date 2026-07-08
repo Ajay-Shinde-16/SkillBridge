@@ -19,6 +19,8 @@ import com.skillbridge.model.User;
 import com.skillbridge.repository.ResumeRepository;
 import com.skillbridge.repository.SkillRepository;
 import com.skillbridge.repository.UserRepository;
+import com.skillbridge.repository.ApplicationRepository;
+import com.skillbridge.repository.JobRepository;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -38,6 +40,8 @@ public class FileUploadController {
     private final UserRepository userRepository;
     private final SkillRepository skillRepository;
     private final ResumeRepository resumeRepository;
+    private final ApplicationRepository applicationRepository;
+    private final JobRepository jobRepository;
 
     @PostMapping("/upload-resume")
     @PreAuthorize("hasRole('SEEKER')")
@@ -166,19 +170,26 @@ public class FileUploadController {
     // primary-resume endpoint below: the ID is an unguessable UUID, not auth-gated,
     // so a plain link (no JS fetch/blob handling needed) works from the UI.
     @GetMapping("/resumes/{resumeId}/view")
-    public ResponseEntity<byte[]> viewSpecificResume(@PathVariable String resumeId) {
-        return resumeRepository.findById(resumeId)
-            .map(r -> ResponseEntity.ok()
-                .contentType(MediaType.APPLICATION_PDF)
-                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + (r.getFileName() != null ? r.getFileName() : "resume.pdf") + "\"")
-                .body(r.getFileData()))
-            .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<byte[]> viewSpecificResume(@PathVariable String resumeId, Authentication auth) {
+        Resume r = resumeRepository.findById(resumeId).orElse(null);
+        if (r == null) return ResponseEntity.notFound().build();
+        if (!canAccessResumeOf(r.getUserId(), auth)) {
+            return ResponseEntity.status(403).build();
+        }
+        return ResponseEntity.ok()
+            .contentType(MediaType.APPLICATION_PDF)
+            .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + (r.getFileName() != null ? r.getFileName() : "resume.pdf") + "\"")
+            .body(r.getFileData());
     }
 
-    // Public-by-userId view — this is what employers see linked from an application's
-    // resumeUrl, and it always serves whichever resume is currently primary.
+    // Serves whichever resume is currently primary for a user. Employers reach this
+    // from an application's resumeUrl; access is restricted to the owner, an admin,
+    // or an employer the seeker has applied to.
     @GetMapping("/resume/{userId}")
-    public ResponseEntity<byte[]> viewResume(@PathVariable String userId) {
+    public ResponseEntity<byte[]> viewResume(@PathVariable String userId, Authentication auth) {
+        if (!canAccessResumeOf(userId, auth)) {
+            return ResponseEntity.status(403).build();
+        }
         return userRepository.findById(userId)
             .filter(u -> u.getResumeData() != null)
             .map(u -> ResponseEntity.ok()
@@ -187,6 +198,25 @@ public class FileUploadController {
                     "inline; filename=\"" + (u.getResumeFileName() != null ? u.getResumeFileName() : "resume.pdf") + "\"")
                 .body(u.getResumeData()))
             .orElse(ResponseEntity.notFound().build());
+    }
+
+    // ─── Resume access rule ───
+    // A resume belonging to `ownerId` may be viewed by: the owner themselves, any
+    // admin, or an employer who owns at least one job that this seeker has applied to.
+    private boolean canAccessResumeOf(String ownerId, Authentication auth) {
+        if (auth == null || auth.getName() == null) return false;
+        User requester = userRepository.findByEmail(auth.getName()).orElse(null);
+        if (requester == null) return false;
+        if (requester.getId().equals(ownerId)) return true;          // owner
+        if ("ADMIN".equals(requester.getRole())) return true;        // admin
+        if ("EMPLOYER".equals(requester.getRole())) {
+            // Employer may view only if this seeker applied to one of the employer's jobs.
+            return applicationRepository.findBySeekerId(ownerId).stream()
+                .map(app -> jobRepository.findById(app.getJobId()).orElse(null))
+                .filter(job -> job != null)
+                .anyMatch(job -> requester.getId().equals(job.getEmployerId()));
+        }
+        return false;
     }
 
     private void syncPrimaryToUser(User user, Resume primary) {

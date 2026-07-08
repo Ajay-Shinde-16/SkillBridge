@@ -14,6 +14,27 @@ API.interceptors.request.use((config) => {
   return config
 })
 
+// ─── Auto-logout on expired/invalid token ───
+// When the server rejects the JWT (401), the stored session is stale. Clear it and
+// send the user to login instead of leaving the UI stuck on failed calls. The login
+// and auth endpoints are exempt so a wrong password on the login page doesn't redirect.
+API.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    const status = error?.response?.status
+    const url = error?.config?.url || ''
+    const isAuthCall = url.includes('/auth/login') || url.includes('/auth/register') || url.includes('/auth/verify-login-otp')
+    if (status === 401 && !isAuthCall) {
+      localStorage.removeItem('token')
+      localStorage.removeItem('user')
+      if (!window.location.pathname.includes('/login')) {
+        window.location.href = '/login'
+      }
+    }
+    return Promise.reject(error)
+  }
+)
+
 // ─── Auth ───
 export const register = (data) => API.post('/auth/register', data)
 export const login    = (data) => API.post('/auth/login', data)
@@ -29,6 +50,29 @@ export const getMyJobs    = ()           => API.get('/jobs/my-jobs')
 export const updateJob    = (id, data)   => API.put(`/jobs/${id}`, data)
 export const deleteJob    = (id)         => API.delete(`/jobs/${id}`)
 export const getMatchScore = (jobId)     => API.get(`/jobs/match-score/${jobId}`)
+
+// ─── Resume viewing (authenticated blob) ───
+// Resume endpoints now require a valid JWT, so a plain <a href> link won't work
+// (links don't send the Authorization header). These fetch the PDF as a blob
+// through the authenticated axios instance and return an object URL to open.
+export const fetchResumeByUserId = (userId) =>
+  API.get(`/files/resume/${userId}`, { responseType: 'blob' })
+export const fetchResumeById = (resumeId) =>
+  API.get(`/files/resumes/${resumeId}/view`, { responseType: 'blob' })
+
+// Opens a resume PDF in a new tab after fetching it with auth. `ref` is either
+// a userId (default) or a resumeId when byResumeId=true.
+export const openResume = async (ref, byResumeId = false) => {
+  try {
+    const { data } = byResumeId ? await fetchResumeById(ref) : await fetchResumeByUserId(ref)
+    const url = window.URL.createObjectURL(data)
+    window.open(url, '_blank')
+    // give the browser a moment to load it before revoking
+    setTimeout(() => window.URL.revokeObjectURL(url), 60000)
+  } catch (e) {
+    alert('Could not open resume. You may not have permission, or it is unavailable.')
+  }
+}
 // ─── Admin job verification ───
 export const getAllJobsAdmin = ()        => API.get('/jobs/admin/all')
 export const getPendingJobs = ()         => API.get('/jobs/admin/pending')

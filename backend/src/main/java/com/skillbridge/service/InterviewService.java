@@ -131,9 +131,16 @@ public class InterviewService {
         return saved;
     }
 
-    public Interview updateInterview(String id, String status, String feedback, String result) {
+    public Interview updateInterview(String id, String status, String feedback, String result,
+                                      String requestingUserId, boolean isAdmin) {
         Interview interview = interviewRepository.findById(id)
             .orElseThrow(() -> new RuntimeException("Interview not found"));
+
+        // ─── Authorization: only the employer who owns this interview (or an admin) may update it ───
+        if (!isAdmin && (interview.getEmployerId() == null
+                || !interview.getEmployerId().equals(requestingUserId))) {
+            throw new RuntimeException("You are not authorized to modify this interview.");
+        }
 
         String previousStatus = interview.getStatus();
         if (status != null) interview.setStatus(status);
