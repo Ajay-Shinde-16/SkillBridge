@@ -51,7 +51,9 @@ public class JobScheduledTasks {
         List<JobAlert> alerts = jobAlertRepository.findAll();
         if (alerts.isEmpty()) return;
 
-        List<Job> openJobs = jobRepository.findByStatus("OPEN");
+        // Only verified jobs are visible/applyable, so alerts must ignore pending ones —
+        // otherwise a seeker gets emailed about a job they can't yet see or apply to.
+        List<Job> openJobs = jobRepository.findByStatusAndVerified("OPEN", true);
         int emailsSent = 0;
 
         for (JobAlert alert : alerts) {

@@ -40,6 +40,12 @@ public class ApplicationService {
             throw new RuntimeException("This job is pending admin approval and is not open for applications yet.");
         }
 
+        // Only jobs that are actively OPEN accept applications — a paused or closed
+        // (or deadline-expired, auto-closed) posting should reject new applicants.
+        if (!"OPEN".equals(job.getStatus())) {
+            throw new RuntimeException("This job is no longer accepting applications.");
+        }
+
         Application app = new Application();
         app.setSeekerId(seekerId);
         app.setJobId(jobId);
