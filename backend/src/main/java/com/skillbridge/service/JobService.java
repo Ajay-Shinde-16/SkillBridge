@@ -47,6 +47,10 @@ public class JobService {
         job.setStatus("OPEN");
         job.setPostedAt(LocalDateTime.now());
         job.setApplicationCount(0);
+        // A new posting must be approved by an admin before seekers can see or apply to it.
+        job.setVerified(false);
+        job.setVerifiedBy(null);
+        job.setVerifiedAt(null);
 
         // Clean requiredSkills — remove any JSON array brackets/quotes
         if (job.getRequiredSkills() != null) {
@@ -60,7 +64,33 @@ public class JobService {
     }
 
     public List<Job> getAllOpenJobs() {
-        return jobRepository.findByStatus("OPEN");
+        // Seekers only ever see jobs that are both OPEN and admin-verified.
+        return jobRepository.findByStatusAndVerified("OPEN", true);
+    }
+
+    // ─── Admin: jobs awaiting verification ───
+    public List<Job> getPendingJobs() {
+        return jobRepository.findByVerified(false);
+    }
+
+    // ─── Admin: approve a job so it becomes visible/applyable ───
+    public Job verifyJob(String jobId, String adminId) {
+        Job job = getJobById(jobId);
+        job.setVerified(true);
+        job.setVerifiedBy(adminId);
+        job.setVerifiedAt(LocalDateTime.now());
+        log.info("Job {} verified by admin {}", jobId, adminId);
+        return jobRepository.save(job);
+    }
+
+    // ─── Admin: revoke verification (e.g. job was approved by mistake) ───
+    public Job unverifyJob(String jobId) {
+        Job job = getJobById(jobId);
+        job.setVerified(false);
+        job.setVerifiedBy(null);
+        job.setVerifiedAt(null);
+        log.info("Job {} verification revoked", jobId);
+        return jobRepository.save(job);
     }
 
     public List<Job> getJobsByEmployer(String employerId) {

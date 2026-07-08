@@ -1,17 +1,19 @@
 import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { getAllJobs, deleteJob } from '../../services/api'
+import { getAllJobsAdmin, deleteJob, verifyJob, unverifyJob } from '../../services/api'
 
 export default function ManageJobs() {
   const [jobs, setJobs] = useState([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState('')
+  const [verifyFilter, setVerifyFilter] = useState('')   // '', 'PENDING', 'VERIFIED'
   const [deleting, setDeleting] = useState(null)
+  const [verifying, setVerifying] = useState(null)
 
   const fetchJobs = () => {
     setLoading(true)
-    getAllJobs().then(({ data }) => { setJobs(data); setLoading(false) })
+    getAllJobsAdmin().then(({ data }) => { setJobs(data); setLoading(false) })
       .catch(() => setLoading(false))
   }
   useEffect(() => { fetchJobs(); const t=setInterval(fetchJobs,30000); return ()=>clearInterval(t) }, [])
@@ -23,11 +25,29 @@ export default function ManageJobs() {
     catch (e) { alert('Failed to delete job') } finally { setDeleting(null) }
   }
 
+  const handleVerify = async (id, title) => {
+    setVerifying(id)
+    try { await verifyJob(id); fetchJobs() }
+    catch (e) { alert('Failed to verify job') } finally { setVerifying(null) }
+  }
+
+  const handleUnverify = async (id, title) => {
+    if (!window.confirm(`Unpublish "${title}"? Seekers will no longer see it until re-approved.`)) return
+    setVerifying(id)
+    try { await unverifyJob(id); fetchJobs() }
+    catch (e) { alert('Failed to unpublish job') } finally { setVerifying(null) }
+  }
+
   const filtered = jobs.filter(j =>
     (j.title?.toLowerCase().includes(search.toLowerCase()) ||
      j.companyName?.toLowerCase().includes(search.toLowerCase())) &&
-    (statusFilter === '' || j.status === statusFilter)
+    (statusFilter === '' || j.status === statusFilter) &&
+    (verifyFilter === '' ||
+     (verifyFilter === 'PENDING' && !j.verified) ||
+     (verifyFilter === 'VERIFIED' && j.verified))
   )
+
+  const pendingCount = jobs.filter(j => !j.verified).length
 
   const statusColors = { OPEN: 'success', CLOSED: 'danger', PAUSED: 'warning' }
 
@@ -51,7 +71,14 @@ export default function ManageJobs() {
         <div className="flex-fill main-content p-3">
           <div className="welcome-header">
             <h2 className="fw-bold mb-1"><i className="bi bi-briefcase me-2"></i>Manage All Jobs</h2>
-            <p className="mb-0">{jobs.length} total job postings on the platform</p>
+            <p className="mb-0">
+              {jobs.length} total job postings on the platform
+              {pendingCount > 0 && (
+                <span className="badge bg-warning text-dark rounded-pill ms-2">
+                  <i className="bi bi-hourglass-split me-1"></i>{pendingCount} pending approval
+                </span>
+              )}
+            </p>
           </div>
 
           <div className="card border-0 shadow-sm rounded-4">
@@ -72,13 +99,19 @@ export default function ManageJobs() {
                   <option value="PAUSED">Paused</option>
                   <option value="CLOSED">Closed</option>
                 </select>
+                <select className="form-select rounded-3" style={{ maxWidth: 170 }}
+                  value={verifyFilter} onChange={e => setVerifyFilter(e.target.value)}>
+                  <option value="">All Approval</option>
+                  <option value="PENDING">Pending Approval</option>
+                  <option value="VERIFIED">Verified</option>
+                </select>
                 <span className="text-muted small align-self-center ms-auto">
                   {filtered.length} results
                 </span>
               </div>
 
               {loading ? (
-                <div className="text-center py-4"><div className="spinner-border" style={{ color: '#123160' }}></div></div>
+                <div className="text-center py-4"><div className="spinner-border" style={{ color: '#0A66C2' }}></div></div>
               ) : (
                 <div className="table-responsive">
                   <table className="table table-hover align-middle mb-0" style={{ fontSize: '0.85rem' }}>
@@ -89,6 +122,7 @@ export default function ManageJobs() {
                         <th className="d-none d-md-table-cell">Salary</th>
                         <th>Applicants</th>
                         <th>Status</th>
+                        <th>Approval</th>
                         <th>Action</th>
                       </tr>
                     </thead>
@@ -101,7 +135,7 @@ export default function ManageJobs() {
                             ₹{job.minSalary?.toLocaleString()}–{job.maxSalary?.toLocaleString()}
                           </td>
                           <td>
-                            <span className="badge rounded-pill" style={{ background: '#EEF3F8', color: '#123160' }}>
+                            <span className="badge rounded-pill" style={{ background: '#EEF3F8', color: '#0A66C2' }}>
                               {job.applicationCount || 0}
                             </span>
                           </td>
@@ -111,15 +145,49 @@ export default function ManageJobs() {
                             </span>
                           </td>
                           <td>
-                            <button
-                              className="btn btn-sm rounded-pill"
-                              style={{ background: '#FEE2E2', color: '#991b1b', fontSize: '0.72rem', padding: '3px 10px' }}
-                              disabled={deleting === job.id}
-                              onClick={() => handleDelete(job.id, job.title)}>
-                              {deleting === job.id
-                                ? <span className="spinner-border spinner-border-sm" style={{ width: 10, height: 10 }}></span>
-                                : <><i className="bi bi-trash me-1"></i>Delete</>}
-                            </button>
+                            {job.verified ? (
+                              <span className="badge rounded-pill" style={{ background: '#D1FAE5', color: '#057642', fontSize: '0.72rem' }}>
+                                <i className="bi bi-patch-check-fill me-1"></i>Verified
+                              </span>
+                            ) : (
+                              <span className="badge rounded-pill" style={{ background: '#FEF3C7', color: '#92400e', fontSize: '0.72rem' }}>
+                                <i className="bi bi-hourglass-split me-1"></i>Pending
+                              </span>
+                            )}
+                          </td>
+                          <td>
+                            <div className="d-flex gap-1">
+                              {!job.verified ? (
+                                <button
+                                  className="btn btn-sm rounded-pill"
+                                  style={{ background: '#D1FAE5', color: '#057642', fontSize: '0.72rem', padding: '3px 10px' }}
+                                  disabled={verifying === job.id}
+                                  onClick={() => handleVerify(job.id, job.title)}>
+                                  {verifying === job.id
+                                    ? <span className="spinner-border spinner-border-sm" style={{ width: 10, height: 10 }}></span>
+                                    : <><i className="bi bi-check-circle me-1"></i>Verify</>}
+                                </button>
+                              ) : (
+                                <button
+                                  className="btn btn-sm rounded-pill"
+                                  style={{ background: '#FEF3C7', color: '#92400e', fontSize: '0.72rem', padding: '3px 10px' }}
+                                  disabled={verifying === job.id}
+                                  onClick={() => handleUnverify(job.id, job.title)}>
+                                  {verifying === job.id
+                                    ? <span className="spinner-border spinner-border-sm" style={{ width: 10, height: 10 }}></span>
+                                    : <><i className="bi bi-x-circle me-1"></i>Unpublish</>}
+                                </button>
+                              )}
+                              <button
+                                className="btn btn-sm rounded-pill"
+                                style={{ background: '#FEE2E2', color: '#991b1b', fontSize: '0.72rem', padding: '3px 10px' }}
+                                disabled={deleting === job.id}
+                                onClick={() => handleDelete(job.id, job.title)}>
+                                {deleting === job.id
+                                  ? <span className="spinner-border spinner-border-sm" style={{ width: 10, height: 10 }}></span>
+                                  : <><i className="bi bi-trash me-1"></i>Delete</>}
+                              </button>
+                            </div>
                           </td>
                         </tr>
                       ))}

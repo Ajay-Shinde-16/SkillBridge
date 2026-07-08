@@ -176,4 +176,75 @@ public class JobController {
         int score = jobService.calculateSkillMatchScore(user.getId(), jobId);
         return ResponseEntity.ok(java.util.Map.of("score", score));
     }
+
+    // ─────────────────────────────────────────────────────────────
+    //  ADMIN JOB VERIFICATION
+    //  Employers post jobs as "pending"; an admin reviews and approves
+    //  them here. Only verified jobs are visible to seekers and open
+    //  for applications.
+    // ─────────────────────────────────────────────────────────────
+
+    // List every job still awaiting admin approval.
+    @GetMapping("/admin/pending")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<List<Job>> getPendingJobs() {
+        return ResponseEntity.ok(jobService.getPendingJobs());
+    }
+
+    // List ALL jobs (verified, pending, open, paused, closed) for the admin console.
+    // The public /all endpoint only returns verified+open jobs, so admins need this
+    // separate view to see and moderate everything on the platform.
+    @GetMapping("/admin/all")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<List<Job>> getAllJobsForAdmin() {
+        return ResponseEntity.ok(jobRepository.findAll());
+    }
+
+    // Approve a job — makes it live for seekers and notifies the employer.
+    @PutMapping("/{id}/verify")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> verifyJob(@PathVariable String id, Authentication auth) {
+        try {
+            User admin = userRepository.findByEmail(auth.getName())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+            Job job = jobService.verifyJob(id, admin.getId());
+
+            // Let the employer know their posting is approved and now visible.
+            if (job.getEmployerId() != null && !job.getEmployerId().isEmpty()) {
+                try {
+                    notificationService.create(job.getEmployerId(),
+                        "✅ Job Approved — " + job.getTitle(),
+                        "Your job posting \"" + job.getTitle() + "\" has been verified by an admin and is now live. Seekers can view and apply to it.",
+                        "SYSTEM", "/employer/dashboard");
+                } catch (Exception e) {
+                    log.warn("Could not notify employer {} of job approval", job.getEmployerId());
+                }
+            }
+            return ResponseEntity.ok(job);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    // Revoke a job's verification (e.g. approved by mistake) — hides it again.
+    @PutMapping("/{id}/unverify")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> unverifyJob(@PathVariable String id, Authentication auth) {
+        try {
+            Job job = jobService.unverifyJob(id);
+            if (job.getEmployerId() != null && !job.getEmployerId().isEmpty()) {
+                try {
+                    notificationService.create(job.getEmployerId(),
+                        "⚠️ Job Unpublished — " + job.getTitle(),
+                        "Your job posting \"" + job.getTitle() + "\" has been unpublished by an admin and is no longer visible to seekers.",
+                        "SYSTEM", "/employer/dashboard");
+                } catch (Exception e) {
+                    log.warn("Could not notify employer {} of job unverify", job.getEmployerId());
+                }
+            }
+            return ResponseEntity.ok(job);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
 }

@@ -29,6 +29,11 @@ export const getMyJobs    = ()           => API.get('/jobs/my-jobs')
 export const updateJob    = (id, data)   => API.put(`/jobs/${id}`, data)
 export const deleteJob    = (id)         => API.delete(`/jobs/${id}`)
 export const getMatchScore = (jobId)     => API.get(`/jobs/match-score/${jobId}`)
+// ─── Admin job verification ───
+export const getAllJobsAdmin = ()        => API.get('/jobs/admin/all')
+export const getPendingJobs = ()         => API.get('/jobs/admin/pending')
+export const verifyJob      = (id)       => API.put(`/jobs/${id}/verify`)
+export const unverifyJob    = (id)       => API.put(`/jobs/${id}/unverify`)
 
 // ─── Applications ───
 export const applyToJob              = (jobId, data) => API.post(`/applications/apply/${jobId}`, data)

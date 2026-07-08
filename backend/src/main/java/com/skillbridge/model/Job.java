@@ -44,6 +44,14 @@ public class Job {
     private String currency = "INR";
     private String status = "OPEN";  // OPEN, CLOSED, PAUSED
     private int applicationCount = 0;
+
+    // ─── Admin verification ───
+    // A newly posted job starts unverified and is hidden from seekers until an
+    // admin approves it. Only verified jobs appear in listings/search and can be applied to.
+    private boolean verified = false;
+    private String verifiedBy;              // admin user id who approved it
+    private LocalDateTime verifiedAt;       // when it was approved
+
     private LocalDateTime postedAt;
     private LocalDateTime deadline;
 

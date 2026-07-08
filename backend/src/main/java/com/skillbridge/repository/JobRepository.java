@@ -12,7 +12,12 @@ public interface JobRepository extends JpaRepository<Job, String> {
     List<Job> findByEmployerId(String employerId);
     List<Job> findByStatus(String status);
 
-    @Query("SELECT j FROM Job j WHERE j.status = 'OPEN' AND " +
+    // ─── Admin verification finders ───
+    // Only verified jobs are shown to seekers; pending (unverified) jobs are what the admin reviews.
+    List<Job> findByStatusAndVerified(String status, boolean verified);
+    List<Job> findByVerified(boolean verified);
+
+    @Query("SELECT j FROM Job j WHERE j.status = 'OPEN' AND j.verified = true AND " +
            "(:keyword IS NULL OR LOWER(j.title) LIKE LOWER(CONCAT('%', :keyword, '%')) OR LOWER(j.description) LIKE LOWER(CONCAT('%', :keyword, '%'))) AND " +
            "(:remote IS NULL OR j.remote = :remote) AND " +
            "(:experienceLevel IS NULL OR j.experienceLevel = :experienceLevel) AND " +
@@ -26,7 +31,7 @@ public interface JobRepository extends JpaRepository<Job, String> {
 
     // Same filters as searchJobs, but paginated — used by the job-browsing page so it
     // doesn't have to fetch every open job in one response as the dataset grows.
-    @Query("SELECT j FROM Job j WHERE j.status = 'OPEN' AND " +
+    @Query("SELECT j FROM Job j WHERE j.status = 'OPEN' AND j.verified = true AND " +
            "(:keyword IS NULL OR LOWER(j.title) LIKE LOWER(CONCAT('%', :keyword, '%')) OR LOWER(j.description) LIKE LOWER(CONCAT('%', :keyword, '%'))) AND " +
            "(:remote IS NULL OR j.remote = :remote) AND " +
            "(:experienceLevel IS NULL OR j.experienceLevel = :experienceLevel) AND " +

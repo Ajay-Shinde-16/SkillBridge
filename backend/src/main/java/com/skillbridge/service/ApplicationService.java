@@ -35,6 +35,11 @@ public class ApplicationService {
             .orElseThrow(() -> new RuntimeException("Seeker not found"));
         Job job = jobService.getJobById(jobId);
 
+        // A job must be admin-verified before anyone can apply to it.
+        if (!job.isVerified()) {
+            throw new RuntimeException("This job is pending admin approval and is not open for applications yet.");
+        }
+
         Application app = new Application();
         app.setSeekerId(seekerId);
         app.setJobId(jobId);
