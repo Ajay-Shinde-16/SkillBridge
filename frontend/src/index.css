@@ -1632,6 +1632,23 @@ form button[type="submit"] {
   color: #fff;
 }
 
+/* VERIFICATION MARKER — if you can see a bright pink dot in the
+   bottom-right corner of the screen, this CSS file IS loaded.
+   If you don't see it, your browser is using an old/cached file
+   or a different index.css than the one you replaced. */
+body::after {
+  content: '';
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #ff00aa;
+  z-index: 99999;
+  box-shadow: 0 0 8px #ff00aa;
+}
+
 /* ════════════════════════════════════════════════════════════
    TMS-STYLE FLOATING LABEL (true version — label sits ON the
    input border, like "⌐ Select Role ⌐" in the reference image)
@@ -1927,18 +1944,20 @@ body.dark-mode .employer-job-row {
     top: 100%;               /* sit just below the navbar */
     left: 0;
     right: 0;
-    background: #0A66C2;      /* same as the navbar bar */
+    background: #0A2347;      /* deep navy — matches the site theme */
     padding: 12px 18px 16px;
-    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.28);
-    border-top: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35);
+    border-top: 1px solid rgba(255, 255, 255, 0.10);
     border-radius: 0 0 14px 14px;
     z-index: 1050;           /* above page content */
     max-height: calc(100vh - 64px);
     overflow-y: auto;        /* scroll if the menu is taller than the screen */
   }
   body.dark-mode .navbar-expand-lg .navbar-collapse {
-    background: #0A2347;
-    border-top-color: rgba(255, 255, 255, 0.08);
+    /* slightly lifted navy so the panel stays visible against the darker page */
+    background: #0F2A52;
+    border-top-color: rgba(255, 255, 255, 0.14);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.55);
   }
 }
 /* The sticky navbar already establishes a positioning context, so the absolute
