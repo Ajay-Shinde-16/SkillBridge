@@ -1,7 +1,18 @@
 import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
+import { getStats } from '../services/api'
 
 export default function Home() {
+  // Live platform counts for the hero — falls back to null until loaded.
+  const [stats, setStats] = useState(null)
+  useEffect(() => {
+    getStats().then(({ data }) => setStats(data)).catch(() => {})
+  }, [])
+
+  // Formats a count with a trailing "+" once it's loaded; shows a neutral
+  // placeholder while loading so the layout doesn't jump.
+  const fmt = (n) => (n === undefined || n === null) ? '—' : `${n}+`
+
   const phrases = [
     'Find Your Dream Remote Job',
     'Get Matched by Your Skills',
@@ -49,7 +60,7 @@ export default function Home() {
           <div className="d-inline-flex align-items-center gap-2 px-3 py-1 rounded-pill mb-3"
             style={{background:'rgba(255,255,255,0.12)', border:'1px solid rgba(255,255,255,0.3)', fontSize:'0.8rem'}}>
             <span style={{width:6,height:6,borderRadius:'50%',background:'#4ade80',display:'inline-block'}}></span>
-            2000+ Active Seekers · Skill-Verified Job Matching
+            {stats ? `${stats.seekers}+ Active Seekers` : 'Active Seekers'} · Skill-Verified Job Matching
           </div>
           <div className="d-flex align-items-center justify-content-center gap-3 mb-3">
             <img src="/logo.svg" alt="SkillBridge" width={52} height={52} style={{borderRadius:12}} onError={e=>e.target.style.display='none'}/>
@@ -71,12 +82,17 @@ export default function Home() {
               <i className="bi bi-person-plus me-2"></i>Get Started Free
             </Link>
           </div>
-          {/* Trust badges */}
+          {/* Trust badges — real counts from the database */}
           <div className="d-flex justify-content-center gap-4 mt-4 flex-wrap">
-            {['500+ Remote Jobs','2000+ Seekers','150+ Employers','80+ Verified Skills'].map((t,i)=>(
+            {[
+              { value: fmt(stats?.jobs),           label: 'Remote Jobs' },
+              { value: fmt(stats?.seekers),        label: 'Seekers' },
+              { value: fmt(stats?.employers),      label: 'Employers' },
+              { value: fmt(stats?.verifiedSkills), label: 'Verified Skills' },
+            ].map((s, i) => (
               <div key={i} className="text-white-50 small">
-                <span className="fw-bold text-white">{t.split(' ')[0]} </span>
-                {t.split(' ').slice(1).join(' ')}
+                <span className="fw-bold text-white">{s.value} </span>
+                {s.label}
               </div>
             ))}
           </div>

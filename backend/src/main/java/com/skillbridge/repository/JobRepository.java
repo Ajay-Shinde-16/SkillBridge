@@ -16,6 +16,7 @@ public interface JobRepository extends JpaRepository<Job, String> {
     // Only verified jobs are shown to seekers; pending (unverified) jobs are what the admin reviews.
     List<Job> findByStatusAndVerified(String status, boolean verified);
     List<Job> findByVerified(boolean verified);
+    long countByStatusAndVerified(String status, boolean verified);
 
     @Query("SELECT j FROM Job j WHERE j.status = 'OPEN' AND j.verified = true AND " +
            "(:keyword IS NULL OR LOWER(j.title) LIKE LOWER(CONCAT('%', :keyword, '%')) OR LOWER(j.description) LIKE LOWER(CONCAT('%', :keyword, '%'))) AND " +

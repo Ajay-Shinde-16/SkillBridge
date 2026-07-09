@@ -154,3 +154,5 @@ export const sendMyJobMessage = (jobId, content)   => API.post(`/messages/job/${
 export const getJobInquiries  = (jobId)            => API.get(`/messages/job/${jobId}/inquiries`)
 export const getInquiryThread = (jobId, seekerId)  => API.get(`/messages/job/${jobId}/seeker/${seekerId}`)
 export const replyToInquiry   = (jobId, seekerId, content) => API.post(`/messages/job/${jobId}/seeker/${seekerId}`, { content })
+// ─── Public landing-page stats (real counts, no auth required) ───
+export const getStats = () => API.get('/stats')

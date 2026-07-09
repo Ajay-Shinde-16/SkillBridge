@@ -8,5 +8,6 @@ import java.util.Optional;
 public interface SkillRepository extends JpaRepository<Skill, String> {
     Optional<Skill> findByNameIgnoreCase(String name);
     List<Skill> findByVerified(boolean verified);
+    long countByVerified(boolean verified);
     List<Skill> findByCategory(String category);
 }
