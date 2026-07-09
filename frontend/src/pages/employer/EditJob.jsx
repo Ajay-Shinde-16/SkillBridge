@@ -33,8 +33,21 @@ export default function EditJob() {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    setSaving(true)
     setError('')
+
+    // Match PostJob's validation so an edit can't introduce invalid data.
+    if (!form.title?.trim()) { setError('Job title is required'); return }
+    if (!form.description?.trim()) { setError('Job description is required'); return }
+    if (!form.requiredSkills?.trim()) { setError('Required skills are needed'); return }
+    if (!form.minSalary || !form.maxSalary) { setError('Salary range is required'); return }
+    if (parseFloat(form.minSalary) < 0 || parseFloat(form.maxSalary) < 0) {
+      setError('Salary cannot be negative'); return
+    }
+    if (parseFloat(form.minSalary) > parseFloat(form.maxSalary)) {
+      setError('Min salary cannot be greater than max salary'); return
+    }
+
+    setSaving(true)
     try {
       const payload = {
         ...form,
@@ -52,7 +65,7 @@ export default function EditJob() {
 
   if (loading) return (
     <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '60vh' }}>
-      <div className="spinner-border" style={{ color: '#123160' }}></div>
+      <div className="spinner-border" style={{ color: '#0A66C2' }}></div>
     </div>
   )
 
@@ -172,14 +185,14 @@ export default function EditJob() {
                         checked={form?.remote ?? true}
                         onChange={e => setForm({ ...form, remote: e.target.checked })} />
                       <label className="form-check-label fw-semibold" htmlFor="remoteSwitch">
-                        <i className="bi bi-globe me-1" style={{ color: '#123160' }}></i>Remote Position
+                        <i className="bi bi-globe me-1" style={{ color: '#0A66C2' }}></i>Remote Position
                       </label>
                     </div>
                   </div>
                 </div>
                 <div className="d-flex gap-3 mt-4 flex-wrap">
                   <button type="submit" className="btn text-white fw-bold px-5 rounded-pill"
-                    style={{ background: '#123160' }} disabled={saving}>
+                    style={{ background: '#0A66C2' }} disabled={saving}>
                     {saving ? <span className="spinner-border spinner-border-sm me-2"></span> : <i className="bi bi-check-circle me-2"></i>}
                     Save Changes
                   </button>

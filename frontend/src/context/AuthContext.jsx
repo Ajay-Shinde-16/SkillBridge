@@ -16,8 +16,14 @@ export function AuthProvider({ children }) {
     const savedToken = localStorage.getItem('token')
     const savedUser = localStorage.getItem('user')
     if (savedToken && savedUser) {
-      setToken(savedToken)
-      setUser(JSON.parse(savedUser))
+      try {
+        setUser(JSON.parse(savedUser))
+        setToken(savedToken)
+      } catch (e) {
+        // Corrupted/tampered localStorage — clear it instead of white-screening the app.
+        localStorage.removeItem('token')
+        localStorage.removeItem('user')
+      }
     }
     setLoading(false)
   }, [])
