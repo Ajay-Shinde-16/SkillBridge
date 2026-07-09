@@ -50,6 +50,7 @@ export const getMyJobs    = ()           => API.get('/jobs/my-jobs')
 export const updateJob    = (id, data)   => API.put(`/jobs/${id}`, data)
 export const deleteJob    = (id)         => API.delete(`/jobs/${id}`)
 export const getMatchScore = (jobId)     => API.get(`/jobs/match-score/${jobId}`)
+export const getSkillBreakdown = (jobId) => API.get(`/jobs/skill-breakdown/${jobId}`)
 
 // ─── Resume viewing (authenticated blob) ───
 // Resume endpoints now require a valid JWT, so a plain <a href> link won't work
@@ -156,3 +157,5 @@ export const getInquiryThread = (jobId, seekerId)  => API.get(`/messages/job/${j
 export const replyToInquiry   = (jobId, seekerId, content) => API.post(`/messages/job/${jobId}/seeker/${seekerId}`, { content })
 // ─── Public landing-page stats (real counts, no auth required) ───
 export const getStats = () => API.get('/stats')
+// ─── Admin analytics dashboard ───
+export const getAnalytics = () => API.get('/analytics')

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { getJobById, applyToJob, getMatchScore, toggleSavedJob, getSavedJobs } from '../services/api'
+import { getJobById, applyToJob, getMatchScore, getSkillBreakdown, toggleSavedJob, getSavedJobs } from '../services/api'
 import { useAuth } from '../context/AuthContext'
 import CompanyLogo from '../components/CompanyLogo'
 
@@ -11,6 +11,7 @@ export default function JobDetail() {
   const [job, setJob] = useState(null)
   const [loading, setLoading] = useState(true)
   const [matchScore, setMatchScore] = useState(null)
+  const [breakdown, setBreakdown] = useState(null)
   const [coverLetter, setCoverLetter] = useState('')
   const [applying, setApplying] = useState(false)
   const [applied, setApplied] = useState(false)
@@ -27,6 +28,10 @@ export default function JobDetail() {
           try {
             const { data: score } = await getMatchScore(id)
             setMatchScore(score.score)
+            try {
+              const { data: bd } = await getSkillBreakdown(id)
+              setBreakdown(bd)
+            } catch { /* breakdown is optional; match score still shows */ }
           } catch { setMatchScore(0) }
           try {
             const { data: saved } = await getSavedJobs()
@@ -209,6 +214,55 @@ export default function JobDetail() {
                     </div>
                   </div>
                 </div>
+
+                {breakdown && (
+                  <div className="mt-3 pt-3 border-top text-start">
+                    {breakdown.matched && breakdown.matched.length > 0 && (
+                      <>
+                        <div className="small fw-semibold text-muted mb-2">Your matching skills</div>
+                        <div className="d-flex flex-wrap gap-2 mb-3">
+                          {breakdown.matched.map((s, i) => {
+                            const isVerified = breakdown.verified && breakdown.verified.includes(s)
+                            return (
+                              <span key={i} className="badge rounded-pill d-inline-flex align-items-center"
+                                style={{ background: '#D1FAE5', color: '#057642', fontSize: '0.75rem', fontWeight: 500 }}>
+                                <i className="bi bi-check-circle-fill me-1"></i>{s}
+                                {isVerified && <i className="bi bi-patch-check-fill ms-1" title="Admin-verified skill"></i>}
+                              </span>
+                            )
+                          })}
+                        </div>
+                      </>
+                    )}
+                    {breakdown.missing && breakdown.missing.length > 0 && (
+                      <>
+                        <div className="small fw-semibold text-muted mb-2">Skills you're missing</div>
+                        <div className="d-flex flex-wrap gap-2 mb-3">
+                          {breakdown.missing.map((s, i) => (
+                            <span key={i} className="badge rounded-pill d-inline-flex align-items-center"
+                              style={{ background: '#FEE2E2', color: '#991b1b', fontSize: '0.75rem', fontWeight: 500 }}>
+                              <i className="bi bi-x-circle me-1"></i>{s}
+                            </span>
+                          ))}
+                        </div>
+                      </>
+                    )}
+                    {breakdown.missing && breakdown.missing.length > 0 && (
+                      <div className="small rounded-3 p-2" style={{ background: '#E6F1FB', color: '#0C447C' }}>
+                        <i className="bi bi-lightbulb me-1"></i>
+                        Learn {breakdown.missing.slice(0, 2).join(' and ')}
+                        {breakdown.missing.length > 2 ? ` +${breakdown.missing.length - 2} more` : ''} to raise your match.
+                        The <i className="bi bi-patch-check-fill"></i> badge means an admin verified that skill.
+                      </div>
+                    )}
+                    {breakdown.missing && breakdown.missing.length === 0 && breakdown.matched && breakdown.matched.length > 0 && (
+                      <div className="small rounded-3 p-2" style={{ background: '#D1FAE5', color: '#057642' }}>
+                        <i className="bi bi-stars me-1"></i>
+                        You have all the required skills for this job!
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
           )}

@@ -177,6 +177,20 @@ public class JobController {
         return ResponseEntity.ok(java.util.Map.of("score", score));
     }
 
+    // Itemized skill-gap breakdown for the job detail page: which required skills
+    // the seeker has, which are admin-verified, and which are missing.
+    @GetMapping("/skill-breakdown/{jobId}")
+    @PreAuthorize("hasRole('SEEKER')")
+    public ResponseEntity<?> getSkillBreakdown(@PathVariable String jobId, Authentication auth) {
+        try {
+            User user = userRepository.findByEmail(auth.getName())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+            return ResponseEntity.ok(jobService.getSkillBreakdown(user.getId(), jobId));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
     // ─────────────────────────────────────────────────────────────
     //  ADMIN JOB VERIFICATION
     //  Employers post jobs as "pending"; an admin reviews and approves

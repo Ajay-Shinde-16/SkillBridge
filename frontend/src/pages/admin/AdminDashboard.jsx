@@ -8,6 +8,7 @@ const sidebarItems = [
   {to:'/admin/skills',icon:'bi-patch-check',label:'Verify Skills'},
   {to:'/admin/jobs',icon:'bi-briefcase',label:'Manage Jobs'},
   {to:'/admin/applications',icon:'bi-file-text',label:'All Applications'},
+  {to:'/admin/analytics',icon:'bi-graph-up',label:'Analytics'},
 ]
 
 export default function AdminDashboard() {

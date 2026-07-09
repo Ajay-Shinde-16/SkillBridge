@@ -11,6 +11,8 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -194,6 +196,55 @@ public class JobService {
 
         double score = (matched + verifiedMatched * 0.5) / required.size() * 100;
         return (int) Math.min(score, 100);
+    }
+
+    // Returns an itemized breakdown of the skill match for a seeker vs a job:
+    // which required skills they have, which are admin-verified, and which are
+    // missing. Uses the SAME matching logic as calculateSkillMatchScore so the
+    // breakdown always agrees with the percentage shown.
+    public Map<String, Object> getSkillBreakdown(String seekerId, String jobId) {
+        User seeker = userRepository.findById(seekerId)
+            .orElseThrow(() -> new RuntimeException("Seeker not found"));
+        Job job = getJobById(jobId);
+
+        List<String> required = job.getRequiredSkillsList();
+        List<String> matchedSkills = new ArrayList<>();
+        List<String> verifiedSkills = new ArrayList<>();
+        List<String> missingSkills = new ArrayList<>();
+
+        // Normalise seeker skills to lowercase for comparison, but keep the
+        // original required-skill casing for display.
+        List<String> seekerLower = new ArrayList<>();
+        if (seeker.getSkillsList() != null)
+            for (Object o : seeker.getSkillsList())
+                if (o != null) seekerLower.add(o.toString().toLowerCase().trim());
+
+        List<String> verifiedLower = new ArrayList<>();
+        if (seeker.getVerifiedSkillsList() != null)
+            for (Object o : seeker.getVerifiedSkillsList())
+                if (o != null) verifiedLower.add(o.toString().toLowerCase().trim());
+
+        if (required != null) {
+            for (String req : required) {
+                String reqLower = req.toLowerCase().trim();
+                if (verifiedLower.contains(reqLower)) {
+                    verifiedSkills.add(req);
+                    matchedSkills.add(req);
+                } else if (seekerLower.contains(reqLower)) {
+                    matchedSkills.add(req);
+                } else {
+                    missingSkills.add(req);
+                }
+            }
+        }
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("score", calculateSkillMatchScore(seekerId, jobId));
+        result.put("matched", matchedSkills);       // skills the seeker has
+        result.put("verified", verifiedSkills);      // subset that are admin-verified
+        result.put("missing", missingSkills);        // required skills the seeker lacks
+        result.put("totalRequired", required == null ? 0 : required.size());
+        return result;
     }
 
     public void incrementApplicationCount(String jobId) {

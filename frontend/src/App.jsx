@@ -36,6 +36,7 @@ const ManageUsers = lazy(() => import('./pages/admin/ManageUsers'))
 const VerifySkills = lazy(() => import('./pages/admin/VerifySkills'))
 const ManageJobs = lazy(() => import('./pages/admin/ManageJobs'))
 const AllApplications = lazy(() => import('./pages/admin/AllApplications'))
+const AdminAnalytics = lazy(() => import('./pages/admin/AdminAnalytics'))
 const CareerRoom = lazy(() => import('./pages/CareerRoom'))
 
 function ProtectedRoute({ children, roles }) {
@@ -181,6 +182,7 @@ function AppRoutes() {
 
       {/* ── ADMIN ── */}
       <Route path="/admin/dashboard" element={<ProtectedRoute roles={['ADMIN']}><WithNav><AdminDashboard /></WithNav></ProtectedRoute>} />
+      <Route path="/admin/analytics" element={<ProtectedRoute roles={['ADMIN']}><WithNav><AdminAnalytics /></WithNav></ProtectedRoute>} />
       <Route path="/admin/users" element={<ProtectedRoute roles={['ADMIN']}><WithNav><ManageUsers /></WithNav></ProtectedRoute>} />
       <Route path="/admin/skills" element={<ProtectedRoute roles={['ADMIN']}><WithNav><VerifySkills /></WithNav></ProtectedRoute>} />
       <Route path="/admin/jobs" element={<ProtectedRoute roles={['ADMIN']}><WithNav><ManageJobs /></WithNav></ProtectedRoute>} />
