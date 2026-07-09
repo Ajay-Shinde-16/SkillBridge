@@ -51,7 +51,7 @@ export default function AllApplications() {
         </div>
         <div className="flex-fill main-content p-3">
           <div className="welcome-header">
-            <h2 className="fw-bold mb-1"><i className="bi bi-file-text me-2"></i>All Applications</h2>
+            <h1 className="fw-bold mb-1"><i className="bi bi-file-text me-2"></i>All Applications</h1>
             <p className="mb-0">{applications.length} total applications on the platform</p>
           </div>
 

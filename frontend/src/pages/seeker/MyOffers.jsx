@@ -94,7 +94,7 @@ export default function MyOffers() {
       )}
 
       <div className="welcome-header mb-4">
-        <h2 className="fw-bold mb-1"><i className="bi bi-trophy me-2"></i>My Job Offers</h2>
+        <h1 className="fw-bold mb-1"><i className="bi bi-trophy me-2"></i>My Job Offers</h1>
         <p className="mb-0">{pending.length} pending • {accepted.length} accepted • {rejected.length} declined</p>
       </div>
 

@@ -103,7 +103,7 @@ export default function ManageUsers() {
 
         <div className="flex-fill main-content p-3">
           <div className="welcome-header">
-            <h2 className="fw-bold mb-1"><i className="bi bi-people me-2"></i>Manage Users</h2>
+            <h1 className="fw-bold mb-1"><i className="bi bi-people me-2"></i>Manage Users</h1>
             <p className="mb-0">{users.length} registered users on the platform</p>
           </div>
 

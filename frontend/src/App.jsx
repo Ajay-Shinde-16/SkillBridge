@@ -1,42 +1,42 @@
-import React from 'react'
+import React, { lazy, Suspense } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider, useAuth } from './context/AuthContext'
 import Navbar from './components/Navbar'
 import StandoutAnimations from './components/StandoutAnimations'
 
 import Home from './pages/Home'
-import Login from './pages/Login'
-import Register from './pages/Register'
-import JobList from './pages/JobList'
-import JobDetail from './pages/JobDetail'
-import Profile from './pages/Profile'
-import ChangePassword from './pages/ChangePassword'
-import NotFound from './pages/NotFound'
-import ForgotPassword from './pages/ForgotPassword'
-import SavedJobs from './pages/seeker/SavedJobs'
+const Login = lazy(() => import('./pages/Login'))
+const Register = lazy(() => import('./pages/Register'))
+const JobList = lazy(() => import('./pages/JobList'))
+const JobDetail = lazy(() => import('./pages/JobDetail'))
+const Profile = lazy(() => import('./pages/Profile'))
+const ChangePassword = lazy(() => import('./pages/ChangePassword'))
+const NotFound = lazy(() => import('./pages/NotFound'))
+const ForgotPassword = lazy(() => import('./pages/ForgotPassword'))
+const SavedJobs = lazy(() => import('./pages/seeker/SavedJobs'))
 
-import SeekerDashboard from './pages/seeker/SeekerDashboard'
-import MyApplications from './pages/seeker/MyApplications'
-import MyInterviews from './pages/seeker/MyInterviews'
-import MyOffers from './pages/seeker/MyOffers'
+const SeekerDashboard = lazy(() => import('./pages/seeker/SeekerDashboard'))
+const MyApplications = lazy(() => import('./pages/seeker/MyApplications'))
+const MyInterviews = lazy(() => import('./pages/seeker/MyInterviews'))
+const MyOffers = lazy(() => import('./pages/seeker/MyOffers'))
 
-import EmployerDashboard from './pages/employer/EmployerDashboard'
-import PostJob from './pages/employer/PostJob'
-import EditJob from './pages/employer/EditJob'
-import ManageApplications from './pages/employer/ManageApplications'
-import ScheduleInterview from './pages/employer/ScheduleInterview'
-import EmployerInterviews from './pages/employer/EmployerInterviews'
-import CompanyProfile from './pages/employer/CompanyProfile'
+const EmployerDashboard = lazy(() => import('./pages/employer/EmployerDashboard'))
+const PostJob = lazy(() => import('./pages/employer/PostJob'))
+const EditJob = lazy(() => import('./pages/employer/EditJob'))
+const ManageApplications = lazy(() => import('./pages/employer/ManageApplications'))
+const ScheduleInterview = lazy(() => import('./pages/employer/ScheduleInterview'))
+const EmployerInterviews = lazy(() => import('./pages/employer/EmployerInterviews'))
+const CompanyProfile = lazy(() => import('./pages/employer/CompanyProfile'))
 
 
-import AdminLogin from './pages/admin/AdminLogin'
-import AdminRegister from './pages/admin/AdminRegister'
-import AdminDashboard from './pages/admin/AdminDashboard'
-import ManageUsers from './pages/admin/ManageUsers'
-import VerifySkills from './pages/admin/VerifySkills'
-import ManageJobs from './pages/admin/ManageJobs'
-import AllApplications from './pages/admin/AllApplications'
-import CareerRoom from './pages/CareerRoom'
+const AdminLogin = lazy(() => import('./pages/admin/AdminLogin'))
+const AdminRegister = lazy(() => import('./pages/admin/AdminRegister'))
+const AdminDashboard = lazy(() => import('./pages/admin/AdminDashboard'))
+const ManageUsers = lazy(() => import('./pages/admin/ManageUsers'))
+const VerifySkills = lazy(() => import('./pages/admin/VerifySkills'))
+const ManageJobs = lazy(() => import('./pages/admin/ManageJobs'))
+const AllApplications = lazy(() => import('./pages/admin/AllApplications'))
+const CareerRoom = lazy(() => import('./pages/CareerRoom'))
 
 function ProtectedRoute({ children, roles }) {
   const { user, loading } = useAuth()
@@ -54,14 +54,14 @@ function WithNav({ children }) {
   return <>
     <Navbar />
     <StandoutAnimations />
-    <div className="sb-page-shell">{children}</div>
+    <main className="sb-page-shell">{children}</main>
   </>
 }
 
 function WithBackground({ children }) {
   return <>
     <StandoutAnimations />
-    <div className="sb-page-shell">{children}</div>
+    <main className="sb-page-shell">{children}</main>
   </>
 }
 
@@ -141,6 +141,7 @@ function AllApplicants() {
 
 function AppRoutes() {
   return (
+    <Suspense fallback={<div className="d-flex justify-content-center align-items-center" style={{minHeight:'60vh'}}><div className="spinner-border" style={{color:'#123160'}}></div></div>}>
     <Routes>
       {/* Admin standalone - no navbar */}
       <Route path="/admin/login" element={<WithBackground><AdminLogin /></WithBackground>} />
@@ -188,6 +189,7 @@ function AppRoutes() {
       {/* 404 */}
       <Route path="*" element={<WithNav><NotFound /></WithNav>} />
     </Routes>
+    </Suspense>
   )
 }
 

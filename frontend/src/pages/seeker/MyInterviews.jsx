@@ -53,7 +53,7 @@ export default function MyInterviews() {
       <div className="welcome-header mb-4">
         <div className="d-flex justify-content-between flex-wrap gap-2">
           <div>
-            <h2 className="fw-bold mb-1"><i className="bi bi-camera-video me-2"></i>My Interviews</h2>
+            <h1 className="fw-bold mb-1"><i className="bi bi-camera-video me-2"></i>My Interviews</h1>
             <p className="mb-0">{upcoming.length} upcoming • {completed.length} completed</p>
           </div>
           <button className="btn btn-sm btn-outline-light rounded-pill" onClick={fetchInterviews}>

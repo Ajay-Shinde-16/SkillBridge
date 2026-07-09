@@ -36,7 +36,7 @@ export default function SavedJobs() {
   return (
     <div className="container py-4">
       <div className="welcome-header mb-4">
-        <h2 className="fw-bold mb-1"><i className="bi bi-bookmark-fill me-2"></i>Saved Jobs</h2>
+        <h1 className="fw-bold mb-1"><i className="bi bi-bookmark-fill me-2"></i>Saved Jobs</h1>
         <p className="mb-0">{jobs.length} jobs bookmarked</p>
       </div>
 
@@ -65,7 +65,7 @@ export default function SavedJobs() {
                     style={{background:'#FEE2E2',color:'#991b1b',border:'none',width:32,height:32}}
                     disabled={removing===job.id}
                     onClick={() => handleRemove(job.id)}
-                    title="Remove from saved">
+                    title="Remove from saved" aria-label="Remove from saved jobs">
                     <i className="bi bi-bookmark-x"></i>
                   </button>
                 </div>

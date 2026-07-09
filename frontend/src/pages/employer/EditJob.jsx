@@ -88,7 +88,7 @@ export default function EditJob() {
         </div>
         <div className="flex-fill main-content p-3">
           <div className="welcome-header">
-            <h2 className="fw-bold mb-1"><i className="bi bi-pencil-square me-2"></i>Edit Job Posting</h2>
+            <h1 className="fw-bold mb-1"><i className="bi bi-pencil-square me-2"></i>Edit Job Posting</h1>
             <p className="mb-0">Update your job details — changes reflect immediately</p>
           </div>
 

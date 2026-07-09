@@ -45,9 +45,9 @@ export default function AllApplicants() {
         <div className="flex-fill main-content p-3">
 
           <div className="welcome-header mb-4">
-            <h2 className="fw-bold mb-1">
+            <h1 className="fw-bold mb-1">
               <i className="bi bi-people-fill me-2"></i>Applicants
-            </h2>
+            </h1>
             <p className="mb-0 opacity-75 small">Select a job to view its applicants</p>
           </div>
 

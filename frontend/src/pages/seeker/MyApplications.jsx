@@ -70,7 +70,7 @@ export default function MyApplications() {
       <div className="welcome-header mb-4">
         <div className="d-flex justify-content-between align-items-start flex-wrap gap-2">
           <div>
-            <h2 className="fw-bold mb-1"><i className="bi bi-file-text me-2"></i>My Applications</h2>
+            <h1 className="fw-bold mb-1"><i className="bi bi-file-text me-2"></i>My Applications</h1>
             <p className="mb-0">{applications.length} total applications</p>
           </div>
           <button className="btn btn-sm btn-outline-light rounded-pill" onClick={fetchApps}>
@@ -84,7 +84,7 @@ export default function MyApplications() {
         <div className="alert alert-warning rounded-3 py-2 mb-3 d-flex align-items-center gap-2">
           <i className="bi bi-exclamation-triangle-fill"></i>
           {error}
-          <button className="btn-close ms-auto btn-close-sm" onClick={() => setError('')}></button>
+          <button className="btn-close ms-auto btn-close-sm" aria-label="Close" onClick={() => setError('')}></button>
         </div>
       )}
 

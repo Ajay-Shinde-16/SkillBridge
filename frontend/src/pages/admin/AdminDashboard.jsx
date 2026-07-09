@@ -78,7 +78,7 @@ export default function AdminDashboard() {
           <div className="welcome-header">
             <div className="d-flex justify-content-between align-items-start flex-wrap gap-2">
               <div>
-                <h2 className="fw-bold mb-1">Admin Dashboard</h2>
+                <h1 className="fw-bold mb-1">Admin Dashboard</h1>
                 <p className="mb-0">Full platform overview and control</p>
               </div>
               <button className="btn btn-sm btn-outline-light rounded-pill" onClick={load}>

@@ -95,9 +95,9 @@ export default function PostJob() {
         {/* Main */}
         <div className="flex-fill main-content p-3">
           <div className="welcome-header">
-            <h2 className="fw-bold mb-1">
+            <h1 className="fw-bold mb-1">
               <i className="bi bi-plus-circle me-2"></i>Post a New Job
-            </h2>
+            </h1>
             <p className="mb-0">Fill in the details to attract the right candidates</p>
           </div>
 
@@ -117,7 +117,7 @@ export default function PostJob() {
             <div className="alert alert-danger rounded-3 mb-3 d-flex align-items-center gap-2">
               <i className="bi bi-exclamation-triangle-fill fs-5"></i>
               <div>{error}</div>
-              <button className="btn-close ms-auto" onClick={() => setError('')}></button>
+              <button className="btn-close ms-auto" aria-label="Close" onClick={() => setError('')}></button>
             </div>
           )}
 

@@ -106,7 +106,7 @@ export default function EmployerDashboard() {
           <div className="welcome-header">
             <div className="d-flex justify-content-between align-items-start flex-wrap gap-2">
               <div>
-                <h2 className="fw-bold mb-1">Employer Dashboard</h2>
+                <h1 className="fw-bold mb-1">Employer Dashboard</h1>
                 <p className="mb-0">
                   {lastUpdated && (
                     <small className="opacity-75">

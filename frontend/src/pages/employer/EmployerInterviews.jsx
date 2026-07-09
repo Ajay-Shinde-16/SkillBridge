@@ -47,7 +47,7 @@ export default function EmployerInterviews() {
         </div>
         <div className="flex-fill main-content p-3">
           <div className="welcome-header">
-            <h2 className="fw-bold mb-1"><i className="bi bi-camera-video me-2"></i>Scheduled Interviews</h2>
+            <h1 className="fw-bold mb-1"><i className="bi bi-camera-video me-2"></i>Scheduled Interviews</h1>
             <p className="mb-0">{interviews.length} interviews — update status and add feedback</p>
           </div>
 

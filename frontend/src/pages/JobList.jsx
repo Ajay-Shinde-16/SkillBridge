@@ -118,7 +118,7 @@ export default function JobList() {
       <div className="page-header">
         <div className="d-flex justify-content-between align-items-start flex-wrap gap-2">
           <div>
-            <h2 className="fw-bold mb-1"><i className="bi bi-briefcase me-2"></i>Browse Remote Jobs</h2>
+            <h1 className="fw-bold mb-1"><i className="bi bi-briefcase me-2"></i>Browse Remote Jobs</h1>
             <p className="mb-0 opacity-75">{totalElements} positions available</p>
           </div>
           {user?.role === 'SEEKER' && (
@@ -298,6 +298,7 @@ export default function JobList() {
                         onClick={(e) => handleToggleSave(e, job.id)}
                         disabled={savingId === job.id}
                         title={isSaved ? 'Remove from saved' : 'Save this job'}
+                        aria-label={isSaved ? 'Remove from saved jobs' : 'Save this job'}
                         className="btn btn-sm rounded-circle flex-shrink-0"
                         style={{
                           width:34, height:34, border:'none',
