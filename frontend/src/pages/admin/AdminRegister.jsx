@@ -190,7 +190,6 @@ export default function AdminRegister() {
                         <label>Admin Secret Code <span className="text-danger">*</span></label>
                         <small className="text-muted">
                           <i className="bi bi-info-circle me-1"></i>
-                          Contact project leader Sudarshan for the secret code
                         </small>
                       </div>
                     </div>
@@ -212,7 +211,7 @@ export default function AdminRegister() {
                     <Link to="/admin/login" className="auth-action-btn">Admin Login</Link>
                   </div>
                   <p className="text-center text-muted mt-3 mb-0" style={{ fontSize: '0.72rem', opacity: 0.6 }}>
-                    <i className="bi bi-lock-fill me-1"></i>SkillBridge Admin Portal — CDAC PGCP-AC-002
+                    <i className="bi bi-lock-fill me-1"></i>
                   </p>
 
                 </div>

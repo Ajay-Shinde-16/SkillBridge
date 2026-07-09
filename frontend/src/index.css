@@ -1632,23 +1632,6 @@ form button[type="submit"] {
   color: #fff;
 }
 
-/* VERIFICATION MARKER — if you can see a bright pink dot in the
-   bottom-right corner of the screen, this CSS file IS loaded.
-   If you don't see it, your browser is using an old/cached file
-   or a different index.css than the one you replaced. */
-body::after {
-  content: '';
-  position: fixed;
-  bottom: 10px;
-  right: 10px;
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
-  background: #ff00aa;
-  z-index: 99999;
-  box-shadow: 0 0 8px #ff00aa;
-}
-
 /* ════════════════════════════════════════════════════════════
    TMS-STYLE FLOATING LABEL (true version — label sits ON the
    input border, like "⌐ Select Role ⌐" in the reference image)
@@ -1680,7 +1663,8 @@ body::after {
 .float-field > label {
   position: absolute;
   left: 13px;
-  top: 50%;
+  top: 26px;                 /* half of the 52px input — centers on the INPUT, not
+                                the wrapper, so sibling help text can't push it down */
   transform: translateY(-50%);
   background: transparent;
   padding: 0 4px;
@@ -1959,6 +1943,24 @@ body.dark-mode .employer-job-row {
     border-top-color: rgba(255, 255, 255, 0.14);
     box-shadow: 0 12px 28px rgba(0, 0, 0, 0.55);
   }
+
+  /* ── SNAPPY OPEN/CLOSE ──
+     Bootstrap animates the collapse by transitioning height over ~350ms,
+     which makes closing the menu feel slow. Since the menu now overlays
+     (absolute) instead of pushing the page, it doesn't need that height
+     animation. We disable the height transition so closing is instant and
+     use a fast fade for a subtle, snappy entrance. */
+  .navbar-expand-lg .navbar-collapse.collapsing {
+    height: auto !important;
+    transition: none !important;
+  }
+  .navbar-expand-lg .navbar-collapse.collapse.show {
+    animation: navDropIn 0.12s ease-out;
+  }
+}
+@keyframes navDropIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 /* The sticky navbar already establishes a positioning context, so the absolute
    mobile dropdown above anchors to it correctly — no extra rule needed. */
