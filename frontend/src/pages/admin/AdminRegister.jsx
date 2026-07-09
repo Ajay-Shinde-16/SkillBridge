@@ -188,9 +188,6 @@ export default function AdminRegister() {
                           onChange={e => setForm({ ...form, secretCode: e.target.value })}
                           placeholder=" " />
                         <label>Admin Secret Code <span className="text-danger">*</span></label>
-                        <small className="text-muted">
-                          <i className="bi bi-info-circle me-1"></i>
-                        </small>
                       </div>
                     </div>
 
