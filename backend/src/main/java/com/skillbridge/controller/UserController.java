@@ -95,6 +95,9 @@ public class UserController {
             return ResponseEntity.badRequest().body(passwordError);
         user.setPassword(passwordEncoder.encode(req.getNewPassword()));
         userRepository.save(user);
+        try {
+            emailService.sendPasswordChangedEmail(user.getEmail(), user.getName());
+        } catch (Exception e) { log.error("Password-changed email failed: {}", e.getMessage()); }
         return ResponseEntity.ok(Map.of("message", "Password changed successfully"));
     }
 
@@ -111,7 +114,7 @@ public class UserController {
         user.setOtpExpiry(LocalDateTime.now().plusMinutes(10));
         userRepository.save(user);
         try {
-            emailService.sendOtpEmail(email, user.getName(), otp);
+            emailService.sendPasswordResetOtpEmail(email, user.getName(), otp);
         } catch (Exception e) {
             log.error("Email failed: {}", e.getMessage());
         }
@@ -141,6 +144,9 @@ public class UserController {
         user.setOtpCode(null);
         user.setOtpExpiry(null);
         userRepository.save(user);
+        try {
+            emailService.sendPasswordChangedEmail(user.getEmail(), user.getName());
+        } catch (Exception e) { log.error("Password-changed email failed: {}", e.getMessage()); }
         return ResponseEntity.ok(Map.of("message", "Password reset successfully! You can now login."));
     }
 

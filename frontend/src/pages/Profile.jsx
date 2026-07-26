@@ -309,13 +309,14 @@ export default function Profile() {
                       <label className="form-label fw-semibold small">
                         Current Password <span className="text-danger">*</span>
                       </label>
-                      <div className="input-group">
-                        <input type={showPwd.current?'text':'password'} className="form-control rounded-start-3" required
+                      <div className="pwd-wrap">
+                        <input type={showPwd.current?'text':'password'} className="form-control rounded-3" required
                           value={pwdForm.currentPassword}
                           onChange={e=>setPwdForm({...pwdForm,currentPassword:e.target.value})}
                           placeholder="Enter your current password"/>
-                        <button type="button" className="btn btn-outline-secondary rounded-end-3"
-                          onClick={()=>setShowPwd({...showPwd,current:!showPwd.current})}>
+                        <button type="button" className="pwd-toggle"
+                          onClick={()=>setShowPwd({...showPwd,current:!showPwd.current})}
+                          aria-label={showPwd.current?'Hide password':'Show password'} tabIndex={-1}>
                           <i className={`bi ${showPwd.current?'bi-eye-slash':'bi-eye'}`}></i>
                         </button>
                       </div>
@@ -326,13 +327,14 @@ export default function Profile() {
                       <label className="form-label fw-semibold small">
                         New Password <span className="text-danger">*</span>
                       </label>
-                      <div className="input-group">
-                        <input type={showPwd.new?'text':'password'} className="form-control rounded-start-3" required
+                      <div className="pwd-wrap">
+                        <input type={showPwd.new?'text':'password'} className="form-control rounded-3" required
                           value={pwdForm.newPassword}
                           onChange={e=>setPwdForm({...pwdForm,newPassword:e.target.value})}
                           placeholder="At least 8 characters"/>
-                        <button type="button" className="btn btn-outline-secondary rounded-end-3"
-                          onClick={()=>setShowPwd({...showPwd,new:!showPwd.new})}>
+                        <button type="button" className="pwd-toggle"
+                          onClick={()=>setShowPwd({...showPwd,new:!showPwd.new})}
+                          aria-label={showPwd.new?'Hide password':'Show password'} tabIndex={-1}>
                           <i className={`bi ${showPwd.new?'bi-eye-slash':'bi-eye'}`}></i>
                         </button>
                       </div>
@@ -355,16 +357,17 @@ export default function Profile() {
                       <label className="form-label fw-semibold small">
                         Confirm New Password <span className="text-danger">*</span>
                       </label>
-                      <div className="input-group">
+                      <div className="pwd-wrap">
                         <input
                           type={showPwd.confirm?'text':'password'}
-                          className={`form-control rounded-start-3 ${pwdForm.confirmPassword&&(pwdForm.newPassword!==pwdForm.confirmPassword?'is-invalid':'is-valid')}`}
+                          className={`form-control rounded-3 ${pwdForm.confirmPassword&&(pwdForm.newPassword!==pwdForm.confirmPassword?'is-invalid':'is-valid')}`}
                           required
                           value={pwdForm.confirmPassword}
                           onChange={e=>setPwdForm({...pwdForm,confirmPassword:e.target.value})}
                           placeholder="Repeat new password"/>
-                        <button type="button" className="btn btn-outline-secondary rounded-end-3"
-                          onClick={()=>setShowPwd({...showPwd,confirm:!showPwd.confirm})}>
+                        <button type="button" className="pwd-toggle"
+                          onClick={()=>setShowPwd({...showPwd,confirm:!showPwd.confirm})}
+                          aria-label={showPwd.confirm?'Hide password':'Show password'} tabIndex={-1}>
                           <i className={`bi ${showPwd.confirm?'bi-eye-slash':'bi-eye'}`}></i>
                         </button>
                         {pwdForm.confirmPassword && pwdForm.newPassword===pwdForm.confirmPassword && (

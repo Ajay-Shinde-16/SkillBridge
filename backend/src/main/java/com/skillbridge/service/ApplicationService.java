@@ -108,6 +108,11 @@ public class ApplicationService {
                     seeker.getName() + " has withdrawn their application for " + app.getJobTitle() + ". You may want to review other candidates.",
                     "APPLICATION", "/employer/applications/" + app.getJobId());
             }
+            // Confirm withdrawal to the seeker by email
+            if (seeker != null) {
+                emailService.sendWithdrawalEmail(seeker.getEmail(), seeker.getName(),
+                    app.getJobTitle(), app.getCompanyName());
+            }
         } catch (Exception e) {
             log.warn("Could not notify employer of withdrawal: {}", e.getMessage());
         }
@@ -263,6 +268,13 @@ public class ApplicationService {
                             "You have accepted the offer for " + app.getJobTitle() + " at " + app.getCompanyName() + ". Congratulations!",
                             "OFFER", "/seeker/offers");
 
+                        // Email seeker confirming acceptance
+                        try {
+                            emailService.sendOfferAcceptedEmail(
+                                seeker.getEmail(), seeker.getName(),
+                                app.getJobTitle(), app.getCompanyName());
+                        } catch (Exception ex) { log.warn("Accepted email failed: {}", ex.getMessage()); }
+
                         // Notify employer that seeker ACCEPTED
                         if (job != null) {
                             notificationService.create(job.getEmployerId(),
@@ -272,13 +284,32 @@ public class ApplicationService {
                         }
                     }
                     case "REJECTED" -> {
-                        // Notify employer when seeker declines
                         Job job = jobRepository.findById(app.getJobId()).orElse(null);
-                        if (job != null) {
-                            notificationService.create(job.getEmployerId(),
-                                "❌ " + seeker.getName() + " Declined the Offer",
-                                seeker.getName() + " has declined your offer for " + app.getJobTitle() + ".",
-                                "OFFER", "/employer/applications/" + app.getJobId());
+                        boolean seekerDeclined = "SEEKER".equals(requestingRole);
+                        if (seekerDeclined) {
+                            // Seeker declined an offer → notify employer + confirm to seeker
+                            if (job != null) {
+                                notificationService.create(job.getEmployerId(),
+                                    "❌ " + seeker.getName() + " Declined the Offer",
+                                    seeker.getName() + " has declined your offer for " + app.getJobTitle() + ".",
+                                    "OFFER", "/employer/applications/" + app.getJobId());
+                            }
+                            try {
+                                emailService.sendOfferDeclinedEmail(
+                                    seeker.getEmail(), seeker.getName(),
+                                    app.getJobTitle(), app.getCompanyName());
+                            } catch (Exception ex) { log.warn("Declined email failed: {}", ex.getMessage()); }
+                        } else {
+                            // Employer/admin rejected the applicant → notify + email the seeker
+                            notificationService.create(seeker.getId(),
+                                "Application Update - " + app.getJobTitle(),
+                                "Your application for " + app.getJobTitle() + " at " + app.getCompanyName() + " was not selected.",
+                                "APPLICATION", "/seeker/applications");
+                            try {
+                                emailService.sendRejectionEmail(
+                                    seeker.getEmail(), seeker.getName(),
+                                    app.getJobTitle(), app.getCompanyName());
+                            } catch (Exception ex) { log.warn("Rejection email failed: {}", ex.getMessage()); }
                         }
                     }
                     default -> log.info("Status: {} — no email trigger", status);
@@ -302,5 +333,73 @@ public class ApplicationService {
             page, size, org.springframework.data.domain.Sort.by("appliedAt").descending()
         );
         return applicationRepository.findAll(pageable);
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    //  CSV EXPORT (employer)
+    //  Returns applications for the given employer's jobs, optionally
+    //  filtered to a single pipeline status, as CSV text. If isAdmin is
+    //  true the export covers all jobs.
+    // ─────────────────────────────────────────────────────────────
+    public String exportApplicationsCsv(String employerId, boolean isAdmin, String statusFilter) {
+        // Collect the relevant applications, scoped to the employer's own jobs.
+        java.util.List<Application> apps = new java.util.ArrayList<>();
+        if (isAdmin) {
+            apps = applicationRepository.findAll();
+        } else {
+            java.util.List<Job> myJobs = jobRepository.findByEmployerId(employerId);
+            for (Job job : myJobs) {
+                apps.addAll(applicationRepository.findByJobId(job.getId()));
+            }
+        }
+
+        // Optional status filter (e.g. APPLIED, SHORTLISTED, INTERVIEW_SCHEDULED,
+        // INTERVIEW_COMPLETED, OFFERED, ACCEPTED, REJECTED). "ALL"/null = no filter.
+        final String wanted = (statusFilter == null || statusFilter.isBlank()
+                || statusFilter.equalsIgnoreCase("ALL")) ? null : statusFilter.toUpperCase();
+
+        StringBuilder sb = new StringBuilder();
+        // Header row
+        sb.append("Sr No,Candidate Name,Email,Job Title,Company,Status,Match Score (%),Applied On,Last Updated\n");
+
+        int sr = 1;
+        // newest first
+        apps.sort((a, b) -> {
+            if (a.getAppliedAt() == null) return 1;
+            if (b.getAppliedAt() == null) return -1;
+            return b.getAppliedAt().compareTo(a.getAppliedAt());
+        });
+
+        java.time.format.DateTimeFormatter fmt =
+            java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+
+        for (Application a : apps) {
+            String status = a.getStatus() == null ? "APPLIED" : a.getStatus();
+            if (wanted != null && !wanted.equals(status)) continue;
+
+            String applied = a.getAppliedAt() != null ? a.getAppliedAt().format(fmt) : "";
+            String updated = a.getUpdatedAt() != null ? a.getUpdatedAt().format(fmt) : "";
+
+            sb.append(sr++).append(",")
+              .append(csv(a.getSeekerName())).append(",")
+              .append(csv(a.getSeekerEmail())).append(",")
+              .append(csv(a.getJobTitle())).append(",")
+              .append(csv(a.getCompanyName())).append(",")
+              .append(csv(status.replace("_", " "))).append(",")
+              .append(a.getSkillMatchScore()).append(",")
+              .append(csv(applied)).append(",")
+              .append(csv(updated))
+              .append("\n");
+        }
+        return sb.toString();
+    }
+
+    // Escape a value for CSV: wrap in quotes if it contains comma/quote/newline,
+    // and double any internal quotes.
+    private String csv(String v) {
+        if (v == null) return "";
+        boolean needsQuote = v.contains(",") || v.contains("\"") || v.contains("\n") || v.contains("\r");
+        String escaped = v.replace("\"", "\"\"");
+        return needsQuote ? "\"" + escaped + "\"" : escaped;
     }
 }

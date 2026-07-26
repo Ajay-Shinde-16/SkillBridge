@@ -139,6 +139,32 @@ public class ApplicationController {
         }
     }
 
+    // ── CSV export of applicants for the logged-in employer, filtered by status ──
+    // status values: ALL, APPLIED, SHORTLISTED, INTERVIEW_SCHEDULED,
+    //                INTERVIEW_COMPLETED, OFFERED, ACCEPTED, REJECTED
+    @GetMapping("/export")
+    @PreAuthorize("hasRole('EMPLOYER') or hasRole('ADMIN')")
+    public ResponseEntity<?> exportApplicationsCsv(
+            @RequestParam(required = false, defaultValue = "ALL") String status,
+            Authentication auth) {
+        try {
+            User user = userRepository.findByEmail(auth.getName())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+            boolean isAdmin = "ADMIN".equals(user.getRole());
+            String csv = applicationService.exportApplicationsCsv(user.getId(), isAdmin, status);
+
+            String safeStatus = status == null ? "all" : status.toLowerCase();
+            String filename = "applicants_" + safeStatus + ".csv";
+
+            return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType("text/csv"))
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + filename + "\"")
+                .body(csv);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
     @GetMapping("/all")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> allApplications(@RequestParam(required = false) Integer page,

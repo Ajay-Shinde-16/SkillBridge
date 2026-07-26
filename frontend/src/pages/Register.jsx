@@ -8,6 +8,8 @@ import { useAuth } from '../context/AuthContext'
 export default function Register() {
   const [form, setForm] = useState({ name:'', email:'', password:'', confirmPassword:'', role:'SEEKER', phone:'', companyName:'', skills:'' })
   const [error, setError] = useState('')
+  const [showPwd, setShowPwd] = useState(false)
+  const [showConfirm, setShowConfirm] = useState(false)
   const [loading, setLoading] = useState(false)
   const { login } = useAuth()
   const navigate = useNavigate()
@@ -104,9 +106,15 @@ export default function Register() {
                         <label>Email Address <span className="text-danger">*</span></label>
                       </div>
                       <div className="col-md-6 float-field">
-                        <input type="password" className="form-control rounded-3" required value={form.password}
-                          onChange={e=>setForm({...form,password:e.target.value})} placeholder=" "/>
-                        <label>Password <span className="text-danger">*</span></label>
+                        <div className="pwd-wrap">
+                          <input type={showPwd ? 'text' : 'password'} className="form-control rounded-3" required value={form.password}
+                            onChange={e=>setForm({...form,password:e.target.value})} placeholder=" "/>
+                          <label>Password <span className="text-danger">*</span></label>
+                          <button type="button" className="pwd-toggle" onClick={()=>setShowPwd(v=>!v)}
+                            aria-label={showPwd ? 'Hide password' : 'Show password'} tabIndex={-1}>
+                            <i className={`bi ${showPwd ? 'bi-eye-slash' : 'bi-eye'}`}></i>
+                          </button>
+                        </div>
                         {form.password && (
                           <div className="mt-1">
                             <div className="rounded-pill overflow-hidden" style={{ height:5, background:'var(--border-color)' }}>
@@ -117,9 +125,15 @@ export default function Register() {
                         )}
                       </div>
                       <div className="col-md-6 float-field">
-                        <input type="password" className="form-control rounded-3" required value={form.confirmPassword}
-                          onChange={e=>setForm({...form,confirmPassword:e.target.value})} placeholder=" "/>
-                        <label>Confirm Password <span className="text-danger">*</span></label>
+                        <div className="pwd-wrap">
+                          <input type={showConfirm ? 'text' : 'password'} className="form-control rounded-3" required value={form.confirmPassword}
+                            onChange={e=>setForm({...form,confirmPassword:e.target.value})} placeholder=" "/>
+                          <label>Confirm Password <span className="text-danger">*</span></label>
+                          <button type="button" className="pwd-toggle" onClick={()=>setShowConfirm(v=>!v)}
+                            aria-label={showConfirm ? 'Hide password' : 'Show password'} tabIndex={-1}>
+                            <i className={`bi ${showConfirm ? 'bi-eye-slash' : 'bi-eye'}`}></i>
+                          </button>
+                        </div>
                         {form.confirmPassword && form.password !== form.confirmPassword && (
                           <span className="text-danger d-block mt-1" style={{ fontSize:'0.78rem' }}>Passwords don't match</span>
                         )}

@@ -1,10 +1,28 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import { Link } from 'react-router-dom'
-import { getMyJobs } from '../../services/api'
+import { getMyJobs, downloadApplicantsCsv } from '../../services/api'
+
+// CSV export options — one download per pipeline stage
+const EXPORT_OPTIONS = [
+  { status: 'ALL',                 label: 'all',          text: 'All Applicants',        icon: 'bi-people' },
+  { status: 'APPLIED',             label: 'applied',      text: 'Applied',               icon: 'bi-file-earmark-text' },
+  { status: 'SHORTLISTED',         label: 'shortlisted',  text: 'Shortlisted',           icon: 'bi-star' },
+  { status: 'INTERVIEW_SCHEDULED', label: 'interview',    text: 'Interview Scheduled',   icon: 'bi-camera-video' },
+  { status: 'INTERVIEW_COMPLETED', label: 'interviewed',  text: 'Interview Completed',   icon: 'bi-check2-square' },
+  { status: 'OFFERED',             label: 'selected',     text: 'Selected (Offered)',    icon: 'bi-award' },
+  { status: 'ACCEPTED',            label: 'accepted',     text: 'Accepted Offer',        icon: 'bi-patch-check' },
+]
 
 export default function AllApplicants() {
   const [jobs, setJobs] = useState([])
   const [loading, setLoading] = useState(true)
+  const [exporting, setExporting] = useState(null)
+
+  const handleExport = async (opt) => {
+    setExporting(opt.status)
+    await downloadApplicantsCsv(opt.status, opt.label)
+    setExporting(null)
+  }
 
   const fetchJobs = useCallback(async () => {
     try {
@@ -44,11 +62,38 @@ export default function AllApplicants() {
 
         <div className="flex-fill main-content p-3">
 
-          <div className="welcome-header mb-4">
-            <h1 className="fw-bold mb-1">
-              <i className="bi bi-people-fill me-2"></i>Applicants
-            </h1>
-            <p className="mb-0 opacity-75 small">Select a job to view its applicants</p>
+          <div className="welcome-header mb-4 d-flex justify-content-between align-items-start flex-wrap gap-2">
+            <div>
+              <h2 className="fw-bold mb-1">
+                <i className="bi bi-people-fill me-2"></i>Applicants
+              </h2>
+              <p className="mb-0 opacity-75 small">Select a job to view its applicants</p>
+            </div>
+
+            {/* Download CSV — one export per pipeline stage */}
+            <div className="dropdown">
+              <button className="btn btn-light btn-sm rounded-pill dropdown-toggle fw-semibold px-3"
+                type="button" data-bs-toggle="dropdown" aria-expanded="false"
+                style={{ color:'#123160' }}>
+                <i className="bi bi-download me-1"></i>
+                {exporting ? 'Preparing…' : 'Download CSV'}
+              </button>
+              <ul className="dropdown-menu dropdown-menu-end shadow-sm rounded-3">
+                <li><h6 className="dropdown-header">Export applicants by stage</h6></li>
+                {EXPORT_OPTIONS.map((opt) => (
+                  <li key={opt.status}>
+                    <button className="dropdown-item d-flex align-items-center gap-2"
+                      disabled={exporting === opt.status}
+                      onClick={() => handleExport(opt)}>
+                      <i className={`bi ${opt.icon}`} style={{ width:18 }}></i>
+                      <span>{opt.text}</span>
+                      {exporting === opt.status &&
+                        <span className="spinner-border spinner-border-sm ms-auto" style={{ width:12, height:12 }}></span>}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
 
           {loading ? (

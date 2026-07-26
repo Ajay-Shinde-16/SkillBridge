@@ -159,6 +159,12 @@ public class InterviewService {
                     "Your interview for " + interview.getJobTitle() + " has been cancelled by the employer. Please check with the employer for further information.",
                     "INTERVIEW", "/seeker/interviews");
                 log.info("Notified seeker {} of interview cancellation", seeker.getId());
+                try {
+                    String company = jobRepository.findById(interview.getJobId())
+                        .map(com.skillbridge.model.Job::getCompanyName).orElse("the company");
+                    emailService.sendInterviewCancelledEmail(seeker.getEmail(), seeker.getName(),
+                        interview.getJobTitle(), company);
+                } catch (Exception ex) { log.warn("Cancel email failed: {}", ex.getMessage()); }
             }
 
             if ("RESCHEDULED".equals(status) && seeker != null) {
@@ -166,6 +172,14 @@ public class InterviewService {
                     "📅 Interview Rescheduled",
                     "Your interview for " + interview.getJobTitle() + " has been rescheduled. Please check My Interviews for the new details.",
                     "INTERVIEW", "/seeker/interviews");
+                try {
+                    String company = jobRepository.findById(interview.getJobId())
+                        .map(com.skillbridge.model.Job::getCompanyName).orElse("the company");
+                    String when = interview.getScheduledDateTime() != null
+                        ? interview.getScheduledDateTime().toString() : "See portal";
+                    emailService.sendInterviewRescheduledEmail(seeker.getEmail(), seeker.getName(),
+                        interview.getJobTitle(), company, when, interview.getMode(), interview.getMeetingLink());
+                } catch (Exception ex) { log.warn("Reschedule email failed: {}", ex.getMessage()); }
             }
         }
 

@@ -83,31 +83,37 @@ export default function ChangePassword() {
 
               <form onSubmit={handleSubmit}>
                 {/* Current Password */}
-                <div className="float-field mb-3" style={{ display: 'flex' }}>
-                  <input type={show.current ? 'text' : 'password'}
-                    className="form-control rounded-start-3" required
-                    value={form.currentPassword}
-                    onChange={e => setForm({ ...form, currentPassword: e.target.value })}
-                    placeholder=" " style={{ borderRight: 'none' }} />
-                  <label>Current Password</label>
-                  <button type="button" className="btn btn-outline-secondary rounded-end-3"
-                    onClick={() => setShow({ ...show, current: !show.current })}>
-                    <i className={`bi ${show.current ? 'bi-eye-slash' : 'bi-eye'}`}></i>
-                  </button>
+                <div className="float-field mb-3">
+                  <div className="pwd-wrap">
+                    <input type={show.current ? 'text' : 'password'}
+                      className="form-control rounded-3" required
+                      value={form.currentPassword}
+                      onChange={e => setForm({ ...form, currentPassword: e.target.value })}
+                      placeholder=" " />
+                    <label>Current Password</label>
+                    <button type="button" className="pwd-toggle"
+                      onClick={() => setShow({ ...show, current: !show.current })}
+                      aria-label={show.current ? 'Hide password' : 'Show password'} tabIndex={-1}>
+                      <i className={`bi ${show.current ? 'bi-eye-slash' : 'bi-eye'}`}></i>
+                    </button>
+                  </div>
                 </div>
 
                 {/* New Password */}
-                <div className="float-field mb-2" style={{ display: 'flex' }}>
-                  <input type={show.new ? 'text' : 'password'}
-                    className="form-control rounded-start-3" required
-                    value={form.newPassword}
-                    onChange={e => setForm({ ...form, newPassword: e.target.value })}
-                    placeholder=" " style={{ borderRight: 'none' }} />
-                  <label>New Password</label>
-                  <button type="button" className="btn btn-outline-secondary rounded-end-3"
-                    onClick={() => setShow({ ...show, new: !show.new })}>
-                    <i className={`bi ${show.new ? 'bi-eye-slash' : 'bi-eye'}`}></i>
-                  </button>
+                <div className="float-field mb-2">
+                  <div className="pwd-wrap">
+                    <input type={show.new ? 'text' : 'password'}
+                      className="form-control rounded-3" required
+                      value={form.newPassword}
+                      onChange={e => setForm({ ...form, newPassword: e.target.value })}
+                      placeholder=" " />
+                    <label>New Password</label>
+                    <button type="button" className="pwd-toggle"
+                      onClick={() => setShow({ ...show, new: !show.new })}
+                      aria-label={show.new ? 'Hide password' : 'Show password'} tabIndex={-1}>
+                      <i className={`bi ${show.new ? 'bi-eye-slash' : 'bi-eye'}`}></i>
+                    </button>
+                  </div>
                 </div>
 
                 {/* Password Strength Bar */}
@@ -121,18 +127,21 @@ export default function ChangePassword() {
                 )}
 
                 {/* Confirm Password */}
-                <div className="float-field mb-4" style={{ display: 'flex' }}>
-                  <input type={show.confirm ? 'text' : 'password'}
-                    className={`form-control rounded-start-3 ${form.confirmPassword && (form.newPassword !== form.confirmPassword ? 'is-invalid' : 'is-valid')}`}
-                    required
-                    value={form.confirmPassword}
-                    onChange={e => setForm({ ...form, confirmPassword: e.target.value })}
-                    placeholder=" " style={{ borderRight: 'none' }} />
-                  <label>Confirm New Password</label>
-                  <button type="button" className="btn btn-outline-secondary rounded-end-3"
-                    onClick={() => setShow({ ...show, confirm: !show.confirm })}>
-                    <i className={`bi ${show.confirm ? 'bi-eye-slash' : 'bi-eye'}`}></i>
-                  </button>
+                <div className="float-field mb-4">
+                  <div className="pwd-wrap">
+                    <input type={show.confirm ? 'text' : 'password'}
+                      className={`form-control rounded-3 ${form.confirmPassword && (form.newPassword !== form.confirmPassword ? 'is-invalid' : 'is-valid')}`}
+                      required
+                      value={form.confirmPassword}
+                      onChange={e => setForm({ ...form, confirmPassword: e.target.value })}
+                      placeholder=" " />
+                    <label>Confirm New Password</label>
+                    <button type="button" className="pwd-toggle"
+                      onClick={() => setShow({ ...show, confirm: !show.confirm })}
+                      aria-label={show.confirm ? 'Hide password' : 'Show password'} tabIndex={-1}>
+                      <i className={`bi ${show.confirm ? 'bi-eye-slash' : 'bi-eye'}`}></i>
+                    </button>
+                  </div>
                   {form.confirmPassword && form.newPassword === form.confirmPassword && (
                     <div className="valid-feedback">Passwords match!</div>
                   )}

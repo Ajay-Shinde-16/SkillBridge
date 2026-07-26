@@ -111,7 +111,7 @@ public class EmailService {
     }
 
     public void sendOtpEmail(String toEmail, String name, String otp) {
-        String subject = "Password Reset OTP - SkillBridge";
+        String subject = "Your SkillBridge Verification Code";
         sendEmail(toEmail, subject, buildOtpHtml(name, otp));
         log.info("OTP email triggered for: {}", toEmail);
     }
@@ -120,7 +120,7 @@ public class EmailService {
     public void sendApplicationConfirmationEmail(String toEmail, String seekerName,
                                                   String jobTitle, String companyName, int matchScore) {
         sendEmail(toEmail,
-            "Application Submitted - " + jobTitle + " at " + companyName,
+            "Application Received - " + jobTitle + " at " + companyName,
             buildApplicationHtml(seekerName, jobTitle, companyName, matchScore));
     }
 
@@ -128,7 +128,7 @@ public class EmailService {
     public void sendShortlistEmail(String toEmail, String seekerName,
                                     String jobTitle, String companyName) {
         sendEmail(toEmail,
-            "You have been Shortlisted! - " + jobTitle + " at " + companyName,
+            "🎉 You're Shortlisted for " + jobTitle + " at " + companyName,
             buildShortlistHtml(seekerName, jobTitle, companyName));
     }
 
@@ -152,7 +152,7 @@ public class EmailService {
                                       String employerNote, byte[] offerLetterPdf) {
         String filename = "OfferLetter_" + seekerName.replace(" ", "_") + ".pdf";
         sendEmail(toEmail,
-            "Job Offer - " + jobTitle + " at " + companyName,
+            "🎉 Job Offer Received - " + jobTitle + " at " + companyName,
             buildOfferHtml(seekerName, jobTitle, companyName, employerNote),
             offerLetterPdf, filename);
     }
@@ -160,8 +160,9 @@ public class EmailService {
     // ─── HTML Templates ───
 
     private String buildOtpHtml(String name, String otp) {
-        return template("#0A66C2", "Password Reset OTP", name,
-            "<p style='color:#444'>You requested a password reset. Use this OTP:</p>" +
+        return template("#0A66C2", "Verification Code", name,
+            "<p style='color:#444'>Your One-Time Password (OTP) for verifying your " +
+            "SkillBridge account is:</p>" +
             "<div style='text-align:center;margin:24px 0'>" +
             "<div style='display:inline-block;background:#EEF3F8;border:2px dashed #0A66C2;" +
             "border-radius:12px;padding:20px 40px'>" +
@@ -169,34 +170,45 @@ public class EmailService {
             "<div style='color:#666;font-size:12px;margin-top:8px'>Valid for 10 minutes only</div>" +
             "</div></div>" +
             "<div style='background:#FEF3C7;border-radius:8px;padding:12px;border:1px solid #FCD34D'>" +
-            "<strong style='color:#92400e'>Never share this OTP with anyone.</strong></div>",
+            "<strong style='color:#92400e'>Please do not share this OTP with anyone. " +
+            "SkillBridge will never ask you to share your verification code.</strong></div>",
             "/login", "Go to Login", "#0A66C2");
     }
 
     private String buildApplicationHtml(String name, String job, String company, int score) {
         String scoreColor = score>=70?"#057642":score>=40?"#d97706":"#dc3545";
-        return template("#0A66C2", "Application Submitted!", name,
-            "<p>Your application has been submitted successfully!</p>" +
+        return template("#0A66C2", "Application Received", name,
+            "<p>Thank you for applying for the " + job + " position at " + company +
+            " through SkillBridge. We have successfully received your application and your " +
+            "profile is now under review by the employer.</p>" +
             "<div style='background:#EEF3F8;border-radius:10px;padding:20px;margin:16px 0;" +
             "border-left:4px solid #0A66C2'>" +
+            "<p style='margin:6px 0'><strong>Job Title:</strong> " + job + "</p>" +
             "<p style='margin:6px 0'><strong>Company:</strong> " + company + "</p>" +
-            "<p style='margin:6px 0'><strong>Position:</strong> " + job + "</p>" +
+            "<p style='margin:6px 0'><strong>Application Status:</strong> " +
+            "<span style='color:#0A66C2;font-weight:700'>Applied</span></p>" +
             "<p style='margin:6px 0'><strong>Skill Match:</strong> " +
             "<span style='color:" + scoreColor + ";font-size:20px;font-weight:700'>" + score + "%</span></p>" +
-            "</div>",
+            "</div>" +
+            "<p style='color:#666'>The employer will review your application and update the status " +
+            "if your profile is shortlisted for the next stage. You can track your application " +
+            "anytime from your SkillBridge dashboard.</p>",
             "/seeker/applications", "Track Application", "#0A66C2");
     }
 
     private String buildShortlistHtml(String name, String job, String company) {
-        return template("#0ea5e9", "You have been Shortlisted!", name,
-            "<p>Congratulations! You have been shortlisted for:</p>" +
+        return template("#0ea5e9", "You're Shortlisted!", name,
+            "<p>Great news! Your application for the " + job + " position at " + company +
+            " has been shortlisted by the employer.</p>" +
             "<div style='background:#E0F2FE;border-radius:10px;padding:20px;margin:16px 0;" +
             "border-left:4px solid #0ea5e9'>" +
+            "<p style='margin:6px 0'><strong>Job Title:</strong> " + job + "</p>" +
             "<p style='margin:6px 0'><strong>Company:</strong> " + company + "</p>" +
-            "<p style='margin:6px 0'><strong>Position:</strong> " + job + "</p>" +
-            "<p style='margin:6px 0'><strong>Status:</strong> " +
+            "<p style='margin:6px 0'><strong>Application Status:</strong> " +
             "<span style='color:#0ea5e9;font-weight:700'>Shortlisted</span></p></div>" +
-            "<p style='color:#666'>The employer will schedule an interview with you shortly.</p>",
+            "<p style='color:#666'>Your profile has successfully passed the initial screening stage. " +
+            "The employer may contact you with further information regarding the next stage. " +
+            "Please keep checking your SkillBridge dashboard and email for updates.</p>",
             "/seeker/applications", "View Application", "#0ea5e9");
     }
 
@@ -210,20 +222,21 @@ public class EmailService {
         if (venue != null && !venue.isEmpty())
             meetingSection += "<p style='margin:6px 0'><strong>Venue:</strong> " + venue + "</p>";
 
-        return template("#0A66C2", "Interview Scheduled!", name,
-            "<p>Your interview has been scheduled!</p>" +
+        return template("#0A66C2", "Interview Scheduled", name,
+            "<p>Congratulations! The employer has scheduled an interview for your application " +
+            "for the " + job + " position at " + company + ".</p>" +
             "<div style='background:#EEF3F8;border-radius:10px;padding:20px;margin:16px 0;" +
             "border-left:4px solid #0A66C2'>" +
-            "<p style='margin:6px 0'><strong>Company:</strong> " + company + "</p>" +
             "<p style='margin:6px 0'><strong>Position:</strong> " + job + "</p>" +
+            "<p style='margin:6px 0'><strong>Company:</strong> " + company + "</p>" +
             "<p style='margin:6px 0'><strong>Date & Time:</strong> " +
             "<span style='color:#0A66C2;font-weight:700'>" + dateTime + "</span></p>" +
-            "<p style='margin:6px 0'><strong>Mode:</strong> " + mode + "</p>" +
+            "<p style='margin:6px 0'><strong>Interview Type:</strong> " + mode + "</p>" +
             meetingSection + "</div>" +
             "<div style='background:#FEF3C7;border-radius:8px;padding:14px;" +
             "margin:12px 0;border:1px solid #FCD34D'>" +
-            "<strong style='color:#92400e'>Please be available 5 minutes before the scheduled time." +
-            "</strong></div>",
+            "<strong style='color:#92400e'>Please make sure you are available at the scheduled time " +
+            "and join using the provided link. We wish you the very best!</strong></div>",
             "/seeker/interviews", "View Interview Details", "#0A66C2");
     }
 
@@ -233,16 +246,20 @@ public class EmailService {
               "<strong style='color:#0A66C2'>Message from Employer:</strong><br>" +
               "<em style='color:#333'>" + note + "</em></div>"
             : "";
-        return template("#057642", "Congratulations! Job Offer Received", name,
-            "<p>You have been selected for the following position!</p>" +
+        return template("#057642", "🎉 Job Offer Received", name,
+            "<p>Congratulations! We are pleased to inform you that " + company +
+            " has extended a job offer to you for the " + job + " position.</p>" +
             "<div style='background:#D1FAE5;border-radius:10px;padding:20px;margin:16px 0;" +
             "border-left:4px solid #057642'>" +
-            "<p style='margin:6px 0'><strong>Company:</strong> " + company + "</p>" +
             "<p style='margin:6px 0'><strong>Position:</strong> " +
-            "<span style='color:#057642;font-weight:700;font-size:16px'>" + job + "</span></p></div>" +
+            "<span style='color:#057642;font-weight:700;font-size:16px'>" + job + "</span></p>" +
+            "<p style='margin:6px 0'><strong>Company:</strong> " + company + "</p>" +
+            "<p style='margin:6px 0'><strong>Offer Status:</strong> " +
+            "<span style='color:#d97706;font-weight:700'>Pending Your Response</span></p></div>" +
             noteSection +
-            "<p style='color:#666'>Please login to SkillBridge and go to " +
-            "<strong>My Offers</strong> to Accept or Decline this offer.</p>",
+            "<p style='color:#666'>Please log in to your SkillBridge account and go to " +
+            "<strong>My Offers</strong> to review the complete offer details and choose whether " +
+            "to accept or decline. Please respond within the specified deadline.</p>",
             "/seeker/offers", "View My Offers", "#057642");
     }
 
@@ -272,5 +289,157 @@ public class EmailService {
             "<p style='margin:0;color:#999;font-size:11px'>" +
             "SkillBridge — CDAC PGCP-AC-002 | C-DAC Bangalore 2026</p>" +
             "</div></div></body></html>";
+    }
+
+    // ─── 6. Offer Accepted (to seeker) ───
+    public void sendOfferAcceptedEmail(String toEmail, String seekerName,
+                                        String jobTitle, String companyName) {
+        sendEmail(toEmail,
+            "Offer Accepted - " + jobTitle + " at " + companyName,
+            template("#057642", "Offer Accepted", seekerName,
+                "<p>Your acceptance of the job offer has been successfully recorded.</p>" +
+                "<div style='background:#D1FAE5;border-radius:10px;padding:20px;margin:16px 0;" +
+                "border-left:4px solid #057642'>" +
+                "<p style='margin:6px 0'><strong>Company:</strong> " + companyName + "</p>" +
+                "<p style='margin:6px 0'><strong>Position:</strong> " + jobTitle + "</p>" +
+                "<p style='margin:6px 0'><strong>Status:</strong> " +
+                "<span style='color:#057642;font-weight:700'>Accepted</span></p></div>" +
+                "<p style='color:#666'>Please follow any further instructions from the employer " +
+                "regarding your joining process. We wish you great success in your new role!</p>",
+                "/seeker/offers", "View Offer", "#057642"));
+    }
+
+    // ─── 7. Offer Declined (to seeker) ───
+    public void sendOfferDeclinedEmail(String toEmail, String seekerName,
+                                        String jobTitle, String companyName) {
+        sendEmail(toEmail,
+            "Offer Declined - " + jobTitle + " at " + companyName,
+            template("#6c757d", "Offer Declined", seekerName,
+                "<p>This confirms that your decision to decline the job offer has been recorded.</p>" +
+                "<div style='background:#F1F5F9;border-radius:10px;padding:20px;margin:16px 0;" +
+                "border-left:4px solid #6c757d'>" +
+                "<p style='margin:6px 0'><strong>Company:</strong> " + companyName + "</p>" +
+                "<p style='margin:6px 0'><strong>Position:</strong> " + jobTitle + "</p>" +
+                "<p style='margin:6px 0'><strong>Status:</strong> " +
+                "<span style='color:#6c757d;font-weight:700'>Declined</span></p></div>" +
+                "<p style='color:#666'>Thank you for using SkillBridge. We wish you all the best " +
+                "in your future career opportunities.</p>",
+                "/jobs", "Explore More Jobs", "#0A66C2"));
+    }
+
+    // ─── 8. Application Rejected / Not Selected (to seeker) ───
+    public void sendRejectionEmail(String toEmail, String seekerName,
+                                    String jobTitle, String companyName) {
+        sendEmail(toEmail,
+            "Application Update - " + jobTitle + " at " + companyName,
+            template("#dc3545", "Application Update", seekerName,
+                "<p>Thank you for your interest in the " + jobTitle + " position at " +
+                companyName + ".</p>" +
+                "<div style='background:#FEF2F2;border-radius:10px;padding:20px;margin:16px 0;" +
+                "border-left:4px solid #dc3545'>" +
+                "<p style='margin:6px 0'><strong>Company:</strong> " + companyName + "</p>" +
+                "<p style='margin:6px 0'><strong>Position:</strong> " + jobTitle + "</p>" +
+                "<p style='margin:6px 0'><strong>Status:</strong> " +
+                "<span style='color:#dc3545;font-weight:700'>Not Selected</span></p></div>" +
+                "<p style='color:#666'>After careful consideration, the employer has decided not to " +
+                "proceed with your application at this time. Please continue exploring other " +
+                "opportunities on SkillBridge that match your skills.</p>",
+                "/jobs", "Explore More Jobs", "#0A66C2"));
+    }
+
+    // ─── 9. Password Changed Confirmation ───
+    public void sendPasswordChangedEmail(String toEmail, String userName) {
+        sendEmail(toEmail,
+            "Password Changed Successfully - SkillBridge",
+            template("#123160", "Password Changed", userName,
+                "<p>Your SkillBridge account password has been successfully changed.</p>" +
+                "<div style='background:#EEF3F8;border-radius:10px;padding:20px;margin:16px 0;" +
+                "border-left:4px solid #123160'>" +
+                "<p style='margin:6px 0'><strong>Email:</strong> " + toEmail + "</p>" +
+                "<p style='margin:6px 0'><strong>Account:</strong> SkillBridge</p></div>" +
+                "<p style='color:#666'>If you made this change, no further action is required. " +
+                "If you did <strong>not</strong> change your password, please secure your account " +
+                "immediately and contact support.</p>",
+                "/login", "Go to Login", "#123160"));
+    }
+
+    // ─── 10. Password Reset OTP ───
+    public void sendPasswordResetOtpEmail(String toEmail, String userName, String otp) {        sendEmail(toEmail,
+            "Password Reset Code - SkillBridge",
+            template("#123160", "Password Reset Code", userName,
+                "<p>We received a request to reset the password for your SkillBridge account.</p>" +
+                "<div style='background:#EEF3F8;border-radius:10px;padding:24px;margin:16px 0;" +
+                "border-left:4px solid #123160;text-align:center'>" +
+                "<p style='margin:0 0 8px;color:#666'>Your password reset OTP is:</p>" +
+                "<p style='margin:0;font-size:32px;font-weight:800;letter-spacing:6px;color:#123160'>" +
+                otp + "</p></div>" +
+                "<p style='color:#666'>This OTP is valid for 10 minutes. If you did not request a " +
+                "password reset, please ignore this email — your password will remain unchanged. " +
+                "<strong>Never share this code with anyone.</strong></p>",
+                "/forgot-password", "Reset Password", "#123160"));
+    }
+
+    // ─── 11. Application Withdrawn (to seeker) ───
+    public void sendWithdrawalEmail(String toEmail, String seekerName,
+                                     String jobTitle, String companyName) {        sendEmail(toEmail,
+            "Application Withdrawn - " + jobTitle + " at " + companyName,
+            template("#6c757d", "Application Withdrawn", seekerName,
+                "<p>This email confirms that your application for the " + jobTitle +
+                " position at " + companyName + " has been successfully withdrawn.</p>" +
+                "<div style='background:#F1F5F9;border-radius:10px;padding:20px;margin:16px 0;" +
+                "border-left:4px solid #6c757d'>" +
+                "<p style='margin:6px 0'><strong>Position:</strong> " + jobTitle + "</p>" +
+                "<p style='margin:6px 0'><strong>Company:</strong> " + companyName + "</p>" +
+                "<p style='margin:6px 0'><strong>Status:</strong> " +
+                "<span style='color:#6c757d;font-weight:700'>Withdrawn</span></p></div>" +
+                "<p style='color:#666'>No further action is required regarding this application. " +
+                "You can continue exploring and applying for other opportunities on SkillBridge.</p>",
+                "/jobs", "Explore More Jobs", "#0A66C2"));
+    }
+
+    // ─── 12. Interview Cancelled (to seeker) ───
+    public void sendInterviewCancelledEmail(String toEmail, String seekerName,
+                                             String jobTitle, String companyName) {
+        sendEmail(toEmail,
+            "Interview Cancelled - " + jobTitle + " at " + companyName,
+            template("#dc3545", "Interview Cancelled", seekerName,
+                "<p>We would like to inform you that the interview scheduled for the " + jobTitle +
+                " position at " + companyName + " has been cancelled.</p>" +
+                "<div style='background:#FEF2F2;border-radius:10px;padding:20px;margin:16px 0;" +
+                "border-left:4px solid #dc3545'>" +
+                "<p style='margin:6px 0'><strong>Position:</strong> " + jobTitle + "</p>" +
+                "<p style='margin:6px 0'><strong>Company:</strong> " + companyName + "</p>" +
+                "<p style='margin:6px 0'><strong>Status:</strong> " +
+                "<span style='color:#dc3545;font-weight:700'>Interview Cancelled</span></p></div>" +
+                "<p style='color:#666'>If the employer schedules another interview, you will receive " +
+                "a new notification through SkillBridge. We apologise for any inconvenience caused.</p>",
+                "/seeker/interviews", "View Interviews", "#0A66C2"));
+    }
+
+    // ─── 13. Interview Rescheduled (to seeker) ───
+    public void sendInterviewRescheduledEmail(String toEmail, String seekerName,
+                                               String jobTitle, String companyName,
+                                               String newDateTime, String mode,
+                                               String meetingLink) {
+        String meetingSection = (meetingLink != null && !meetingLink.isEmpty())
+            ? "<p style='margin:6px 0'><strong>Meeting Link:</strong> " +
+              "<a href='" + meetingLink + "' style='color:#0A66C2'>" + meetingLink + "</a></p>"
+            : "";
+        sendEmail(toEmail,
+            "Interview Rescheduled - " + jobTitle + " at " + companyName,
+            template("#d97706", "Interview Rescheduled", seekerName,
+                "<p>Please be informed that your interview for the " + jobTitle +
+                " position at " + companyName + " has been rescheduled.</p>" +
+                "<div style='background:#FEF3C7;border-radius:10px;padding:20px;margin:16px 0;" +
+                "border-left:4px solid #d97706'>" +
+                "<p style='margin:6px 0'><strong>Position:</strong> " + jobTitle + "</p>" +
+                "<p style='margin:6px 0'><strong>Company:</strong> " + companyName + "</p>" +
+                "<p style='margin:6px 0'><strong>New Date & Time:</strong> " +
+                "<span style='font-weight:700'>" + newDateTime + "</span></p>" +
+                "<p style='margin:6px 0'><strong>Interview Type:</strong> " + mode + "</p>" +
+                meetingSection + "</div>" +
+                "<p style='color:#666'>Please take note of the updated schedule and ensure your " +
+                "availability.</p>",
+                "/seeker/interviews", "View Interview Details", "#0A66C2"));
     }
 }

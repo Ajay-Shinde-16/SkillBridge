@@ -26,8 +26,21 @@ export default function ManageApplications() {
   const [search, setSearch] = useState('')
   const [toast, setToast] = useState({ msg:'', type:'success' })
   const [chatOpenId, setChatOpenId] = useState(null)
+  const [exportOpen, setExportOpen] = useState(false)
 
   const prevDataRef = useRef('')
+  const exportRef = useRef(null)
+
+  // Close the export dropdown when clicking outside it
+  useEffect(() => {
+    const onClick = (e) => {
+      if (exportOpen && exportRef.current && !exportRef.current.contains(e.target)) {
+        setExportOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', onClick)
+    return () => document.removeEventListener('mousedown', onClick)
+  }, [exportOpen])
 
   const fetchApplications = useCallback(async (showLoader = false) => {
     if (showLoader) setLoading(true)
@@ -183,14 +196,23 @@ export default function ManageApplications() {
     }
   }
 
-  const handleExport = () => {
-    exportToCsv('applicants.csv', filtered, [
+  const handleExport = (statusFilter = 'ALL', label = 'all') => {
+    // Export the applicants for this job, optionally filtered to one pipeline stage.
+    const rows = statusFilter === 'ALL'
+      ? filtered
+      : filtered.filter(a => a.status === statusFilter)
+    if (rows.length === 0) {
+      alert('No applicants in this stage to export.')
+      return
+    }
+    exportToCsv(`applicants_${label}.csv`, rows, [
       { label: 'Name', accessor: a => a.seekerName },
       { label: 'Email', accessor: a => a.seekerEmail },
       { label: 'Status', accessor: a => STATUS_STYLE[a.status]?.label || a.status },
       { label: 'Skill Match %', accessor: a => a.skillMatchScore ?? '' },
       { label: 'Applied At', accessor: a => a.appliedAt ? new Date(a.appliedAt).toLocaleDateString() : '' },
     ])
+    setExportOpen(false)
   }
 
   const filtered = applications.filter(a =>
@@ -292,10 +314,37 @@ export default function ManageApplications() {
                 placeholder="Search by name or email..."
                 value={search} onChange={e=>setSearch(e.target.value)}/>
             </div>
-            <button className="btn btn-sm rounded-pill" style={{background:'#EEF3F8',color:'#0A66C2',border:'1px solid #0A66C2'}}
-              onClick={handleExport}>
-              <i className="bi bi-download me-1"></i>Export CSV
-            </button>
+            <div className="dropdown" style={{ position:'relative' }} ref={exportRef}>
+              <button className="btn btn-sm rounded-pill" style={{background:'#EEF3F8',color:'#0A66C2',border:'1px solid #0A66C2'}}
+                onClick={() => setExportOpen(o => !o)} aria-expanded={exportOpen}>
+                <i className="bi bi-download me-1"></i>Export CSV
+                <i className="bi bi-chevron-down ms-1" style={{ fontSize:'0.7rem' }}></i>
+              </button>
+              {exportOpen && (
+                <ul className="dropdown-menu dropdown-menu-end shadow-sm rounded-3 show"
+                  style={{ display:'block', position:'absolute', right:0, top:'100%', marginTop:6, zIndex:1000, minWidth:210 }}>
+                  <li><h6 className="dropdown-header">Export by stage</h6></li>
+                  {[
+                    { status:'ALL',                 label:'all',          text:'All Applicants',      icon:'bi-people' },
+                    { status:'APPLIED',             label:'applied',      text:'Applied',             icon:'bi-file-earmark-text' },
+                    { status:'SHORTLISTED',         label:'shortlisted',  text:'Shortlisted',         icon:'bi-star' },
+                    { status:'INTERVIEW_SCHEDULED', label:'interview',    text:'Interview Scheduled', icon:'bi-camera-video' },
+                    { status:'INTERVIEW_COMPLETED', label:'interviewed',  text:'Interview Completed', icon:'bi-check2-square' },
+                    { status:'OFFERED',             label:'offered',      text:'Offered',             icon:'bi-award' },
+                    { status:'ACCEPTED',            label:'accepted',     text:'Accepted',            icon:'bi-patch-check' },
+                    { status:'REJECTED',            label:'rejected',     text:'Rejected',            icon:'bi-x-circle' },
+                  ].map(opt => (
+                    <li key={opt.status}>
+                      <button className="dropdown-item d-flex align-items-center gap-2"
+                        onClick={() => handleExport(opt.status, opt.label)}>
+                        <i className={`bi ${opt.icon}`} style={{ width:18 }}></i>
+                        <span>{opt.text}</span>
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
           </div>
 
           {/* Applicant Cards */}

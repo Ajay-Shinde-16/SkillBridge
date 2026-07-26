@@ -764,8 +764,28 @@ body.dark-mode .sidebar {
   z-index: 2;
 }
 .card:hover::before { transform: scaleX(1); }
-.card:hover { transform: translateY(-4px) !important; box-shadow: 0 14px 36px rgba(18,49,96,0.13) !important; }
-.card { transition: transform 0.25s ease, box-shadow 0.25s ease !important; }
+.card:hover {
+  transform: translateY(-4px) !important;
+  box-shadow: 0 14px 36px rgba(18,49,96,0.13) !important;
+}
+/* Keep text crisp during the hover lift: render on a stable GPU layer with
+   backface-visibility hidden, which prevents the sub-pixel blur that a bare
+   transform:translateY causes on hover. */
+.card {
+  transition: transform 0.25s ease, box-shadow 0.25s ease !important;
+}
+
+/* ── GLOBAL ANTI-BLUR ──
+   Any element that lifts or scales on hover gets promoted to a GPU layer, and
+   text on that layer can render blurry. Applying backface-visibility:hidden and
+   crisp font-smoothing to every hover-animated surface keeps text sharp app-wide. */
+.card, .job-card, .stat-card, .btn,
+.card:hover, .job-card:hover, .stat-card:hover, .btn:hover {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
 
 /* ─── JOB CARD ─── */
 .job-card { transition: all 0.25s cubic-bezier(0.4,0,0.2,1) !important; }
@@ -1509,7 +1529,11 @@ body.dark-mode .btn-light { background: #ffffff !important; border-color: #fffff
 body.dark-mode .btn-light:hover { background: #E6EDF5 !important; color: #0A2347 !important; }
 
 /* ── PREMIUM POLISH: feature/value cards lift a touch more crisply ── */
-.job-card, .card { will-change: transform; }
+/* NOTE: applying will-change permanently promotes every card to its own GPU
+   layer, which softens/blurs text rendering. Apply it only during hover so the
+   lift stays smooth but text is crystal clear at rest. */
+/* (Removed will-change on hover — the backface-visibility fix above keeps the
+   lift smooth without the extra GPU layer that was softening the text.) */
 
 /* — deep-navy inline TEXT (new brand hues) → readable on dark — */
 body.dark-mode [style*="color: rgb(10, 35, 71)"],
@@ -1964,3 +1988,85 @@ body.dark-mode .employer-job-row {
 }
 /* The sticky navbar already establishes a positioning context, so the absolute
    mobile dropdown above anchors to it correctly — no extra rule needed. */
+/* ── Password show/hide eye toggle (sits inside the input, right side) ── */
+.pwd-wrap { position: relative; display: block; }
+.pwd-wrap > input,
+.pwd-wrap > .form-control { padding-right: 44px !important; }
+.pwd-toggle {
+  position: absolute !important;
+  top: 26px;                 /* vertical centre of the 52px float-field input */
+  right: 10px;
+  transform: translateY(-50%);
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+  padding: 4px !important;
+  margin: 0 !important;
+  width: auto !important;
+  height: auto !important;
+  cursor: pointer;
+  color: var(--text-muted, #6c757d);
+  font-size: 1.1rem;
+  line-height: 1;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.pwd-toggle:hover,
+.pwd-toggle:focus { color: var(--accent, #123160); background: transparent !important; box-shadow: none !important; }
+
+/* ── Floating label INSIDE pwd-wrap ──
+   The float-field label rules only match a label that is a direct sibling of the
+   input. Since the eye toggle wraps the input in .pwd-wrap, the label sits inside
+   .pwd-wrap instead, so we replicate the resting + floated states here. */
+.float-field .pwd-wrap { position: relative; }
+.float-field .pwd-wrap > label {
+  position: absolute;
+  left: 13px;
+  top: 26px;
+  transform: translateY(-50%);
+  background: transparent;
+  padding: 0 4px;
+  font-size: 0.92rem;
+  font-weight: 400;
+  color: var(--text-muted);
+  pointer-events: none;
+  transition: all 0.15s ease;
+  z-index: 2;
+  border-radius: 4px;
+  max-width: calc(100% - 52px);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.float-field .pwd-wrap > .form-control:focus ~ label,
+.float-field .pwd-wrap > .form-control:not(:placeholder-shown) ~ label {
+  top: 0;
+  transform: translateY(-50%);
+  background: var(--bg-card, #fff);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--text-secondary);
+}
+.float-field .pwd-wrap > .form-control:focus ~ label { color: var(--accent) !important; }
+body.dark-mode .float-field .pwd-wrap > .form-control:focus ~ label,
+body.dark-mode .float-field .pwd-wrap > .form-control:not(:placeholder-shown) ~ label {
+  background: var(--bg-card, #1c2128);
+}
+
+/* ── Divider line before the eye icon (full height of the input) ── */
+.pwd-toggle::before {
+  content: '';
+  position: absolute;
+  left: -8px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 1px;
+  height: 38px;
+  background: var(--border-color, #d6dce4);
+}
+.pwd-wrap > input,
+.pwd-wrap > .form-control { padding-right: 50px !important; }

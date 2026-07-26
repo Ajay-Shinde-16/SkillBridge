@@ -13,6 +13,9 @@ export default function AdminRegister() {
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [showPwd, setShowPwd] = useState(false)
+  const [showConfirm, setShowConfirm] = useState(false)
+  const [showSecret, setShowSecret] = useState(false)
   const { user } = useAuth()
   const navigate = useNavigate()
 
@@ -148,11 +151,17 @@ export default function AdminRegister() {
                       </div>
 
                       <div className="col-md-6 float-field">
-                        <input type="password" className="form-control rounded-3" required
-                          value={form.password}
-                          onChange={e => setForm({ ...form, password: e.target.value })}
-                          placeholder=" " />
-                        <label>Password <span className="text-danger">*</span></label>
+                        <div className="pwd-wrap">
+                          <input type={showPwd ? 'text' : 'password'} className="form-control rounded-3" required
+                            value={form.password}
+                            onChange={e => setForm({ ...form, password: e.target.value })}
+                            placeholder=" " />
+                          <label>Password <span className="text-danger">*</span></label>
+                          <button type="button" className="pwd-toggle" onClick={() => setShowPwd(v => !v)}
+                            aria-label={showPwd ? 'Hide password' : 'Show password'} tabIndex={-1}>
+                            <i className={`bi ${showPwd ? 'bi-eye-slash' : 'bi-eye'}`}></i>
+                          </button>
+                        </div>
                         {form.password && (() => {
                           const s = getPasswordStrength(form.password)
                           return (
@@ -167,11 +176,17 @@ export default function AdminRegister() {
                       </div>
 
                       <div className="col-md-6 float-field">
-                        <input type="password" className="form-control rounded-3" required
-                          value={form.confirmPassword}
-                          onChange={e => setForm({ ...form, confirmPassword: e.target.value })}
-                          placeholder=" " />
-                        <label>Confirm Password <span className="text-danger">*</span></label>
+                        <div className="pwd-wrap">
+                          <input type={showConfirm ? 'text' : 'password'} className="form-control rounded-3" required
+                            value={form.confirmPassword}
+                            onChange={e => setForm({ ...form, confirmPassword: e.target.value })}
+                            placeholder=" " />
+                          <label>Confirm Password <span className="text-danger">*</span></label>
+                          <button type="button" className="pwd-toggle" onClick={() => setShowConfirm(v => !v)}
+                            aria-label={showConfirm ? 'Hide password' : 'Show password'} tabIndex={-1}>
+                            <i className={`bi ${showConfirm ? 'bi-eye-slash' : 'bi-eye'}`}></i>
+                          </button>
+                        </div>
                         {form.confirmPassword && form.password !== form.confirmPassword && (
                           <span className="text-danger d-block mt-1" style={{ fontSize: '0.78rem' }}>Passwords don't match</span>
                         )}
@@ -183,11 +198,17 @@ export default function AdminRegister() {
                       </div>
 
                       <div className="col-12 float-field">
-                        <input type="password" className="form-control rounded-3" required
-                          value={form.secretCode}
-                          onChange={e => setForm({ ...form, secretCode: e.target.value })}
-                          placeholder=" " />
-                        <label>Admin Secret Code <span className="text-danger">*</span></label>
+                        <div className="pwd-wrap">
+                          <input type={showSecret ? 'text' : 'password'} className="form-control rounded-3" required
+                            value={form.secretCode}
+                            onChange={e => setForm({ ...form, secretCode: e.target.value })}
+                            placeholder=" " />
+                          <label>Admin Secret Code <span className="text-danger">*</span></label>
+                          <button type="button" className="pwd-toggle" onClick={() => setShowSecret(v => !v)}
+                            aria-label={showSecret ? 'Hide secret code' : 'Show secret code'} tabIndex={-1}>
+                            <i className={`bi ${showSecret ? 'bi-eye-slash' : 'bi-eye'}`}></i>
+                          </button>
+                        </div>
                       </div>
                     </div>
 

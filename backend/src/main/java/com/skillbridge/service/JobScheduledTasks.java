@@ -3,9 +3,11 @@ package com.skillbridge.service;
 import com.skillbridge.model.Job;
 import com.skillbridge.model.JobAlert;
 import com.skillbridge.model.User;
+import com.skillbridge.model.Application;
 import com.skillbridge.repository.JobAlertRepository;
 import com.skillbridge.repository.JobRepository;
 import com.skillbridge.repository.UserRepository;
+import com.skillbridge.repository.ApplicationRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -24,23 +26,32 @@ public class JobScheduledTasks {
     private final JobAlertRepository jobAlertRepository;
     private final UserRepository userRepository;
     private final EmailService emailService;
+    private final ApplicationRepository applicationRepository;
 
-    // Runs once an hour. Closes any job still marked OPEN whose deadline has passed —
-    // previously the deadline field was just decorative and jobs stayed open forever.
+    // Runs once an hour. DELETES any job whose deadline has passed — the job and all
+    // its applications are removed from the database, so it disappears from the site.
     @Scheduled(fixedRate = 60 * 60 * 1000)
-    public void closeExpiredJobs() {
-        List<Job> openJobs = jobRepository.findByStatus("OPEN");
+    public void deleteExpiredJobs() {
+        List<Job> allJobs = jobRepository.findAll();
         LocalDateTime now = LocalDateTime.now();
-        int closedCount = 0;
-        for (Job job : openJobs) {
+        int deletedCount = 0;
+        for (Job job : allJobs) {
             if (job.getDeadline() != null && job.getDeadline().isBefore(now)) {
-                job.setStatus("CLOSED");
-                jobRepository.save(job);
-                closedCount++;
+                // Remove the job's applications first to avoid orphaned records.
+                try {
+                    List<Application> apps = applicationRepository.findByJobId(job.getId());
+                    if (apps != null && !apps.isEmpty()) {
+                        applicationRepository.deleteAll(apps);
+                    }
+                } catch (Exception e) {
+                    log.warn("Could not clean up applications for expired job {}: {}", job.getId(), e.getMessage());
+                }
+                jobRepository.deleteById(job.getId());
+                deletedCount++;
             }
         }
-        if (closedCount > 0) {
-            log.info("⏰ Auto-closed {} job(s) past their application deadline.", closedCount);
+        if (deletedCount > 0) {
+            log.info("Auto-deleted {} job(s) past their application deadline.", deletedCount);
         }
     }
 

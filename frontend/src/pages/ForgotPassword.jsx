@@ -18,6 +18,7 @@ export default function ForgotPassword() {
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
   const [showPwd, setShowPwd] = useState(false)
+  const [showConfirm, setShowConfirm] = useState(false)
   const navigate = useNavigate()
 
   const handleSendOtp = async (e) => {
@@ -192,36 +193,45 @@ export default function ForgotPassword() {
                   </div>
 
                   {/* New Password */}
-                  <div className="float-field mb-3" style={{ display: 'flex' }}>
-                    <input
-                      type={showPwd ? 'text' : 'password'}
-                      className="form-control rounded-start-3"
-                      required
-                      value={newPassword}
-                      onChange={e => setNewPassword(e.target.value)}
-                      placeholder=" "
-                      style={{ borderRight: 'none' }}
-                    />
-                    <label>New Password</label>
-                    <button
-                      type="button"
-                      className="btn btn-outline-secondary rounded-end-3"
-                      onClick={() => setShowPwd(!showPwd)}>
-                      <i className={`bi ${showPwd ? 'bi-eye-slash' : 'bi-eye'}`}></i>
-                    </button>
+                  <div className="float-field mb-3">
+                    <div className="pwd-wrap">
+                      <input
+                        type={showPwd ? 'text' : 'password'}
+                        className="form-control rounded-3"
+                        required
+                        value={newPassword}
+                        onChange={e => setNewPassword(e.target.value)}
+                        placeholder=" "
+                      />
+                      <label>New Password</label>
+                      <button
+                        type="button"
+                        className="pwd-toggle"
+                        onClick={() => setShowPwd(!showPwd)}
+                        aria-label={showPwd ? 'Hide password' : 'Show password'} tabIndex={-1}>
+                        <i className={`bi ${showPwd ? 'bi-eye-slash' : 'bi-eye'}`}></i>
+                      </button>
+                    </div>
                   </div>
 
                   {/* Confirm Password */}
                   <div className="float-field mb-4">
-                    <input
-                      type="password"
-                      className={`form-control rounded-3 ${confirmPassword && (newPassword !== confirmPassword ? 'is-invalid' : 'is-valid')}`}
-                      required
-                      value={confirmPassword}
-                      onChange={e => setConfirmPassword(e.target.value)}
-                      placeholder=" "
-                    />
-                    <label>Confirm Password</label>
+                    <div className="pwd-wrap">
+                      <input
+                        type={showConfirm ? 'text' : 'password'}
+                        className={`form-control rounded-3 ${confirmPassword && (newPassword !== confirmPassword ? 'is-invalid' : 'is-valid')}`}
+                        required
+                        value={confirmPassword}
+                        onChange={e => setConfirmPassword(e.target.value)}
+                        placeholder=" "
+                      />
+                      <label>Confirm Password</label>
+                      <button type="button" className="pwd-toggle"
+                        onClick={() => setShowConfirm(!showConfirm)}
+                        aria-label={showConfirm ? 'Hide password' : 'Show password'} tabIndex={-1}>
+                        <i className={`bi ${showConfirm ? 'bi-eye-slash' : 'bi-eye'}`}></i>
+                      </button>
+                    </div>
                   </div>
 
                   {/* Reset Button */}

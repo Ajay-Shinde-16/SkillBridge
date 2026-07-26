@@ -148,20 +148,22 @@ export default function Login() {
                             <i className="bi bi-key me-1"></i>Forgot Password?
                           </Link>
                         </div>
-                        <div className="float-field mb-4" style={{ display: 'flex' }}>
-                          <input
-                            type={showPassword ? 'text' : 'password'}
-                            className="form-control rounded-start-3"
-                            required
-                            value={form.password}
-                            onChange={e => setForm({ ...form, password: e.target.value })}
-                            placeholder=" " style={{ borderRight: 'none' }} />
-                          <label>Password</label>
-                          <button type="button"
-                            className="btn btn-outline-secondary rounded-end-3"
-                            onClick={() => setShowPassword(!showPassword)}>
-                            <i className={`bi ${showPassword ? 'bi-eye-slash' : 'bi-eye'}`}></i>
-                          </button>
+                        <div className="float-field mb-4">
+                          <div className="pwd-wrap">
+                            <input
+                              type={showPassword ? 'text' : 'password'}
+                              className="form-control rounded-3"
+                              required
+                              value={form.password}
+                              onChange={e => setForm({ ...form, password: e.target.value })}
+                              placeholder=" " />
+                            <label>Password</label>
+                            <button type="button" className="pwd-toggle"
+                              onClick={() => setShowPassword(!showPassword)}
+                              aria-label={showPassword ? 'Hide password' : 'Show password'} tabIndex={-1}>
+                              <i className={`bi ${showPassword ? 'bi-eye-slash' : 'bi-eye'}`}></i>
+                            </button>
+                          </div>
                         </div>
 
                         {/* Sign In Button */}

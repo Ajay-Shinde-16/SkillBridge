@@ -10,6 +10,7 @@ export default function ManageJobs() {
   const [verifyFilter, setVerifyFilter] = useState('')   // '', 'PENDING', 'VERIFIED'
   const [deleting, setDeleting] = useState(null)
   const [verifying, setVerifying] = useState(null)
+  const [viewJob, setViewJob] = useState(null)   // job shown in the details modal
 
   const fetchJobs = () => {
     setLoading(true)
@@ -27,7 +28,7 @@ export default function ManageJobs() {
 
   const handleVerify = async (id, title) => {
     setVerifying(id)
-    try { await verifyJob(id); fetchJobs() }
+    try { await verifyJob(id); fetchJobs(); setViewJob(null) }
     catch (e) { alert('Failed to verify job') } finally { setVerifying(null) }
   }
 
@@ -180,6 +181,12 @@ export default function ManageJobs() {
                               )}
                               <button
                                 className="btn btn-sm rounded-pill"
+                                style={{ background: '#E6F1FB', color: '#0C447C', fontSize: '0.72rem', padding: '3px 10px' }}
+                                onClick={() => setViewJob(job)}>
+                                <i className="bi bi-eye me-1"></i>View
+                              </button>
+                              <button
+                                className="btn btn-sm rounded-pill"
                                 style={{ background: '#FEE2E2', color: '#991b1b', fontSize: '0.72rem', padding: '3px 10px' }}
                                 disabled={deleting === job.id}
                                 onClick={() => handleDelete(job.id, job.title)}>
@@ -199,6 +206,100 @@ export default function ManageJobs() {
           </div>
         </div>
       </div>
+
+      {/* ── Job details modal (View → validate) ── */}
+      {viewJob && (
+        <div onClick={() => setViewJob(null)}
+          style={{ position:'fixed', inset:0, background:'rgba(10,20,40,0.55)', zIndex:2000,
+                   display:'flex', alignItems:'center', justifyContent:'center', padding:16 }}>
+          <div onClick={e => e.stopPropagation()}
+            className="bg-white rounded-4 shadow"
+            style={{ maxWidth:640, width:'100%', maxHeight:'88vh', overflowY:'auto' }}>
+
+            {/* header */}
+            <div className="d-flex justify-content-between align-items-start p-4 pb-3"
+              style={{ borderBottom:'1px solid #eef1f5' }}>
+              <div>
+                <h5 className="fw-bold mb-1" style={{ color:'#0A2347' }}>{viewJob.title}</h5>
+                <div className="text-muted small"><i className="bi bi-building me-1"></i>{viewJob.companyName}</div>
+              </div>
+              <button className="btn-close" aria-label="Close" onClick={() => setViewJob(null)}></button>
+            </div>
+
+            {/* body */}
+            <div className="p-4 pt-3">
+              <div className="d-flex flex-wrap gap-2 mb-3">
+                <span className="badge rounded-pill" style={{ background:'#E6F1FB', color:'#0C447C' }}>
+                  {viewJob.jobType ? viewJob.jobType.replace(/_/g,' ') : 'Full Time'}
+                </span>
+                <span className="badge rounded-pill" style={{ background:'#EDE9FE', color:'#5B21B6' }}>
+                  {viewJob.experienceLevel || 'Any level'}
+                </span>
+                <span className="badge rounded-pill" style={{ background:'#DCFCE7', color:'#166534' }}>
+                  {viewJob.remote ? 'Remote' : (viewJob.location || 'On-site')}
+                </span>
+                <span className="badge rounded-pill"
+                  style={ viewJob.verified
+                    ? { background:'#D1FAE5', color:'#057642' }
+                    : { background:'#FEF3C7', color:'#92400e' } }>
+                  {viewJob.verified ? 'Verified' : 'Pending approval'}
+                </span>
+              </div>
+
+              <dl className="row small mb-3">
+                <dt className="col-4 text-muted fw-normal">Salary</dt>
+                <dd className="col-8">
+                  {viewJob.minSalary ? `${viewJob.currency||'INR'} ${viewJob.minSalary} - ${viewJob.maxSalary}` : 'Not specified'}
+                </dd>
+                <dt className="col-4 text-muted fw-normal">Posted</dt>
+                <dd className="col-8">{viewJob.postedAt ? new Date(viewJob.postedAt).toLocaleDateString() : '—'}</dd>
+                <dt className="col-4 text-muted fw-normal">Deadline</dt>
+                <dd className="col-8">{viewJob.deadline ? new Date(viewJob.deadline).toLocaleDateString() : 'None'}</dd>
+                <dt className="col-4 text-muted fw-normal">Applications</dt>
+                <dd className="col-8">{viewJob.applicationCount ?? 0}</dd>
+              </dl>
+
+              {viewJob.requiredSkills && (
+                <>
+                  <div className="small fw-semibold text-muted mb-2">Required skills</div>
+                  <div className="d-flex flex-wrap gap-2 mb-3">
+                    {viewJob.requiredSkills.split(',').map((s,i) => s.trim() && (
+                      <span key={i} className="badge rounded-pill" style={{ background:'#F1F5F9', color:'#334155' }}>{s.trim()}</span>
+                    ))}
+                  </div>
+                </>
+              )}
+
+              <div className="small fw-semibold text-muted mb-2">Description</div>
+              <p className="small" style={{ whiteSpace:'pre-wrap', color:'#3c4046' }}>
+                {viewJob.description || 'No description provided.'}
+              </p>
+            </div>
+
+            {/* footer — validate action */}
+            <div className="p-4 pt-0 d-flex gap-2 justify-content-end">
+              <button className="btn btn-light rounded-pill px-3" onClick={() => setViewJob(null)}>Close</button>
+              {!viewJob.verified ? (
+                <button className="btn rounded-pill px-4 fw-semibold text-white"
+                  style={{ background:'#057642' }}
+                  disabled={verifying === viewJob.id}
+                  onClick={() => handleVerify(viewJob.id, viewJob.title)}>
+                  {verifying === viewJob.id
+                    ? <span className="spinner-border spinner-border-sm"></span>
+                    : <><i className="bi bi-check-circle me-1"></i>Validate & Publish Job</>}
+                </button>
+              ) : (
+                <button className="btn rounded-pill px-4 fw-semibold"
+                  style={{ background:'#FEF3C7', color:'#92400e' }}
+                  disabled={verifying === viewJob.id}
+                  onClick={() => { handleUnverify(viewJob.id, viewJob.title); setViewJob(null) }}>
+                  <i className="bi bi-x-circle me-1"></i>Unpublish
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

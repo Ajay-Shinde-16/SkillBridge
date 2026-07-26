@@ -7,6 +7,7 @@ export default function AdminLogin() {
   const [form, setForm] = useState({ email: '', password: '' })
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
   const { user, login } = useAuth()
   const navigate = useNavigate()
 
@@ -83,11 +84,17 @@ export default function AdminLogin() {
                       <label>Admin Email</label>
                     </div>
                     <div className="float-field mb-4">
-                      <input type="password" className="form-control rounded-3" required
-                        value={form.password}
-                        onChange={e => setForm({ ...form, password: e.target.value })}
-                        placeholder=" " />
-                      <label>Password</label>
+                      <div className="pwd-wrap">
+                        <input type={showPassword ? 'text' : 'password'} className="form-control rounded-3" required
+                          value={form.password}
+                          onChange={e => setForm({ ...form, password: e.target.value })}
+                          placeholder=" " />
+                        <label>Password</label>
+                        <button type="button" className="pwd-toggle" onClick={() => setShowPassword(v => !v)}
+                          aria-label={showPassword ? 'Hide password' : 'Show password'} tabIndex={-1}>
+                          <i className={`bi ${showPassword ? 'bi-eye-slash' : 'bi-eye'}`}></i>
+                        </button>
+                      </div>
                     </div>
                     <button type="submit"
                       className="btn btn-lg w-100 text-white fw-bold rounded-3"
