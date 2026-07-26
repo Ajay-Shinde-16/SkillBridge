@@ -40,12 +40,8 @@ public class SecurityConfig {
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/api/auth/**").permitAll()
-                .requestMatchers("/api/users/forgot-password", "/api/users/reset-password").permitAll()
                 .requestMatchers("/api/jobs/search", "/api/jobs/all", "/api/jobs/{id}").permitAll()
                 .requestMatchers("/api/skills/all").permitAll()
-                .requestMatchers("/actuator/health").permitAll()
-                .requestMatchers("/api/health").permitAll()
-                .requestMatchers("/api/stats").permitAll()
                 .anyRequest().authenticated()
             )
             .authenticationProvider(authenticationProvider())
@@ -53,34 +49,10 @@ public class SecurityConfig {
         return http.build();
     }
 
-    @org.springframework.beans.factory.annotation.Value("${app.frontend-url:}")
-    private String frontendUrl;
-
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-
-        // Build the allowed-origins list defensively:
-        // - FRONTEND_URL can be a single URL or a comma-separated list
-        // - trailing slashes are stripped (a very common copy-paste mistake that would
-        //   otherwise cause an exact-match failure and silently block the whole site)
-        // - common local dev ports are always included so local testing never breaks
-        java.util.List<String> origins = new java.util.ArrayList<>();
-        if (frontendUrl != null && !frontendUrl.isBlank()) {
-            for (String url : frontendUrl.split(",")) {
-                String cleaned = url.trim();
-                if (cleaned.endsWith("/")) cleaned = cleaned.substring(0, cleaned.length() - 1);
-                if (!cleaned.isEmpty()) origins.add(cleaned);
-            }
-        }
-        origins.add("http://localhost:5173");
-        origins.add("http://localhost:3000");
-        // Safety net so a single misconfigured FRONTEND_URL can't take the whole site
-        // down — covers frontends hosted on Vercel or Render regardless of env var state.
-        origins.add("https://*.vercel.app");
-        origins.add("https://*.onrender.com");
-
-        config.setAllowedOriginPatterns(origins);
+        config.setAllowedOrigins(List.of("http://localhost:5173"));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);

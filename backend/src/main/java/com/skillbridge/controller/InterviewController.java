@@ -22,14 +22,13 @@ public class InterviewController {
     private final UserRepository userRepository;
 
     @PostMapping("/schedule")
-    @PreAuthorize("hasRole('EMPLOYER') or hasRole('ADMIN')")
+    @PreAuthorize("hasRole('EMPLOYER')")
     public ResponseEntity<?> schedule(@RequestBody Interview interview, Authentication auth) {
         try {
             User user = userRepository.findByEmail(auth.getName())
                 .orElseThrow(() -> new RuntimeException("User not found"));
             interview.setEmployerId(user.getId());
-            boolean isAdmin = "ADMIN".equals(user.getRole());
-            return ResponseEntity.ok(interviewService.scheduleInterview(interview, user.getId(), isAdmin));
+            return ResponseEntity.ok(interviewService.scheduleInterview(interview));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
@@ -51,31 +50,13 @@ public class InterviewController {
         return ResponseEntity.ok(interviewService.getEmployerInterviews(user.getId()));
     }
 
-    // Seeker marks interview as attended (joins meeting)
-    @PutMapping("/{id}/join")
-    @PreAuthorize("hasRole('SEEKER')")
-    public ResponseEntity<?> joinInterview(@PathVariable String id, Authentication auth) {
-        try {
-            User user = userRepository.findByEmail(auth.getName())
-                .orElseThrow(() -> new RuntimeException("User not found"));
-            return ResponseEntity.ok(interviewService.markCompleted(id, user.getId()));
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
-    }
-
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('EMPLOYER') or hasRole('ADMIN')")
     public ResponseEntity<?> updateInterview(@PathVariable String id,
-                                             @RequestBody Map<String, String> body,
-                                             Authentication auth) {
+                                             @RequestBody Map<String, String> body) {
         try {
-            User user = userRepository.findByEmail(auth.getName())
-                .orElseThrow(() -> new RuntimeException("User not found"));
-            boolean isAdmin = "ADMIN".equals(user.getRole());
             return ResponseEntity.ok(interviewService.updateInterview(
-                id, body.get("status"), body.get("feedback"), body.get("result"),
-                user.getId(), isAdmin));
+                id, body.get("status"), body.get("feedback"), body.get("result")));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
