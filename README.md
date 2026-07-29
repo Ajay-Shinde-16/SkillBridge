@@ -1,5 +1,5 @@
 # SkillBridge — Remote Job Portal with Verified Skill Tagging
-### CDAC Project
+### CDAC Project | Group: PGCP-AC-002 | Leader: Sudarshan Bhandare
 
 ---
 
@@ -9,8 +9,47 @@
 | Frontend | React 18 + Vite + Bootstrap 5 + Axios |
 | Backend | Java 17 + Spring Boot 3.2 + Spring Security |
 | Auth | JWT (JSON Web Token) |
-| Database | **MySQL 8.0** |
+| Database | MongoDB |
 | Tools | IntelliJ IDEA / VS Code, Postman, GitHub |
+
+---
+
+## Project Structure
+```
+skillbridge/
+├── backend/                   ← Spring Boot Project
+│   ├── pom.xml
+│   └── src/main/java/com/skillbridge/
+│       ├── SkillBridgeApplication.java
+│       ├── config/SecurityConfig.java
+│       ├── controller/        ← REST API controllers
+│       ├── dto/               ← Request/Response DTOs
+│       ├── model/             ← MongoDB document models
+│       ├── repository/        ← Spring Data MongoDB repos
+│       ├── security/          ← JWT filter, UserDetailsService
+│       └── service/           ← Business logic
+│
+└── frontend/                  ← React + Vite Project
+    ├── package.json
+    ├── vite.config.js
+    └── src/
+        ├── App.jsx            ← Routes
+        ├── main.jsx
+        ├── index.css
+        ├── context/AuthContext.jsx
+        ├── services/api.js    ← All Axios API calls
+        ├── components/Navbar.jsx
+        └── pages/
+            ├── Home.jsx
+            ├── Login.jsx
+            ├── Register.jsx
+            ├── JobList.jsx    ← Search + Filters
+            ├── JobDetail.jsx  ← Apply + Match Score
+            ├── Profile.jsx
+            ├── seeker/        ← Seeker dashboard, applications, interviews
+            ├── employer/      ← Post jobs, manage applications, schedule interviews
+            └── admin/         ← Manage users, verify skills
+```
 
 ---
 
@@ -18,24 +57,19 @@
 - Java 17+
 - Maven 3.8+
 - Node.js 18+
-- **MySQL 8.0** (local)
+- MongoDB (local or MongoDB Atlas)
 - IntelliJ IDEA / VS Code
 
 ---
 
 ## Setup Instructions
 
-### Step 1: Setup MySQL Database
-```sql
--- Open MySQL Workbench or CLI and run:
-CREATE DATABASE skillbridge CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-```
-Or just run the backend — Spring Boot creates tables automatically!
+### Step 1: Start MongoDB
+```bash
+# Local MongoDB
+mongod
 
-Update `application.properties` with your MySQL username/password:
-```properties
-spring.datasource.username=root
-spring.datasource.password=YOUR_PASSWORD
+# OR use MongoDB Atlas (update application.properties with your URI)
 ```
 
 ### Step 2: Run Backend
@@ -56,45 +90,111 @@ Frontend runs on: http://localhost:5173
 
 ---
 
-## Responsive Design
-| Device | Screen | Status |
-|--------|--------|--------|
-| Desktop | 1200px+ | ✅ Full sidebar + all features |
-| Laptop | 992px–1199px | ✅ Full sidebar |
-| Tablet | 768px–991px | ✅ Compact sidebar |
-| Mobile | < 768px | ✅ Bottom navigation bar |
+## API Endpoints
+
+### Auth
+| Method | URL | Description |
+|--------|-----|-------------|
+| POST | /api/auth/register | Register new user |
+| POST | /api/auth/login | Login, get JWT token |
+
+### Jobs
+| Method | URL | Access |
+|--------|-----|--------|
+| GET | /api/jobs/all | Public |
+| GET | /api/jobs/search?keyword=&minSalary=&maxSalary=&remote=&experienceLevel= | Public |
+| GET | /api/jobs/{id} | Public |
+| POST | /api/jobs/create | EMPLOYER |
+| GET | /api/jobs/my-jobs | EMPLOYER |
+| PUT | /api/jobs/{id} | EMPLOYER |
+| DELETE | /api/jobs/{id} | EMPLOYER/ADMIN |
+| GET | /api/jobs/match-score/{jobId} | SEEKER |
+
+### Applications
+| Method | URL | Access |
+|--------|-----|--------|
+| POST | /api/applications/apply/{jobId} | SEEKER |
+| GET | /api/applications/my-applications | SEEKER |
+| GET | /api/applications/job/{jobId} | EMPLOYER |
+| PUT | /api/applications/{id}/status | EMPLOYER |
+| GET | /api/applications/all | ADMIN |
+
+### Interviews
+| Method | URL | Access |
+|--------|-----|--------|
+| POST | /api/interviews/schedule | EMPLOYER |
+| GET | /api/interviews/my-interviews | SEEKER |
+| GET | /api/interviews/employer-interviews | EMPLOYER |
+| PUT | /api/interviews/{id} | EMPLOYER |
+
+### Skills
+| Method | URL | Access |
+|--------|-----|--------|
+| GET | /api/skills/all | Public |
+| POST | /api/skills/add | ADMIN |
+| PUT | /api/skills/verify-user-skill | ADMIN |
+| PUT | /api/skills/update-my-skills | SEEKER |
 
 ---
 
-## User Roles
-| Role | Access |
-|------|--------|
-| SEEKER | Browse jobs, apply, track applications, view interviews |
-| EMPLOYER | Post jobs, manage applicants, schedule interviews |
-| ADMIN | Manage users, verify skills, full platform access |
+## Key Features
 
-**To make Admin:** Register normally, then run in MySQL:
-```sql
-UPDATE users SET role = 'ADMIN' WHERE email = 'admin@skillbridge.com';
+### 1. Verified Skill Tagging
+- Seekers add their skills to their profile
+- Admin can verify each skill with one click
+- Verified skills show a green badge on profile
+- Verified skills get 1.5x weight in match score calculation
+
+### 2. Skill Match Score Algorithm
 ```
+score = (matched_skills + verified_matched * 0.5) / required_skills * 100
+capped at 100%
+```
+
+### 3. Application Status Pipeline
+```
+APPLIED → SHORTLISTED → INTERVIEW_SCHEDULED → OFFERED → ACCEPTED
+                                           ↓
+                                        REJECTED
+```
+
+### 4. Role-Based Access
+- **SEEKER**: Browse jobs, apply, track applications, view interviews
+- **EMPLOYER**: Post jobs, manage applications, schedule interviews, make offers
+- **ADMIN**: Manage all users, verify skills, full platform access
+
+---
+
+## User Credentials for Testing (after registration)
+
+Register these accounts in order:
+1. Admin: email=admin@skillbridge.com, role=ADMIN (register normally, then manually set role in MongoDB)
+2. Employer: email=employer@test.com, role=EMPLOYER
+3. Seeker: email=seeker@test.com, role=SEEKER
 
 ---
 
 ## Team Division
+
 | Member | Module |
 |--------|--------|
-| Ajay Shinde (Leader) | Auth + Admin Panel + Project Setup |
-| Member 2 | Job Module + Search + Skill Match Score |
-| Member 3 | Application Tracker + Interview + Offers |
-| Member 4 | React Frontend (16 pages) + Responsive UI |
+| Member 1 (Leader: Sudarshan) | Auth (JWT + Spring Security) + Admin Panel |
+| Member 2 | Job Module (Backend + Search + Match Score) |
+| Member 3 | Application + Interview + Offer Management |
+| Member 4 | React Frontend (All pages + Bootstrap UI) |
 
 ---
 
-## Hosting (Free)
-| Service | Purpose | URL |
-|---------|---------|-----|
-| Render | Backend (Spring Boot) | Render.com |
-| Railway | MySQL Database | railway.app |
-| Vercel | Frontend (React) | vercel.com |
+## MongoDB Collections
 
-*SkillBridge — CDAC PGCP Bangalore 2026*
+| Collection | Purpose |
+|------------|---------|
+| users | All user accounts (seeker/employer/admin) |
+| jobs | Job postings with required skills |
+| applications | Job applications with status tracking |
+| interviews | Scheduled interviews |
+| skills | Skill catalogue with verification status |
+
+---
+
+*SkillBridge — Built for CDAC PGCP Batch 2026, C-DAC Bangalore*
