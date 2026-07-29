@@ -4,6 +4,42 @@ import { getJobById, applyToJob, getMatchScore, getSkillBreakdown, toggleSavedJo
 import { useAuth } from '../context/AuthContext'
 import CompanyLogo from '../components/CompanyLogo'
 
+// Curated free learning resources for common skills. Unknown skills fall back
+// to a web search for "learn <skill>". Makes the skill-gap actionable.
+const LEARN_LINKS = {
+  'java':        'https://dev.java/learn/',
+  'python':      'https://docs.python.org/3/tutorial/',
+  'javascript':  'https://developer.mozilla.org/en-US/docs/Learn/JavaScript',
+  'typescript':  'https://www.typescriptlang.org/docs/handbook/intro.html',
+  'react':       'https://react.dev/learn',
+  'angular':     'https://angular.dev/tutorials',
+  'vue':         'https://vuejs.org/tutorial/',
+  'node':        'https://nodejs.org/en/learn',
+  'nodejs':      'https://nodejs.org/en/learn',
+  'spring':      'https://spring.io/guides',
+  'springboot':  'https://spring.io/guides/gs/spring-boot',
+  'spring boot': 'https://spring.io/guides/gs/spring-boot',
+  'sql':         'https://www.w3schools.com/sql/',
+  'mysql':       'https://dev.mysql.com/doc/mysql-getting-started/en/',
+  'postgresql':  'https://www.postgresql.org/docs/current/tutorial.html',
+  'mongodb':     'https://learn.mongodb.com/',
+  'docker':      'https://docs.docker.com/get-started/',
+  'kubernetes':  'https://kubernetes.io/docs/tutorials/kubernetes-basics/',
+  'aws':         'https://aws.amazon.com/getting-started/',
+  'azure':       'https://learn.microsoft.com/en-us/training/azure/',
+  'git':         'https://git-scm.com/book/en/v2',
+  'html':        'https://developer.mozilla.org/en-US/docs/Learn/HTML',
+  'css':         'https://developer.mozilla.org/en-US/docs/Learn/CSS',
+  'graphql':     'https://graphql.org/learn/',
+  'redis':       'https://redis.io/learn',
+  'kafka':       'https://kafka.apache.org/quickstart',
+  'system design':'https://github.com/donnemartin/system-design-primer',
+}
+const learnUrl = (skill) => {
+  const key = (skill || '').toLowerCase().trim()
+  return LEARN_LINKS[key] || `https://www.google.com/search?q=learn+${encodeURIComponent(skill)}+free+course`
+}
+
 export default function JobDetail() {
   const { id } = useParams()
   const { user } = useAuth()
@@ -236,13 +272,16 @@ export default function JobDetail() {
                     )}
                     {breakdown.missing && breakdown.missing.length > 0 && (
                       <>
-                        <div className="small fw-semibold text-muted mb-2">Skills you're missing</div>
+                        <div className="small fw-semibold text-muted mb-2">Skills you're missing — click to learn</div>
                         <div className="d-flex flex-wrap gap-2 mb-3">
                           {breakdown.missing.map((s, i) => (
-                            <span key={i} className="badge rounded-pill d-inline-flex align-items-center"
+                            <a key={i} href={learnUrl(s)} target="_blank" rel="noopener noreferrer"
+                              className="badge rounded-pill d-inline-flex align-items-center text-decoration-none"
+                              title={`Learn ${s} — opens free resources`}
                               style={{ background: '#FEE2E2', color: '#991b1b', fontSize: '0.75rem', fontWeight: 500 }}>
                               <i className="bi bi-x-circle me-1"></i>{s}
-                            </span>
+                              <i className="bi bi-box-arrow-up-right ms-1" style={{ fontSize: '0.6rem' }}></i>
+                            </a>
                           ))}
                         </div>
                       </>
@@ -250,8 +289,9 @@ export default function JobDetail() {
                     {breakdown.missing && breakdown.missing.length > 0 && (
                       <div className="small rounded-3 p-2" style={{ background: '#E6F1FB', color: '#0C447C' }}>
                         <i className="bi bi-lightbulb me-1"></i>
-                        Learn {breakdown.missing.slice(0, 2).join(' and ')}
-                        {breakdown.missing.length > 2 ? ` +${breakdown.missing.length - 2} more` : ''} to raise your match.
+                        Click any missing skill above to open free learning resources for it.
+                        Learning {breakdown.missing.slice(0, 2).join(' and ')}
+                        {breakdown.missing.length > 2 ? ` +${breakdown.missing.length - 2} more` : ''} will raise your match.
                         The <i className="bi bi-patch-check-fill"></i> badge means an admin verified that skill.
                       </div>
                     )}

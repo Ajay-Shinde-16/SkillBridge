@@ -80,6 +80,9 @@ export const getJobById = (id) =>
 export const getSkillBreakdown = (jobId) =>
   API.get(`/jobs/skill-breakdown/${jobId}`)
 
+export const getRecommendedJobs = () =>
+  API.get('/jobs/recommended')
+
 export const createJob = (data) =>
   API.post('/jobs/create', data)
 

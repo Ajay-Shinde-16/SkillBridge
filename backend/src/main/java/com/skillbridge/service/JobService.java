@@ -252,4 +252,29 @@ public class JobService {
         job.setApplicationCount(job.getApplicationCount() + 1);
         jobRepository.save(job);
     }
+
+    // Returns the top open, verified jobs ranked by this seeker's skill-match
+    // score (highest first). Powers the "Recommended for you" strip on the
+    // seeker dashboard. Reuses the exact same scoring as the match badge so
+    // recommendations always agree with the scores shown elsewhere.
+    public List<Map<String, Object>> getRecommendedJobs(String seekerId, int limit) {
+        List<Job> openJobs = jobRepository.findByStatusAndVerified("OPEN", true);
+        List<Map<String, Object>> scored = new ArrayList<>();
+        for (Job job : openJobs) {
+            int score;
+            try {
+                score = calculateSkillMatchScore(seekerId, job.getId());
+            } catch (Exception e) {
+                score = 0;
+            }
+            if (score > 0) {                 // only recommend jobs with some match
+                Map<String, Object> m = new HashMap<>();
+                m.put("job", job);
+                m.put("matchScore", score);
+                scored.add(m);
+            }
+        }
+        scored.sort((a, b) -> (int) b.get("matchScore") - (int) a.get("matchScore"));
+        return scored.size() > limit ? scored.subList(0, limit) : scored;
+    }
 }

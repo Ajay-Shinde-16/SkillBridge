@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react'
 import { Link } from 'react-router-dom'
-import { getMyApplications, getMyInterviews, getProfile } from '../../services/api'
+import { getMyApplications, getMyInterviews, getProfile, getRecommendedJobs } from '../../services/api'
 import { useAuth } from '../../context/AuthContext'
 
 const STATUS_COLORS = {
@@ -16,7 +16,15 @@ export default function SeekerDashboard() {
   const [interviews, setInterviews] = useState([])
   const [loading, setLoading] = useState(true)
   const [lastUpdated, setLastUpdated] = useState(null)
+  const [recommended, setRecommended] = useState([])
   const prevDataRef = useRef('')
+
+  // Load personalized job recommendations once (ranked by match score)
+  useEffect(() => {
+    getRecommendedJobs()
+      .then(({ data }) => setRecommended(Array.isArray(data) ? data : []))
+      .catch(() => {})
+  }, [])
 
   const fetchAll = useCallback(async (showLoader = false) => {
     if (showLoader) setLoading(true)
@@ -189,6 +197,51 @@ export default function SeekerDashboard() {
               </small>
             </div>
           </div>
+
+          {/* Recommended for you — top matches by skill score */}
+          {recommended.length > 0 && (
+            <div className="card border-0 shadow-sm rounded-3 mb-4">
+              <div className="card-body p-4">
+                <div className="d-flex justify-content-between align-items-center mb-3">
+                  <h6 className="fw-bold mb-0">
+                    <i className="bi bi-stars me-2" style={{color:'#d97706'}}></i>
+                    Recommended for You
+                  </h6>
+                  <Link to="/jobs" className="btn btn-sm rounded-pill fw-semibold"
+                    style={{background:'#EEF3F8',color:'#123160',border:'none',fontSize:'0.78rem'}}>
+                    Browse All Jobs
+                  </Link>
+                </div>
+                <div className="row g-3">
+                  {recommended.map((r, i) => (
+                    <div key={i} className="col-md-6 col-lg-4">
+                      <Link to={`/jobs/${r.job.id}`} className="text-decoration-none">
+                        <div className="border rounded-3 p-3 h-100"
+                          style={{borderColor:'#e5eaf0', transition:'box-shadow 0.2s'}}>
+                          <div className="d-flex justify-content-between align-items-start mb-1">
+                            <div className="fw-bold" style={{color:'#0A2347', fontSize:'0.92rem'}}>
+                              {r.job.title}
+                            </div>
+                            <span className="badge rounded-pill flex-shrink-0 ms-2"
+                              style={{background: scoreColor(r.matchScore)+'18', color: scoreColor(r.matchScore), fontWeight:700}}>
+                              {r.matchScore}% match
+                            </span>
+                          </div>
+                          <div className="small text-muted mb-2">
+                            <i className="bi bi-building me-1"></i>{r.job.companyName}
+                            {r.job.remote && <span className="ms-2"><i className="bi bi-house-door me-1"></i>Remote</span>}
+                          </div>
+                          <div className="small text-muted">
+                            {r.job.minSalary ? `₹${r.job.minSalary} - ₹${r.job.maxSalary}` : 'Salary not specified'}
+                          </div>
+                        </div>
+                      </Link>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Recent Applications */}
           <div className="card border-0 shadow-sm rounded-3 mb-4">

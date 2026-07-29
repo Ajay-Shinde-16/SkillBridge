@@ -168,6 +168,19 @@ public class JobController {
         }
     }
 
+    // Top job recommendations for the logged-in seeker, ranked by match score.
+    @GetMapping("/recommended")
+    @PreAuthorize("hasRole('SEEKER')")
+    public ResponseEntity<?> getRecommendedJobs(Authentication auth) {
+        try {
+            User user = userRepository.findByEmail(auth.getName())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+            return ResponseEntity.ok(jobService.getRecommendedJobs(user.getId(), 5));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
     @GetMapping("/match-score/{jobId}")
     @PreAuthorize("hasRole('SEEKER')")
     public ResponseEntity<?> getMatchScore(@PathVariable String jobId, Authentication auth) {
