@@ -20,11 +20,29 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + email));
+            .orElseThrow(() -> new UsernameNotFoundException("User not found: " + email));
+
+        // ─── Handle both BCrypt and plain text passwords ───
+        // Spring Security needs a valid password for JWT filter validation
+        String password = user.getPassword();
+        if (password == null) password = "";
+
+        // If plain text, wrap it so Spring Security doesn't throw error
+        // The actual login validation is done in AuthService
+        if (!password.startsWith("$2a$") && !password.startsWith("$2b$") && !password.isEmpty()) {
+            // Plain text password - encode it for Spring Security's internal use
+            // (AuthService handles the actual comparison)
+            password = "{noop}" + password;
+        }
+
         return new org.springframework.security.core.userdetails.User(
-                user.getEmail(),
-                user.getPassword(),
-                List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole()))
+            user.getEmail(),
+            password,
+            user.isActive(),  // enabled
+            true,             // accountNonExpired
+            true,             // credentialsNonExpired
+            true,             // accountNonLocked
+            List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole()))
         );
     }
 }
