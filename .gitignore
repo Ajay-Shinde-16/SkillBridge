@@ -1,1 +1,22 @@
+# Build output
 backend/target/
+frontend/dist/
+
+# Dependencies
+node_modules/
+
+# Environment / secrets — never commit these
+.env
+*.env
+
+# JVM crash logs (from IDE / low-memory language server)
+hs_err_pid*.log
+replay_pid*.log
+
+# IDE
+.vscode/
+.idea/
+*.iml
+
+# OS
+.DS_Store
